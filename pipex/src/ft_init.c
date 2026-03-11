@@ -1,32 +1,31 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   get_next_line.h                                    :+:      :+:    :+:   */
+/*   ft_init.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: sbonneau <sbonneau@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/10/22 04:05:10 by sbonneau          #+#    #+#             */
-/*   Updated: 2026/03/11 05:34:32 by sbonneau         ###   ########.fr       */
+/*   Created: 2025/11/20 03:06:16 by sbonneau          #+#    #+#             */
+/*   Updated: 2026/03/11 05:34:14 by sbonneau         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef GET_NEXT_LINE_H
-# define GET_NEXT_LINE_H
-# ifndef BUFFER_SIZE
-#  define BUFFER_SIZE 400
-# endif
+#include "../includes/pipex.h"
 
-# include <stdlib.h>
-# include <unistd.h>
-# include <fcntl.h>
-
-void	ft_strncpy(char *dst, char *src, size_t n);
-void	ft_strcpy(char *dst, char *src);
-
-char	*get_next_line(int fd);
-char	*ft_strjoin(char *s1, char *s2);
-char	*ft_strchr(char *s, char c);
-
-size_t	ft_strlen(char *s);
-
-#endif
+void	ft_init(t_pipex *px, int ac, char **av, char **env)
+{
+	px->here_doc = 0;
+	px->limiter = NULL;
+	px->infile = -1;
+	px->outfile = -1;
+	px->prev_fd = -1;
+	px->ac = ac;
+	px->av = av;
+	px->env = env;
+	if (ac > 2 && ft_strcmp(av[1], "here_doc") == 0)
+	{
+		px->here_doc = 1;
+		px->limiter = av[2];
+	}
+	px->cmds_count = px->ac - 3 - px->here_doc;
+}
