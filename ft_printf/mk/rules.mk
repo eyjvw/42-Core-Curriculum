@@ -9,7 +9,7 @@ $(NAME): $(OBJ_DIR) $(OBJECTS)
 $(OBJ_DIR):
 	@mkdir -p $(OBJ_DIR)
 
-$(OBJ_DIR)/%.o: %.c ft_printf.h
+$(OBJ_DIR)/%.o: src/%.c includes/ft_printf.h
 	@echo "$(YELLOW)🔧 Compiling $<...$(RESET)"
 	@$(CC) -c $(CFLAGS) $< -o $@
 
