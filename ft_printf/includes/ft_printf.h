@@ -6,7 +6,7 @@
 /*   By: sbonneau <sbonneau@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/16 00:24:31 by sbonneau          #+#    #+#             */
-/*   Updated: 2026/03/11 05:13:19 by sbonneau         ###   ########.fr       */
+/*   Updated: 2026/03/11 05:27:50 by sbonneau         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,4 +51,3 @@ char	*ft_hex_to_str(unsigned long n, int upper, t_flags flags);
 char	*ft_get_conversion(va_list args, char c, t_flags flags);
 
 t_flags	ft_parse_flags(const char *format, int *i);
-
