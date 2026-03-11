@@ -9,7 +9,7 @@ $(NAME): $(OBJ_DIR) $(OBJECTS)
 $(OBJ_DIR):
 	@mkdir -p $(OBJ_DIR)
 
-$(OBJ_DIR)/%.o: %.c libft.h
+$(OBJ_DIR)/%.o: %.c ft_printf.h
 	@echo "$(YELLOW)🔧 Compiling $<...$(RESET)"
 	@$(CC) -c $(CFLAGS) $< -o $@
 
@@ -23,11 +23,6 @@ fclean: clean
 	@$(RM) $(NAME)
 	@echo "$(RED)✔️ Fclean done.$(RESET)"
 
-bonus: $(OBJ_DIR) $(OBJECTS) $(BONUS_OBJECTS)
-	@echo "$(BLUE)📦 Creating library with bonus...$(RESET)"
-	@$(AR) $(NAME) $(OBJECTS) $(BONUS_OBJECTS)
-	@echo "$(CYAN)📚 $(NAME) created with bonus successfully.$(RESET)"
-
 re: fclean all
 
-.PHONY: all bonus clean fclean re
+.PHONY: all clean fclean re
