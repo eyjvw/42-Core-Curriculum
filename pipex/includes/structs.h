@@ -6,7 +6,7 @@
 /*   By: sbonneau <sbonneau@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/20 03:05:52 by sbonneau          #+#    #+#             */
-/*   Updated: 2026/03/11 06:20:43 by sbonneau         ###   ########.fr       */
+/*   Updated: 2026/03/11 09:08:22 by sbonneau         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,9 +21,9 @@ typedef struct s_pipex
 	int		here_doc;
 	int		cmds_count;
 	int		ac;
-	
+
 	char	*limiter;
-	
+
 	char	**av;
 	char	**env;
 }	t_pipex;
