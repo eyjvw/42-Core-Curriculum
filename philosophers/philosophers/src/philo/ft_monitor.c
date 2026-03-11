@@ -6,7 +6,7 @@
 /*   By: sbonneau <sbonneau@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/26 06:30:01 by sbonneau          #+#    #+#             */
-/*   Updated: 2026/03/11 08:43:17 by sbonneau         ###   ########.fr       */
+/*   Updated: 2026/03/11 09:17:17 by sbonneau         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,20 +23,17 @@ static bool	ft_check_one_dead(t_data *data)
 		pthread_mutex_lock(&data->meal);
 		if (data->philos[i].done)
 		{
-			pthread_mutex_unlock(&data->meal);
-			i++;
+			(pthread_mutex_unlock(&data->meal), i++);
 			continue ;
 		}
 		now = ft_timestamp(data);
 		if (now - data->philos[i].last_meal_time > data->time_to_die)
 		{
-			pthread_mutex_unlock(&data->meal);
-			ft_set_death(data);
+			(pthread_mutex_unlock(&data->meal), ft_set_death(data));
 			pthread_mutex_lock(&data->print);
 			printf("%4lld %6d died\n", now - data->start_time,
 				data->philos[i].id);
-			pthread_mutex_unlock(&data->print);
-			return (1);
+			return (pthread_mutex_unlock(&data->print), 1);
 		}
 		pthread_mutex_unlock(&data->meal);
 		i++;

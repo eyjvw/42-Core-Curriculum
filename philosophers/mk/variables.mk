@@ -5,31 +5,31 @@ SRC = philosophers
 SRC_BONUS = philosophers_bonus
 
 SOURCES = $(SRC)/main.c \
-		  $(SRC)/sources/philo/ft_death.c \
-		  $(SRC)/sources/philo/ft_join.c \
-		  $(SRC)/sources/philo/ft_monitor.c \
-		  $(SRC)/sources/philo/ft_routine.c \
-		  $(SRC)/sources/philo/ft_sleep.c \
-		  $(SRC)/sources/philo/ft_timestamp.c \
-		  $(SRC)/sources/utils/ft_ato.c \
-		  $(SRC)/sources/utils/ft_clean.c \
-		  $(SRC)/sources/utils/ft_init.c \
-		  $(SRC)/sources/utils/ft_parsing.c \
-		  $(SRC)/sources/utils/ft_prints.c
+		  $(SRC)/src/philo/ft_death.c \
+		  $(SRC)/src/philo/ft_join.c \
+		  $(SRC)/src/philo/ft_monitor.c \
+		  $(SRC)/src/philo/ft_routine.c \
+		  $(SRC)/src/philo/ft_sleep.c \
+		  $(SRC)/src/philo/ft_timestamp.c \
+		  $(SRC)/src/utils/ft_ato.c \
+		  $(SRC)/src/utils/ft_clean.c \
+		  $(SRC)/src/utils/ft_init.c \
+		  $(SRC)/src/utils/ft_parsing.c \
+		  $(SRC)/src/utils/ft_prints.c
 
 BONUS_SOURCES = $(SRC_BONUS)/main.c \
-				$(SRC_BONUS)/sources/philo/ft_fork.c \
-				$(SRC_BONUS)/sources/philo/ft_kill_all.c \
-				$(SRC_BONUS)/sources/philo/ft_monitor.c \
-				$(SRC_BONUS)/sources/philo/ft_routine.c \
-				$(SRC_BONUS)/sources/philo/ft_sleep.c \
-				$(SRC_BONUS)/sources/philo/ft_timestamp.c \
-				$(SRC_BONUS)/sources/philo/ft_wait.c \
-				$(SRC_BONUS)/sources/utils/ft_ato.c \
-				$(SRC_BONUS)/sources/utils/ft_clean.c \
-				$(SRC_BONUS)/sources/utils/ft_init.c \
-				$(SRC_BONUS)/sources/utils/ft_parsing.c \
-				$(SRC_BONUS)/sources/utils/ft_prints.c
+				$(SRC_BONUS)/src/philo/ft_fork.c \
+				$(SRC_BONUS)/src/philo/ft_kill_all.c \
+				$(SRC_BONUS)/src/philo/ft_monitor.c \
+				$(SRC_BONUS)/src/philo/ft_routine.c \
+				$(SRC_BONUS)/src/philo/ft_sleep.c \
+				$(SRC_BONUS)/src/philo/ft_timestamp.c \
+				$(SRC_BONUS)/src/philo/ft_wait.c \
+				$(SRC_BONUS)/src/utils/ft_ato.c \
+				$(SRC_BONUS)/src/utils/ft_clean.c \
+				$(SRC_BONUS)/src/utils/ft_init.c \
+				$(SRC_BONUS)/src/utils/ft_parsing.c \
+				$(SRC_BONUS)/src/utils/ft_prints.c
 
 OBJ_DIR = obj
 BONUS_OBJ_DIR = obj_bonus

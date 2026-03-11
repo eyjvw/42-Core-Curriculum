@@ -6,15 +6,14 @@
 /*   By: sbonneau <sbonneau@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/25 17:31:25 by sbonneau          #+#    #+#             */
-/*   Updated: 2026/03/11 08:43:17 by sbonneau         ###   ########.fr       */
+/*   Updated: 2026/03/11 09:11:50 by sbonneau         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef STRUCTS_H
-# define STRUCTS_H
+#pragma once
 
-# include <pthread.h>
-# include <stdbool.h>
+#include <pthread.h>
+#include <stdbool.h>
 
 typedef struct s_data	t_data;
 
@@ -52,5 +51,3 @@ typedef struct s_data
 
 	struct s_philo	*philos;
 }	t_data;
-
-#endif

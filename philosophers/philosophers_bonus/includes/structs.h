@@ -3,18 +3,17 @@
 /*                                                        :::      ::::::::   */
 /*   structs.h                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: sbonneau <sbonneau@student.42lehavre.fr>   +#+  +:+       +#+        */
+/*   By: sbonneau <sbonneau@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/25 17:31:25 by sbonneau          #+#    #+#             */
-/*   Updated: 2025/12/02 05:37:25 by sbonneau         ###   ########.fr       */
+/*   Updated: 2026/03/11 09:10:23 by sbonneau         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef STRUCTS_H
-# define STRUCTS_H
+#pragma once
 
-# include <semaphore.h>
-# include <stdbool.h>
+#include <semaphore.h>
+#include <stdbool.h>
 
 typedef struct s_data	t_data;
 
@@ -47,5 +46,3 @@ typedef struct s_data
 
 	pid_t			*pids;
 }	t_data;
-
-#endif

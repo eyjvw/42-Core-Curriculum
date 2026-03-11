@@ -6,15 +6,14 @@
 /*   By: sbonneau <sbonneau@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/25 17:31:33 by sbonneau          #+#    #+#             */
-/*   Updated: 2026/03/11 09:03:14 by sbonneau         ###   ########.fr       */
+/*   Updated: 2026/03/11 09:09:58 by sbonneau         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef FUNCTIONS_H
-# define FUNCTIONS_H
+#pragma once
 
-# include "structs.h"
-# include <stdbool.h>
+#include "structs.h"
+#include <stdbool.h>
 
 void		ft_routine(t_philo *philo);
 void		ft_parsing(t_data *data, int ac, char **av);
@@ -30,7 +29,6 @@ void		ft_fork(t_data *data);
 void		ft_child_exit(t_philo *philo, int status);
 
 int			ft_atoi(char *s);
+
 long long	ft_atoll(char *s);
 long long	ft_timestamp(t_data *data);
-
-#endif

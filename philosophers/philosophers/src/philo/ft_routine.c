@@ -6,7 +6,7 @@
 /*   By: sbonneau <sbonneau@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/26 06:20:55 by sbonneau          #+#    #+#             */
-/*   Updated: 2026/03/11 08:54:58 by sbonneau         ###   ########.fr       */
+/*   Updated: 2026/03/11 09:15:57 by sbonneau         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,28 +20,34 @@ static void	ft_one_philo(t_philo *philo)
 	pthread_mutex_unlock(philo->left_fork);
 }
 
+static void	ft_check(t_philo *philo, pthread_mutex_t **f, pthread_mutex_t **s)
+{
+	if (philo->left_fork < philo->right_fork)
+	{
+		*f = philo->left_fork;
+		*s = philo->right_fork;
+	}
+	else
+	{
+		*f = philo->right_fork;
+		*s = philo->left_fork;
+	}
+}
+
 static void	ft_eat(t_philo *philo)
 {
 	pthread_mutex_t	*first;
 	pthread_mutex_t	*second;
 
-	if (philo->left_fork < philo->right_fork)
-	{
-		first = philo->left_fork;
-		second = philo->right_fork;
-	}
-	else
-	{
-		first = philo->right_fork;
-		second = philo->left_fork;
-	}
+	ft_check(philo, &first, &second);
 	pthread_mutex_lock(first);
 	if (ft_get_death(philo->data))
 		return (pthread_mutex_unlock(first), (void)0);
 	ft_print(philo, TAKEN_FORK);
 	pthread_mutex_lock(second);
 	if (ft_get_death(philo->data))
-		return (pthread_mutex_unlock(second), pthread_mutex_unlock(first), (void)0);
+		return (pthread_mutex_unlock(second),
+			pthread_mutex_unlock(first), (void)0);
 	ft_print(philo, TAKEN_FORK);
 	pthread_mutex_lock(&philo->data->meal);
 	philo->last_meal_time = ft_timestamp(philo->data);
