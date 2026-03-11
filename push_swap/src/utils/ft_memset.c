@@ -1,23 +1,26 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   pipex.h                                            :+:      :+:    :+:   */
+/*   ft_memset.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: sbonneau <sbonneau@student.42.fr>          +#+  +:+       +#+        */
+/*   By: sbonneau <sbonneau@student.42lehavre.fr>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/11/20 02:56:32 by sbonneau          #+#    #+#             */
-/*   Updated: 2026/03/11 05:52:38 by sbonneau         ###   ########.fr       */
+/*   Created: 2025/11/18 21:47:00 by sbonneau          #+#    #+#             */
+/*   Updated: 2025/11/18 21:47:07 by sbonneau         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#pragma once
+#include "../../includes/push_swap.h"
 
-#include <unistd.h>
-#include <stdlib.h>
-#include <fcntl.h>
-#include <sys/wait.h>
-#include <sys/types.h>
+void	*ft_memset(void *s, int c, size_t x)
+{
+	size_t	i;
 
-#include "structs.h"
-#include "defines.h"
-#include "functions.h"
+	i = 0;
+	while (i < x)
+	{
+		((unsigned char *)s)[i] = c;
+		i++;
+	}
+	return (s);
+}

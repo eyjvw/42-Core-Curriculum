@@ -1,23 +1,30 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   pipex.h                                            :+:      :+:    :+:   */
+/*   ft_putstr_fd.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: sbonneau <sbonneau@student.42.fr>          +#+  +:+       +#+        */
+/*   By: sbonneau <sbonneau@student.42lehavre.fr>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/11/20 02:56:32 by sbonneau          #+#    #+#             */
-/*   Updated: 2026/03/11 05:52:38 by sbonneau         ###   ########.fr       */
+/*   Created: 2025/11/16 10:04:07 by sbonneau          #+#    #+#             */
+/*   Updated: 2025/11/18 21:47:33 by sbonneau         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#pragma once
+#include "../../includes/push_swap.h"
 
-#include <unistd.h>
-#include <stdlib.h>
-#include <fcntl.h>
-#include <sys/wait.h>
-#include <sys/types.h>
+static size_t	ft_strlen(char *str)
+{
+	size_t	i;
 
-#include "structs.h"
-#include "defines.h"
-#include "functions.h"
+	i = 0;
+	if (!str)
+		return (0);
+	while (str[i])
+		i++;
+	return (i);
+}
+
+void	ft_putstr_fd(int fd, char *str)
+{
+	write(fd, str, ft_strlen(str));
+}

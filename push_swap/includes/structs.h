@@ -1,23 +1,26 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   pipex.h                                            :+:      :+:    :+:   */
+/*   structs.h                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: sbonneau <sbonneau@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/11/20 02:56:32 by sbonneau          #+#    #+#             */
-/*   Updated: 2026/03/11 05:52:38 by sbonneau         ###   ########.fr       */
+/*   Created: 2025/11/18 21:43:15 by sbonneau          #+#    #+#             */
+/*   Updated: 2026/03/11 05:51:30 by sbonneau         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #pragma once
 
-#include <unistd.h>
-#include <stdlib.h>
-#include <fcntl.h>
-#include <sys/wait.h>
-#include <sys/types.h>
+typedef struct t_stack
+{
+	int				content;
+	int				index;
+	struct t_stack	*next;
+}	t_stack;
 
-#include "structs.h"
-#include "defines.h"
-#include "functions.h"
+typedef struct t_all
+{
+	t_stack	*a;
+	t_stack	*b;
+}	t_all;

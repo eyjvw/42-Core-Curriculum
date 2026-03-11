@@ -1,23 +1,28 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   pipex.h                                            :+:      :+:    :+:   */
+/*   ft_size_stack.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: sbonneau <sbonneau@student.42.fr>          +#+  +:+       +#+        */
+/*   By: sbonneau <sbonneau@student.42lehavre.fr>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/11/20 02:56:32 by sbonneau          #+#    #+#             */
-/*   Updated: 2026/03/11 05:52:38 by sbonneau         ###   ########.fr       */
+/*   Created: 2025/11/18 22:15:41 by sbonneau          #+#    #+#             */
+/*   Updated: 2025/11/18 22:17:14 by sbonneau         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#pragma once
+#include "../../includes/push_swap.h"
 
-#include <unistd.h>
-#include <stdlib.h>
-#include <fcntl.h>
-#include <sys/wait.h>
-#include <sys/types.h>
+int	ft_size_stack(t_stack *stack)
+{
+	int	size;
 
-#include "structs.h"
-#include "defines.h"
-#include "functions.h"
+	if (stack == NULL)
+		return (0);
+	size = 0;
+	while (stack)
+	{
+		size++;
+		stack = stack->next;
+	}
+	return (size);
+}

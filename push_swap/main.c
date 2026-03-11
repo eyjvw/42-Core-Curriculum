@@ -1,23 +1,23 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   pipex.h                                            :+:      :+:    :+:   */
+/*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: sbonneau <sbonneau@student.42.fr>          +#+  +:+       +#+        */
+/*   By: sbonneau <sbonneau@student.42lehavre.fr>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/11/20 02:56:32 by sbonneau          #+#    #+#             */
-/*   Updated: 2026/03/11 05:52:38 by sbonneau         ###   ########.fr       */
+/*   Created: 2025/11/18 21:45:07 by sbonneau          #+#    #+#             */
+/*   Updated: 2025/11/18 22:18:42 by sbonneau         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#pragma once
+#include "includes/push_swap.h"
 
-#include <unistd.h>
-#include <stdlib.h>
-#include <fcntl.h>
-#include <sys/wait.h>
-#include <sys/types.h>
+int	main(int ac, char **av)
+{
+	t_all	all;
 
-#include "structs.h"
-#include "defines.h"
-#include "functions.h"
+	ft_memset(&all, 0, sizeof(t_all));
+	ft_check_and_init(&all, ac, av);
+	ft_sort(&all);
+	ft_clean_exit(&all, 0);
+}

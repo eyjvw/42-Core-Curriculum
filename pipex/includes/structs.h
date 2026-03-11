@@ -3,15 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   structs.h                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: sbonneau <sbonneau@student.42lehavre.fr>   +#+  +:+       +#+        */
+/*   By: sbonneau <sbonneau@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/20 03:05:52 by sbonneau          #+#    #+#             */
-/*   Updated: 2025/11/20 04:13:15 by sbonneau         ###   ########.fr       */
+/*   Updated: 2026/03/11 05:52:49 by sbonneau         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef STRUCTS_H
-# define STRUCTS_H
+#pragma once
 
 typedef struct s_pipex
 {
@@ -27,5 +26,3 @@ typedef struct s_pipex
 	char	**av;
 	char	**env;
 }	t_pipex;
-
-#endif
