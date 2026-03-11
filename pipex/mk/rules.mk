@@ -1,7 +1,7 @@
 all: $(NAME)
 	@echo "$(GREEN)✅ Compilation completed: $(NAME)$(RESET)"
 
-$(NAME): $(OBJ_DIR) $(OBJ_DIR)/sources $(OBJECTS)
+$(NAME): $(OBJ_DIR) $(OBJECTS)
 	@echo "$(BLUE)🔗 Linking $(NAME)...$(RESET)"
 	@$(CC) $(CFLAGS) -o $(NAME) $(OBJECTS)
 	@echo "$(CYAN)🚀 $(NAME) ready.$(RESET)"
@@ -9,11 +9,9 @@ $(NAME): $(OBJ_DIR) $(OBJ_DIR)/sources $(OBJECTS)
 $(OBJ_DIR):
 	@mkdir -p $(OBJ_DIR)
 
-$(OBJ_DIR)/sources:
-	@mkdir -p $(OBJ_DIR)/sources
-
 $(OBJ_DIR)/%.o: %.c includes/pipex.h
 	@echo "$(YELLOW)🔧 Compiling $<...$(RESET)"
+	@mkdir -p $(dir $@)
 	@$(CC) -c $(CFLAGS) $< -o $@
 
 clean:

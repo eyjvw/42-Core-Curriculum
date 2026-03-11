@@ -6,11 +6,11 @@
 /*   By: sbonneau <sbonneau@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/19 04:29:14 by sbonneau          #+#    #+#             */
-/*   Updated: 2026/03/11 05:57:28 by sbonneau         ###   ########.fr       */
+/*   Updated: 2026/03/11 06:25:18 by sbonneau         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../../includes/push_swap.h"
+#include "push_swap.h"
 
 static t_stack	*ft_apply(t_all *all, t_stack *tail, t_stack *new_node)
 {

@@ -56,7 +56,7 @@ BONUS_SRC = $(BONUS_DIR)/main.c \
 OBJECTS = $(addprefix $(OBJ_DIR)/, $(notdir $(ALL_SRC:.c=.o)))
 BONUS_OBJECTS = $(addprefix $(BONUS_OBJ_DIR)/, $(notdir $(BONUS_SRC:.c=.o)))
 
-CFLAGS = -O2 -Wall -Wextra -Werror -Iincludes
+CFLAGS = -O2 -Wall -Wextra -Werror -I includes/
 RM = rm -f
 RM_RF = rm -rf
 CC = cc

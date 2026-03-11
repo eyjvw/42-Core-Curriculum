@@ -10,7 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../checker.h"
+#include "checker.h"
 
 void	ft_strncpy(char *dst, char *src, size_t n)
 {

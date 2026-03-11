@@ -10,7 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "./includes/pipex.h"
+#include "pipex.h"
 
 static void	ft_child_process(t_pipex *px, int i)
 {

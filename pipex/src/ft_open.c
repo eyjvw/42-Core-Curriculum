@@ -10,7 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../includes/pipex.h"
+#include "pipex.h"
 #include <fcntl.h>
 
 void	ft_open(t_pipex *px)

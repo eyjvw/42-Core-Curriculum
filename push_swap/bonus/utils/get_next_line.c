@@ -10,7 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../checker.h"
+#include "checker.h"
 
 static char	*ft_copy(char *s1, char *s2)
 {

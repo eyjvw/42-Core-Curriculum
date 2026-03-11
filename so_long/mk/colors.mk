@@ -1,0 +1,5 @@
+GREEN := $(shell printf "\033[0;32m")
+YELLOW := $(shell printf "\033[1;33m")
+BLUE := $(shell printf "\033[1;34m")
+RED := $(shell printf "\033[0;31m")
+RESET := $(shell printf "\033[0m")
