@@ -3,14 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   ft_ato.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: sbonneau <sbonneau@student.42lehavre.fr>   +#+  +:+       +#+        */
+/*   By: sbonneau <sbonneau@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/30 13:26:44 by sbonneau          #+#    #+#             */
-/*   Updated: 2025/12/01 22:49:04 by sbonneau         ###   ########.fr       */
+/*   Updated: 2026/03/25 03:19:53 by sbonneau         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "philosophers.h"
+#include "philosophers_bonus.h"
 
 int	ft_atoi(char *s)
 {

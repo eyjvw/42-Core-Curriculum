@@ -3,15 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   functions.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: sbonneau <sbonneau@student.42lehavre.fr>   +#+  +:+       +#+        */
+/*   By: sbonneau <sbonneau@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/18 21:44:00 by sbonneau          #+#    #+#             */
-/*   Updated: 2025/11/19 04:31:46 by sbonneau         ###   ########.fr       */
+/*   Updated: 2026/03/25 03:41:08 by sbonneau         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef FUNCTIONS_H
-# define FUNCTIONS_H
+#pragma once
 
 t_stack	*ft_create_stack(int content);
 int		ft_atoi(char *str, int *numbers);
@@ -46,5 +45,3 @@ void	ft_sort_to_a(t_all *all);
 void	ft_init_index(t_all *all, int size, int *numbers);
 void	ft_init_stacks(t_all *all, int size, int *numbers);
 char	**ft_split(char *s, char c);
-
-#endif

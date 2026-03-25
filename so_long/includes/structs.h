@@ -3,15 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   structs.h                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: sbonneau <sbonneau@student.42lehavre.fr>   +#+  +:+       +#+        */
+/*   By: sbonneau <sbonneau@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/30 04:21:28 by sbonneau          #+#    #+#             */
-/*   Updated: 2025/11/11 05:59:33 by sbonneau         ###   ########.fr       */
+/*   Updated: 2026/03/25 03:41:48 by sbonneau         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef STRUCTS_H
-# define STRUCTS_H
+#pragma once
 
 typedef struct s_map
 {
@@ -55,5 +54,3 @@ typedef struct s_game
 	int			collectibles_collected;
 	int			player_on_exit;
 }	t_game;
-
-#endif

@@ -3,18 +3,17 @@
 /*                                                        :::      ::::::::   */
 /*   checker.h                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: sbonneau <sbonneau@student.42lehavre.fr>   +#+  +:+       +#+        */
+/*   By: sbonneau <sbonneau@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/19 05:09:03 by sbonneau          #+#    #+#             */
-/*   Updated: 2025/11/19 06:38:36 by sbonneau         ###   ########.fr       */
+/*   Updated: 2026/03/25 03:41:18 by sbonneau         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef CHECKER_H
-# define CHECKER_H
-# define BUFFER_SIZE 100
+#pragma once
+#define BUFFER_SIZE 100
 
-# include "../includes/push_swap.h"
+#include "../includes/push_swap.h"
 
 void	pa(t_all *all);
 void	pb(t_all *all);
@@ -36,5 +35,3 @@ char	*ft_strjoin(char *s1, char *s2);
 size_t	ft_strlen(char *s);
 char	*ft_strchr(char *s, char c);
 int		ft_strcmp(const char *s1, const char *s2);
-
-#endif

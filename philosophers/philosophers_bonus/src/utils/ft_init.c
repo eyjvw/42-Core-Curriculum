@@ -6,11 +6,11 @@
 /*   By: sbonneau <sbonneau@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/26 06:09:44 by sbonneau          #+#    #+#             */
-/*   Updated: 2026/03/11 09:03:14 by sbonneau         ###   ########.fr       */
+/*   Updated: 2026/03/25 03:19:59 by sbonneau         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "philosophers.h"
+#include "philosophers_bonus.h"
 
 static void	ft_init_philos(t_data *data)
 {

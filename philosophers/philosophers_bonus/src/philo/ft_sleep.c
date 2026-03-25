@@ -6,11 +6,11 @@
 /*   By: sbonneau <sbonneau@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/26 06:28:15 by sbonneau          #+#    #+#             */
-/*   Updated: 2026/03/11 09:03:14 by sbonneau         ###   ########.fr       */
+/*   Updated: 2026/03/25 03:20:39 by sbonneau         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "philosophers.h"
+#include "philosophers_bonus.h"
 
 void	ft_sleep(t_philo *philo, long long ms)
 {

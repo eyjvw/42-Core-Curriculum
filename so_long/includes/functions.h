@@ -3,15 +3,16 @@
 /*                                                        :::      ::::::::   */
 /*   functions.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: sbonneau <sbonneau@student.42lehavre.fr>   +#+  +:+       +#+        */
+/*   By: sbonneau <sbonneau@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/30 04:06:24 by sbonneau          #+#    #+#             */
-/*   Updated: 2025/11/11 05:59:29 by sbonneau         ###   ########.fr       */
+/*   Updated: 2026/03/25 03:48:35 by sbonneau         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef FUNCTIONS_H
-# define FUNCTIONS_H
+#pragma once
+
+#include "structs.h"
 
 void			ft_clear_fd(const int fd);
 void			ft_putstr_fd(const int fd, const char *str);
@@ -40,5 +41,3 @@ void			ft_putnbr_fd(int fd, int nb);
 void			ft_putnbr_fd(int fd, int nb);
 int				ft_is_possible(t_game *game);
 char			*ft_fusion(const char *str, int n);
-
-#endif

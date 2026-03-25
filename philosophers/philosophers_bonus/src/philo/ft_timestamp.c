@@ -3,14 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   ft_timestamp.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: sbonneau <sbonneau@student.42lehavre.fr>   +#+  +:+       +#+        */
+/*   By: sbonneau <sbonneau@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/26 06:08:56 by sbonneau          #+#    #+#             */
-/*   Updated: 2025/12/02 04:33:24 by sbonneau         ###   ########.fr       */
+/*   Updated: 2026/03/25 03:20:41 by sbonneau         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "philosophers.h"
+#include "philosophers_bonus.h"
 
 long long	ft_timestamp(t_data *data)
 {
