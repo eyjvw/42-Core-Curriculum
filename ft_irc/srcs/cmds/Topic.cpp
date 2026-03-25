@@ -1,0 +1,48 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   Topic.cpp                                          :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: hkeromne <student@42lehavre.fr>            +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2026/02/17 20:43:56 by hkeromne          #+#    #+#             */
+/*   Updated: 2026/02/20 01:02:29 by hkeromne         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+# include "Topic.hpp"
+# include "Errors.hpp"
+
+bool Topic::Check(Server &server)
+{
+	if (package.cmdData.size() < 1)
+		return (package.setError(ERR_NEEDMOREPARAMS), false);
+
+	std::string	topicChan =	package.cmdData[TOPIC_CHANNEL];
+	package.errNick =		package.client->getNick();
+	package.errChanName =	topicChan;
+
+	if (!server.isChannel(topicChan))
+		return (package.setError(ERR_NOSUCHCHANNEL), false);
+	Channel *channel = server.getChannel(topicChan);
+
+	if (!channel->isClient(package.client->getFd()))
+		return (package.setError(ERR_NOTONCHANNEL), false);
+	if (channel->getOpTopic()
+	&& !channel->isOperator(package.client->getFd()))
+		return (package.setError(ERR_CHANOPRIVSNEEDED), false);
+
+	return (true);
+}
+
+void Topic::Set(Server &server)
+{
+	std::string	topicChan	= package.cmdData[TOPIC_CHANNEL];
+	Channel		*channel	= server.getChannel(topicChan);
+	package.channel	= channel;
+	if (package.cmdData.size() < 2)
+		return ;
+	std::string newTopic	= package.cmdData[TOPIC_NEW];
+
+	channel->setTopic(newTopic);
+}
