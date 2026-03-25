@@ -44,7 +44,7 @@ The bonus version uses `static char *buffer[FD_MAX]` — one buffer slot per fil
 
 ## Usage
 
-### Compilation
+### Build
 
 ```bash
 # Standard version

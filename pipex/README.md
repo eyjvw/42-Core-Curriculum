@@ -16,7 +16,7 @@ cmd1 | cmd2 << LIMITER >> outfile
 
 ## Usage
 
-### Compilation
+### Build
 
 ```bash
 make

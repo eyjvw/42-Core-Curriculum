@@ -32,7 +32,7 @@ Each valid move is counted and printed.
 - X11 development packages
 - `minilibx-linux` (already present or fetched with `make minilibx`)
 
-### Compilation
+### Build
 
 ```bash
 make

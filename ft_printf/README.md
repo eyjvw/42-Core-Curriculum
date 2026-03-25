@@ -29,7 +29,7 @@ The project includes support for the following formatting flags:
 
 ## Instructions
 
-### Compilation
+### Build
 
 To compile the library:
 

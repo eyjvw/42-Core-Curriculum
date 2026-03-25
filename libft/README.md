@@ -30,7 +30,7 @@ A generic singly-linked list implementation using `t_list`:
 
 ## Instructions
 
-### Compilation
+### Build
 
 ```bash
 # Compile the base library

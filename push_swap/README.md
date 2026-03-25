@@ -8,7 +8,7 @@
 
 ## Usage
 
-### Compilation
+### Build
 
 ```bash
 make
