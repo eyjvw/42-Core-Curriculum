@@ -1,0 +1,123 @@
+services:
+  nginx:
+    build: ./requirements/nginx/.
+    container_name: nginx
+    depends_on:
+      - wp-php
+      - mariadb
+    ports:
+      - "443:443"
+    networks:
+      - inception
+    volumes:
+      - web:/var/www/html
+      - nginx_logs:/var/log/nginx
+    restart: on-failure:3
+  wp-php:
+    build: ./requirements/wordpress/.
+    container_name: wp-php
+    depends_on:
+      - mariadb
+      - redis
+    volumes:
+      - web:/var/www/html
+    networks:
+      - inception
+    env_file: ".env"
+    restart: on-failure:3
+    secrets:
+      - db_pass
+      - db_root_pass
+      - db_redis_pass
+  mariadb:
+    build: requirements/mariadb/.
+    container_name: mariadb
+    networks:
+      - inception
+    volumes:
+      - db:/var/lib/mysql
+    env_file: ".env"
+    restart: on-failure:3
+    secrets:
+      - db_pass
+      - db_root_pass
+  ftp:
+    build: requirements/ftp/.
+    container_name: ftp
+    networks:
+      - inception
+    volumes:
+      - web:/var/www/html
+    ports:
+      - "21:21"
+      - "21100-21110:21100-21110"
+    env_file: ".env"
+    restart: on-failure:3
+    secrets:
+      - ftp_password
+  redis:
+    build: requirements/redis/.
+    container_name: redis
+    networks:
+      - inception
+    restart: on-failure:3
+    secrets:
+      - db_redis_pass
+  adminer:
+    build: ./requirements/adminer/.
+    container_name: adminer
+    depends_on:
+      - mariadb
+    networks:
+      - inception
+    ports:
+      - "8080:8080"
+    restart: on-failure:3
+  static:
+    build: ./requirements/static/.
+    container_name: static
+    networks:
+      - inception
+    ports:
+      - "8081:80"
+    restart: on-failure:3
+  fail2ban:
+    build: ./requirements/fail2ban/.
+    container_name: fail2ban
+    networks:
+      - inception
+    volumes:
+      - nginx_logs:/var/log/nginx:ro
+    cap_add:
+      - NET_ADMIN
+      - NET_RAW
+    restart: on-failure:3
+
+volumes:
+  db:
+    driver: local
+    driver_opts:
+      o: bind
+      type: none
+      device: /home/sbonneau/data/db
+  web:
+    driver: local
+    driver_opts:
+      o: bind
+      type: none
+      device: /home/sbonneau/data/web
+  nginx_logs:
+    driver: local
+
+networks:
+  inception:
+
+secrets:
+  db_pass:
+    file: ../secrets/db_pass.txt
+  db_root_pass:
+    file: ../secrets/db_root_pass.txt
+  ftp_password:
+    file: ../secrets/db_ftp_pass.txt
+  db_redis_pass:
+    file: ../secrets/db_redis_pass.txt
