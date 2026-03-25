@@ -1,0 +1,17 @@
+{
+  "name":			"social",
+  "module":			"index.ts",
+  "type":			"module",
+  "private":		true,
+  "devDependencies": {
+    "@types/bun":	"latest"
+  },
+  "peerDependencies": {
+    "typescript":	"^5"
+  },
+  "dependencies": {
+    "drizzle-orm":	"^0.45.1",
+    "jose":			"^6.0.11",
+    "zod":			"^4.3.6"
+  }
+}

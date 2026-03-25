@@ -1,0 +1,85 @@
+services:
+  nginx:
+    build:
+      context: .
+      dockerfile: nginx/Dockerfile
+    container_name: app_nginx
+    ports:
+      - "8443:443"
+      - "8080:80"
+    depends_on:
+      - gateway
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./certs:/etc/nginx/certs:ro
+
+  gateway:
+    build:
+      context: .
+      dockerfile: gateway/config/Dockerfile
+    container_name: app_gateway
+    env_file:
+      - ./gateway/.env
+    depends_on:
+      - auth
+      - social
+      - game
+    command: bun run src/index.ts
+    volumes:
+      - ./gateway/src:/app/src
+
+  frontend:
+    build:
+      context: .
+      dockerfile: frontend/config/Dockerfile
+    container_name: app_front
+    env_file:
+      - ./frontend/.env
+    depends_on:
+      - gateway
+    command: bun run dev
+    volumes:
+      - ./frontend/src:/app/src
+      - ./frontend/public:/app/public
+
+  auth:
+    build:
+      context: .
+      dockerfile: backend/auth/config/Dockerfile
+    container_name: app_auth
+    env_file:
+      - ./backend/auth/.env
+    command: bun run src/index.ts
+    volumes:
+      - ./backend/auth/src:/app/src
+      - ./backend/db:/app/db
+      - sqlite-data:/app/data
+
+  social:
+    build:
+      context: .
+      dockerfile: backend/social/config/Dockerfile
+    container_name: app_social
+    env_file:
+      - ./backend/social/.env
+    command: bun run src/index.ts
+    volumes:
+      - ./backend/social/src:/app/src
+      - ./backend/db:/app/db
+      - sqlite-data:/app/data
+
+  game:
+    build:
+      context: .
+      dockerfile: backend/game/config/Dockerfile
+    container_name: app_game
+    env_file:
+      - ./backend/game/.env
+    command: bun run src/index.ts
+    volumes:
+      - ./backend/game/src:/app/src
+      - ./backend/db:/db
+      - sqlite-data:/app/data
+
+volumes:
+  sqlite-data:
