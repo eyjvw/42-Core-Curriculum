@@ -1,0 +1,89 @@
+{
+    ignore_readline_malloc
+    Memcheck:Leak
+    match-leak-kinds: reachable
+    fun:malloc
+    ...
+    obj:/usr/lib/*/libreadline.so.*
+}
+
+{
+    ignore_readline_realloc
+    Memcheck:Leak
+    match-leak-kinds: reachable
+    fun:realloc
+    ...
+    obj:/usr/lib/*/libreadline.so.*
+}
+
+{
+    ignore_readline_strdup
+    Memcheck:Leak
+    match-leak-kinds: reachable
+    fun:strdup
+    ...
+    obj:/usr/lib/*/libreadline.so.*
+}
+
+{
+    ignore_history_malloc
+    Memcheck:Leak
+    match-leak-kinds: reachable
+    fun:malloc
+    ...
+    obj:/usr/lib/*/libhistory.so.*
+}
+
+{
+    ignore_history_realloc
+    Memcheck:Leak
+    match-leak-kinds: reachable
+    fun:realloc
+    ...
+    obj:/usr/lib/*/libhistory.so.*
+}
+
+{
+    ignore_history_strdup
+    Memcheck:Leak
+    match-leak-kinds: reachable
+    fun:strdup
+    ...
+    obj:/usr/lib/*/libhistory.so.*
+}
+
+{
+    ignore_system_leaks
+    Memcheck:Leak
+    match-leak-kinds: reachable
+    fun:__libc_system
+    ...
+    obj:/usr/lib/*/libc.so.*
+}
+
+{
+    ignore_execve_leaks
+    Memcheck:Leak
+    match-leak-kinds: reachable
+    fun:execve
+    ...
+    obj:/usr/lib/*/libc.so.*
+}
+
+{
+    ignore_posix_spawn_leaks
+    Memcheck:Leak
+    match-leak-kinds: reachable
+    fun:posix_spawn
+    ...
+    obj:/usr/lib/*/libc.so.*
+}
+
+{
+    ignore_getenv_leaks
+    Memcheck:Leak
+    match-leak-kinds: reachable
+    fun:getenv
+    ...
+    obj:/usr/lib/*/libc.so.*
+}
