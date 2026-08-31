@@ -1,10 +1,12 @@
 # ex00 — Easy Find
 
-Description
+*This project has been created as part of the 42 curriculum by sbonneau.*
+
+## Description
 
 Search for integer values inside STL containers using generic utilities.
 
-Build & Run
+## Build & Run
 
 ```bash
 make

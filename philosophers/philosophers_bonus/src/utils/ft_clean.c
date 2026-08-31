@@ -24,11 +24,14 @@ void	ft_clean(t_data *data, bool unlink)
 		sem_close(data->print);
 	if (data->dead && data->dead != SEM_FAILED)
 		sem_close(data->dead);
+	if (data->meal && data->meal != SEM_FAILED)
+		sem_close(data->meal);
 	if (unlink)
 	{
 		sem_unlink(SEM_FOR_FORKS);
 		sem_unlink(SEM_FOR_PRINT);
 		sem_unlink(SEM_FOR_DEAD);
+		sem_unlink(SEM_FOR_MEAL);
 	}
 }
 

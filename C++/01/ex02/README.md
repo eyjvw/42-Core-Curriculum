@@ -1,6 +1,8 @@
 # ex02 — Pointer vs Reference (HI THIS IS BRAIN)
 
-Description
+*This project has been created as part of the 42 curriculum by sbonneau.*
+
+## Description
 
 Small exercise that demonstrates the difference between a pointer and a reference
 by printing the memory address and the value of a single `std::string` using:
@@ -9,7 +11,7 @@ by printing the memory address and the value of a single `std::string` using:
 - a pointer to the object
 - a reference to the object
 
-What you practice
+## What you practice
 
 - Understanding memory addresses and how pointers store them.
 - Dereferencing a pointer to access the pointed value (`*ptr`).
@@ -17,19 +19,19 @@ What you practice
 - Observing that pointers and references can be used to access the same object but
 	with different syntax and semantics.
 
-Files
+## Files
 
 - `src/main.cpp` — prints addresses and values for object/pointer/reference
 - `Makefile` — build rules (uses `mk/` fragments)
 
-Build & Run
+## Build & Run
 
 ```bash
 make
 ./HiThisBrain
 ```
 
-Notes
+## Notes
 
 - The program outputs the memory address of the string and shows the same value
 	when accessed directly, via pointer, and via reference.

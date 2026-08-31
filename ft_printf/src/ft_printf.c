@@ -12,32 +12,33 @@
 
 #include "ft_printf.h"
 
+/*
+** Zero padding goes after whatever must stay glued to the left of the number:
+** a sign for %d, or the 0x / 0X prefix added by the # flag. Padding in front
+** of it would print 00000xff instead of 0x0000ff.
+*/
 static int	ft_handle_zero_pad(char *str, int len, int pad_count)
 {
 	int	count;
 	int	i;
+	int	skip;
 
 	count = 0;
 	i = 0;
+	skip = 0;
 	if (str[0] == '+' || str[0] == '-' || str[0] == ' ')
-	{
-		count += write(1, str, 1);
-		while (i < pad_count)
-		{
-			write(1, "0", 1);
-			i++;
-		}
-		count += pad_count;
-		count += write(1, str + 1, len - 1);
-		return (count);
-	}
+		skip = 1;
+	else if (len > 1 && str[0] == '0' && (str[1] == 'x' || str[1] == 'X'))
+		skip = 2;
+	if (skip > 0)
+		count += write(1, str, skip);
 	while (i < pad_count)
 	{
 		write(1, "0", 1);
 		i++;
 	}
 	count += pad_count;
-	count += write(1, str, len);
+	count += write(1, str + skip, len - skip);
 	return (count);
 }
 

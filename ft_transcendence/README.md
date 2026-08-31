@@ -1,8 +1,6 @@
+# ft_transcendence — ft_gambling
+
 *This project has been created as part of the 42 curriculum by sbonneau, hkeromne, marcheva, dedavid, zcadinot.*
-
----
-
-# 🎰 ft_gambling — ft_transcendence
 
 A full-stack, single-page web application built as the final project of the 42 common core. **ft_gambling** is an online casino-style platform featuring Blackjack (solo & multiplayer), a real-time social system with friends and chat, user authentication with optional two-factor authentication, and a fully containerised microservice architecture behind an Nginx reverse proxy.
 
@@ -10,23 +8,23 @@ A full-stack, single-page web application built as the final project of the 42 c
 
 ---
 
-## 📑 Table of Contents
+## Table of Contents
 
-1. [Team Information](#-team-information)
-2. [Description](#-description)
-3. [Features List](#-features-list)
-4. [Technical Stack](#-technical-stack)
-5. [Database Schema](#-database-schema)
-6. [Architecture Overview](#-architecture-overview)
-7. [Modules](#-modules)
-8. [Instructions](#-instructions)
-9. [Individual Contributions](#-individual-contributions)
-10. [Project Management](#-project-management)
-11. [Resources](#-resources)
+1. [Team Information](#team-information)
+2. [Description](#description)
+3. [Features List](#features-list)
+4. [Technical Stack](#technical-stack)
+5. [Database Schema](#database-schema)
+6. [Architecture Overview](#architecture-overview)
+7. [Modules](#modules)
+8. [Instructions](#instructions)
+9. [Individual Contributions](#individual-contributions)
+10. [Project Management](#project-management)
+11. [Resources](#resources)
 
 ---
 
-## 👥 Team Information
+## Team Information
 
 | Member    | Role(s)                          | Responsibilities |
 |-----------|----------------------------------|------------------|
@@ -38,7 +36,7 @@ A full-stack, single-page web application built as the final project of the 42 c
 
 ---
 
-## 📖 Description
+## Description
 
 **ft_gambling** is a single-page application (SPA) that recreates a casino experience using only virtual currency. The project demonstrates modern web development practices including:
 
@@ -59,7 +57,7 @@ A full-stack, single-page web application built as the final project of the 42 c
 
 ---
 
-## ✨ Features List
+## Features List
 
 | Feature | Description | Contributors |
 |---------|-------------|--------------|
@@ -84,7 +82,7 @@ A full-stack, single-page web application built as the final project of the 42 c
 
 ---
 
-## 🛠 Technical Stack
+## Technical Stack
 
 ### Frontend
 | Technology | Purpose | Justification |
@@ -123,7 +121,7 @@ SQLite was chosen because the project runs on a single server and doesn't requir
 
 ---
 
-## 🗄 Database Schema
+## Database Schema
 
 ### Visual Representation
 
@@ -186,7 +184,7 @@ SQLite was chosen because the project runs on a single server and doesn't requir
 
 ---
 
-## 🏗 Architecture Overview
+## Architecture Overview
 
 ```
                   ┌────────────┐
@@ -216,7 +214,7 @@ SQLite was chosen because the project runs on a single server and doesn't requir
 
 ---
 
-## 🧩 Modules
+## Modules
 
 ### Module Summary
 
@@ -285,7 +283,7 @@ Instead of the traditional Pong game, the project implements a full **Blackjack*
 
 ---
 
-## 📋 Instructions
+## Instructions
 
 ### Prerequisites
 
@@ -371,7 +369,7 @@ make all
 
 ---
 
-## 🧑‍💻 Individual Contributions
+## Individual Contributions
 
 ### Samuel
 - **Authentication system** — Designed and implemented registration, login, logout, and JWT token management.
@@ -410,7 +408,7 @@ make all
 
 ---
 
-## 📊 Project Management
+## Project Management
 
 ### Work Organisation
 - **Sprints** — The team worked in weekly sprints with defined goals.
@@ -431,7 +429,7 @@ make all
 
 ---
 
-## 📚 Resources
+## Resources
 
 ### Documentation & References
 - [Bun Documentation](https://bun.sh/docs) — Runtime, HTTP server, WebSocket, SQLite bindings.
@@ -467,6 +465,6 @@ All AI-generated code was reviewed, tested, and adapted by team members before i
 
 ---
 
-## 📜 License
+## License
 
 This project is an educational project developed as part of the **42 school curriculum**. All rights are reserved by the developers (Samuel, Hoel, Marc, Derhen, Zibrian).

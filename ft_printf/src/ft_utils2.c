@@ -45,3 +45,18 @@ int	ft_putptr(void *ptr)
 	count += ft_puthex_base((unsigned long)ptr, "0123456789abcdef");
 	return (count);
 }
+
+/*
+** Allocates a conversion buffer big enough for the longest possible result:
+** the digits themselves or the requested precision, whichever is larger, plus
+** room for a sign or an 0x prefix and the terminating NUL.
+*/
+char	*ft_alloc_num(int digits, int precision)
+{
+	int	size;
+
+	size = digits;
+	if (precision > size)
+		size = precision;
+	return (malloc(size + 4));
+}

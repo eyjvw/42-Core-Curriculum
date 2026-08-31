@@ -22,6 +22,7 @@ void		ft_init(t_data *data);
 void		ft_clean(t_data *data);
 void		ft_print_error(pthread_mutex_t *mutex, char *s);
 void		ft_print(t_philo *philo, char *s);
+void		ft_print_death(t_data *data, int id, long long now);
 void		ft_sleep(t_data *data, long long ms);
 void		ft_monitor(t_data *data);
 void		ft_join(t_data *data);

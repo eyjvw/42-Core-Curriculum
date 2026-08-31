@@ -27,13 +27,13 @@
 #define BOLD_YELLOW "\033[1;33m"
 #define BOLD_BLUE "\033[1;34m"
 
-#define INVALID_NUM_ARGS "Nombre d'arguments invalide\n"
-#define INVALID_ARGS "Arguments invalide\n"
-#define NUM_PHILO_LIMITS "Le nombre de philosophers doit etre entre 1 et 200\n"
-#define PIDS_MALLOC_FAILED "Le malloc des pids a echoue\n"
-#define PHILOS_MALLOC_FAILED "Le malloc des philosophers a echoue\n"
-#define GETTIMEOFDAY_ERROR "La fonction gettimeofday a echoue"
-#define NEGATIVE_ARGS "Les arguments doivent etres positifs\n"
+#define INVALID_NUM_ARGS "Invalid number of arguments\n"
+#define INVALID_ARGS "Invalid arguments\n"
+#define NUM_PHILO_LIMITS "Philosophers must be between 1 and 200\n"
+#define PIDS_MALLOC_FAILED "Allocation of the pids failed\n"
+#define PHILOS_MALLOC_FAILED "Allocation of the philosophers failed\n"
+#define GETTIMEOFDAY_ERROR "gettimeofday failed\n"
+#define NEGATIVE_ARGS "The arguments must be positive\n"
 
 #define THINKING "is thinking"
 #define TAKEN_FORK "has taken a fork"
@@ -44,7 +44,7 @@
 #define SEM_FOR_FORKS "/philosopher_forks"
 #define SEM_FOR_PRINT "/philosopher_print"
 #define SEM_FOR_DEAD "/philosopher_dead"
+#define SEM_FOR_MEAL "/philosopher_meal"
 
-#define SIGKILL 9
 #define PHILO_DIED 42
 #define PHILO_DONE 0

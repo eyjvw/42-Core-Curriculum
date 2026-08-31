@@ -24,6 +24,7 @@ int		ft_putunbr(unsigned int n);
 int		ft_putptr(void *ptr);
 int		ft_puthex(unsigned int n, int upper);
 int		ft_strlen_custom(const char *s);
+char	*ft_alloc_num(int digits, int precision);
 int		ft_is_flag_or_digit(char c);
 int		ft_print_left_pad(int len, int width);
 int		ft_print_right_pad(int len, int width);

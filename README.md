@@ -16,8 +16,8 @@ A comprehensive 6-month (148 days) programming journey from C fundamentals to fu
 
 | Project | Language | Time | Description |
 |---------|----------|------|-------------|
-| [C++ 00-02](./C++/00/README.md) | C++98 | 15-20h | OOP fundamentals, classes, references vs pointers |
-| [C++ 03-09](./C++/01/README.md) | C++98 | 50-70h | Inheritance, templates, exceptions, STL |
+| [C++ 00-02](./C++/README.md) | C++98 | 15-20h | OOP fundamentals, classes, references vs pointers, canonical form |
+| [C++ 03-09](./C++/README.md) | C++98 | 50-70h | Inheritance, polymorphism, exceptions, casts, templates, STL |
 
 ### Systems Programming
 
@@ -124,8 +124,8 @@ make re              # Rebuild
 
 | Metric | Value |
 |--------|-------|
-| **Total Projects** | 13 |
-| **Total Lines of Code** | ~31,000+ |
+| **Total Projects** | 13 (incl. the 10 C++ modules counted as one) |
+| **Total Lines of Code** | ~35,000 (C / C++ / TypeScript sources) |
 | **Languages** | 6 (C, C++, JavaScript, TypeScript, Docker, YAML) |
 | **Estimated Time** | ~700 hours |
 | **Difficulty Progression** | Beginner → Intermediate → Advanced → Expert |
@@ -134,7 +134,7 @@ make re              # Rebuild
 
 ## Getting Started
 
-1. **Read a project's README** — Each project folder has detailed documentation
+1. **Read a project's README** — Each project folder has detailed documentation (the C++ piscine has its own index in [`C++/README.md`](./C++/README.md))
 2. **Build and test** — Run `make` and verify it compiles
 3. **Explore the code** — Study the architecture in `includes/` and `src/`
 4. **Understand the concepts** — Check the README for key learnings
@@ -162,6 +162,7 @@ make re              # Rebuild
 <div align="center">
 
 **Created by:** sbonneau  
+**Group projects:** cub3D (with hkeromne), ft_transcendence (with hkeromne, marcheva, dedavid, zcadinot)  
 **School:** 42 Le Havre  
 **Status:** ✅ Complete
 

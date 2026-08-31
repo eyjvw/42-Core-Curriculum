@@ -12,22 +12,15 @@
 
 #include "philosophers_bonus.h"
 
+/*
+** Death is watched by the monitor thread, so sleeping only has to wake up
+** often enough for the process to stay responsive.
+*/
 void	ft_sleep(t_philo *philo, long long ms)
 {
 	long long	start;
 
 	start = ft_timestamp(philo->data);
 	while (ft_timestamp(philo->data) - start < ms)
-	{
-		if (ft_timestamp(philo->data) - philo->last_meal_time
-			> philo->data->time_to_die)
-		{
-			sem_wait(philo->data->print);
-			printf("%4lld %6d died\n",
-				ft_timestamp(philo->data) - philo->data->start_time, philo->id);
-			sem_post(philo->data->dead);
-			ft_child_exit(philo, PHILO_DIED);
-		}
 		usleep(200);
-	}
 }

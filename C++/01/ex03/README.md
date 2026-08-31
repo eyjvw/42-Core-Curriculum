@@ -1,30 +1,32 @@
 # ex03 — Human & Weapon (References vs Pointers)
 
-Description
+*This project has been created as part of the 42 curriculum by sbonneau.*
+
+## Description
 
 This exercise implements `HumanA`, `HumanB`, and `Weapon` classes to illustrate the
 difference between references and pointers as class members.
 
-What you practice
+## What you practice
 
 - Class composition: storing objects vs references to objects.
 - How references and pointers affect object lifetime and ownership.
 - Member function interaction between classes.
 
-Files
+## Files
 
 - `includes/Weapon.hpp`, `HumanA.hpp`, `HumanB.hpp`
 - `src/` — implementations
 - `Makefile` for building the exercise
 
-Build & Run
+## Build & Run
 
 ```bash
 make
 ./Violence
 ```
 
-Notes
+## Notes
 
 - `HumanA` typically holds a reference to a `Weapon`, requiring the weapon to outlive the human.
 - `HumanB` usually holds a pointer allowing weapon reassignment at runtime.

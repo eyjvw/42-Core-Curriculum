@@ -1,10 +1,12 @@
 # ex00 — Bureaucrat Exceptions
 
-Description
+*This project has been created as part of the 42 curriculum by sbonneau.*
+
+## Description
 
 Implement `Bureaucrat` with grade constraints and exception handling.
 
-Build & Run
+## Build & Run
 
 ```bash
 make

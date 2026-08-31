@@ -12,40 +12,49 @@
 
 #include "philosophers_bonus.h"
 
-static size_t	ft_strlen(char *s)
+static int	ft_putnbr(char *buf, int i, long long n)
 {
-	size_t	i;
-
-	i = 0;
-	if (!s)
-		return (i);
-	while (s[i])
-		i++;
-	return (i);
+	if (n >= 10)
+		i = ft_putnbr(buf, i, n / 10);
+	buf[i] = '0' + (n % 10);
+	return (i + 1);
 }
 
-static void	ft_putstr_fd(int fd, char *s)
+/*
+** One "timestamp id state" line, emitted with a single write(). Philosophers
+** are separate processes that get killed when the simulation ends, so no log
+** may be left sitting in a stdio buffer.
+*/
+static void	ft_log(t_philo *philo, char *s)
 {
-	if (!s)
-		return ;
-	write(fd, s, ft_strlen(s));
-}
+	char	buf[128];
+	int		i;
 
-void	ft_print_error(sem_t *sem, char *s)
-{
-	if (sem)
-		sem_wait(sem);
-	ft_putstr_fd(2, RED);
-	ft_putstr_fd(2, s);
-	ft_putstr_fd(2, RESET);
-	if (sem)
-		sem_post(sem);
+	i = ft_putnbr(buf, 0, ft_timestamp(philo->data) - philo->data->start_time);
+	buf[i++] = ' ';
+	i = ft_putnbr(buf, i, philo->id);
+	buf[i++] = ' ';
+	while (*s)
+		buf[i++] = *s++;
+	buf[i++] = '\n';
+	write(1, buf, i);
 }
 
 void	ft_print(t_philo *philo, char *s)
 {
 	sem_wait(philo->data->print);
-	printf("%4lld %6d %s\n",
-		ft_timestamp(philo->data) - philo->data->start_time, philo->id, s);
+	ft_log(philo, s);
 	sem_post(philo->data->print);
+}
+
+/*
+** The print semaphore is taken and never released: once the death line is out,
+** no other philosopher can append a message after it.
+*/
+void	ft_die(t_philo *philo)
+{
+	sem_wait(philo->data->print);
+	ft_log(philo, DIED);
+	sem_post(philo->data->dead);
+	ft_child_exit(philo, PHILO_DIED);
 }

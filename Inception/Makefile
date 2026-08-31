@@ -9,7 +9,9 @@ down:
 	sudo rm -rf /home/sbonneau/data/web/*
 	sudo rm -rf /home/sbonneau/data/db/*
 
-fclean:down
+fclean: down
 	sudo docker system prune --all
 
-re:fclean up
+re: fclean up
+
+.PHONY: up stop down fclean re

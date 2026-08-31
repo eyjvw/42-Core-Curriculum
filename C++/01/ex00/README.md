@@ -1,29 +1,31 @@
 # ex00 — Basic Class & Memory
 
-Description
+*This project has been created as part of the 42 curriculum by sbonneau.*
+
+## Description
 
 Introductory exercise demonstrating basic class creation, constructors/destructors,
 and the difference between stack and heap allocation.
 
-What you practice
+## What you practice
 
 - Defining a simple C++ class with constructor and destructor.
 - Allocating objects on the stack vs `new` (heap) and observing lifetime.
 - Simple member functions and output.
 
-Files
+## Files
 
 - `includes/` — class headers
 - `src/` — implementation files
 - `Makefile` (uses `mk/` fragments) to build the binary.
 
-Build & Run
+## Build & Run
 
 ```bash
 make
 ./Zombie
 ```
 
-Notes
+## Notes
 
 - Inspect the constructors/destructors to understand order of operations and memory ownership.

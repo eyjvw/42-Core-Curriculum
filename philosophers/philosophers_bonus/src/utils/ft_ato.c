@@ -12,56 +12,51 @@
 
 #include "philosophers_bonus.h"
 
+/*
+** ft_check_args() has already rejected anything that is not a digit, so no
+** sign is handled here. The overflow test is done before the multiplication,
+** never after it, so the accumulator can never wrap around.
+*/
+static void	ft_overflow(void)
+{
+	ft_print_error(NULL, INVALID_ARGS);
+	exit(EXIT_FAILURE);
+}
+
 int	ft_atoi(char *s)
 {
-	long	num;
-	int		sign;
-	int		i;
+	long long	num;
+	int			i;
 
 	num = 0;
-	sign = 1;
 	i = 0;
-	if (s[0] == '-' || s[0] == '+')
-	{
-		if (s[0] == '-')
-			sign = -1;
-		i++;
-	}
+	if (!s[0])
+		ft_overflow();
 	while (s[i])
 	{
+		if (num > (2147483647LL - (s[i] - '0')) / 10)
+			ft_overflow();
 		num = num * 10 + (s[i] - '0');
-		if (sign == 1 && num > 2147483647)
-			return (ft_print_error(NULL, INVALID_ARGS), exit(EXIT_FAILURE), 0);
-		if (sign == -1 && num > 2147483648)
-			return (ft_print_error(NULL, INVALID_ARGS), exit(EXIT_FAILURE), 0);
 		i++;
 	}
-	return ((int)(num * sign));
+	return ((int)num);
 }
 
 long long	ft_atoll(char *s)
 {
 	unsigned long long	num;
-	int					sign;
 	int					i;
 
 	num = 0;
-	sign = 1;
 	i = 0;
-	if (s[0] == '-' || s[0] == '+')
-	{
-		if (s[0] == '-')
-			sign = -1;
-		i++;
-	}
+	if (!s[0])
+		ft_overflow();
 	while (s[i])
 	{
+		if (num > (9223372036854775807ULL - (s[i] - '0')) / 10)
+			ft_overflow();
 		num = num * 10 + (s[i] - '0');
-		if (sign == 1 && num > 9223372036854775807LL)
-			return (ft_print_error(NULL, INVALID_ARGS), exit(EXIT_FAILURE), 0);
-		if (sign == -1 && (unsigned long long)num > 9223372036854775808ULL)
-			return (ft_print_error(NULL, INVALID_ARGS), exit(EXIT_FAILURE), 0);
 		i++;
 	}
-	return (num * sign);
+	return ((long long)num);
 }

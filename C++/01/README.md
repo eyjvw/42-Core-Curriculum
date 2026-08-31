@@ -1,13 +1,15 @@
 # C++ — Module Week 01
 
+*This project has been created as part of the 42 curriculum by sbonneau.*
+
 This folder contains the C++ exercises for Week 01 (ex00 → ex06).
 
-Description
+## Description
 
 These exercises continue the introduction to C++ with focus on object semantics,
 references vs pointers, class design, and small practical utilities.
 
-Exercises
+## Exercises
 
 - `ex00` — simple class & memory: basic class construction and stack vs heap usage.
 - `ex01` — horde-style allocation: practice constructors/destructors and arrays of objects.
@@ -17,7 +19,7 @@ Exercises
 - `ex05` — `Harl` logger (level-based handlers): member functions and dispatch.
 - `ex06` — advanced `Harl`: level dispatch with controlled fall-through behavior.
 
-Build
+## Build
 
 Requirements: Linux with a C++ compiler (`g++`/`c++`).
 
@@ -29,7 +31,7 @@ make
 
 Makefile rules are standardized using shared `mk/` fragments (`variables.mk`, `colors.mk`, `rules.mk`).
 
-What you learn
+## What you learn
 
 - Class construction/destruction and basic RAII
 - Stack vs heap allocation and managing dynamic arrays
@@ -37,3 +39,12 @@ What you learn
 - Small-scale project layout and Makefile usage
 
 See each exercise folder for a short README describing the exercise-specific goals.
+
+## Resources
+
+- C++ reference (cppreference.com)
+- 42 coding standards
+
+## AI Usage
+
+AI assistance was used to standardize Makefiles and README style across the repository.

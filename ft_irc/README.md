@@ -1,61 +1,63 @@
 # ft_irc
 
-*Ce projet a été créé dans le cadre du cursus 42 par sbonneau.*
+*This project has been created as part of the 42 curriculum by sbonneau.*
 
 ## Description
 
-`ft_irc` (exécutable `ircserv`) est un serveur IRC minimal en C++98. Il implémente l'acceptation de connexions TCP non-bloquantes, l'authentification par mot de passe (PASS), la gestion des utilisateurs (NICK/USER), et des fonctionnalités de base des salons (JOIN/INVITE/KICK/TOPIC/MODE) ainsi que l'envoi de messages (PRIVMSG).
+**ft_irc** (executable `ircserv`) is a minimal IRC server written in C++98. It implements
+non-blocking TCP connection handling, password authentication (`PASS`), user management
+(`NICK` / `USER`), basic channel features (`JOIN` / `INVITE` / `KICK` / `TOPIC` / `MODE`)
+and message delivery (`PRIVMSG`).
 
-Le serveur utilise `poll()` pour la gestion d'IO et traite les commandes/réponses via des modules `MSG`, `CMD` et `RPL`.
+The server uses `poll()` for I/O multiplexing and processes commands and replies through the
+`MSG`, `CMD` and `RPL` modules.
 
-## Compilation
+## Build
 
 ```bash
 make
 ```
 
-Le Makefile est configuré pour compiler en C++98 avec les flags `-Werror -Wall -Wextra -std=c++98 -g3`.
+The Makefile compiles in C++98 with the flags `-Werror -Wall -Wextra -std=c++98 -g3`.
 
-## Exécution
-
-Usage :
+## Usage
 
 ```bash
 ./ircserv <PASSWORD> <PORT>
-# Exemple :
+# Example:
 ./ircserv mySecretPass 6667
 ```
 
-- `<PASSWORD>` : mot de passe requis pour l'authentification PASS
-- `<PORT>` : port TCP (1-65535)
+- `<PASSWORD>`: password required for `PASS` authentication
+- `<PORT>`: TCP port (1-65535)
 
-Le serveur réagit à `SIGINT` pour déclencher un arrêt propre.
+The server handles `SIGINT` to trigger a clean shutdown.
 
-## Règles Makefile
+## Makefile rules
 
-- `make` / `make all` : compiler le binaire `ircserv`
-- `make clean` : supprimer les fichiers objets (`obj/`)
-- `make fclean` : supprimer le binaire
-- `make re` : `fclean` puis `all`
+- `make` / `make all`: build the `ircserv` binary
+- `make clean`: remove object files (`obj/`)
+- `make fclean`: remove the binary and artifacts
+- `make re`: full rebuild
 
-## Structure du projet
+## Project Structure
 
 ```
 ft_irc/
-├── Makefile                     - règle de build
-├── README.md                    - ce fichier
-├── headers/                     - en-têtes (.hpp/.h)
-├── srcs/                        - sources C++
-│   ├── main.cpp                 - point d'entrée, vérification des args
-│   ├── Server.cpp               - boucle principale, accept, poll, auth
-│   ├── Client.cpp               - gestion des clients
-│   ├── Channel.cpp              - gestion des salons
-│   ├── MSG.cpp                  - parsing/formatage des messages
-│   ├── RPL.cpp                  - génération des replies (RPL/ERR)
-│   ├── Package.cpp              - structure temporaire des commandes
-│   ├── Ft.cpp                   - utilitaires (time, parsing, etc.)
-│   ├── Errors.cpp               - codes d'erreur/constantes
-│   └── cmds/                    - implémentation des commandes IRC
+├── Makefile                     - build rules
+├── README.md                    - this file
+├── headers/                     - headers (.hpp/.h)
+├── srcs/                        - C++ sources
+│   ├── main.cpp                 - entry point, argument checking
+│   ├── Server.cpp               - main loop, accept, poll, auth
+│   ├── Client.cpp               - client management
+│   ├── Channel.cpp              - channel management
+│   ├── MSG.cpp                  - message parsing/formatting
+│   ├── RPL.cpp                  - reply generation (RPL/ERR)
+│   ├── Package.cpp              - temporary command structure
+│   ├── Ft.cpp                   - utilities (time, parsing, etc.)
+│   ├── Errors.cpp               - error codes and constants
+│   └── cmds/                    - IRC command implementations
 │       ├── CMD.cpp
 │       ├── Mode.cpp
 │       ├── Join.cpp
@@ -67,44 +69,38 @@ ft_irc/
 │       └── User.cpp
 ```
 
-## Commandes supportées (implémentées)
+## Supported Commands
 
-- PASS, NICK, USER : authentification et identification
-- JOIN, PART (via Join), MODE : création/gestion de salons
-- INVITE : invitation dans un salon
-- KICK : expulsion d'un utilisateur
-- TOPIC : lecture/écriture du topic d'un salon
-- PRIVMSG / NOTICE (via Priv) : envoi de messages privés ou vers salons
+- `PASS`, `NICK`, `USER`: authentication and identification
+- `JOIN`, `PART` (via `Join`), `MODE`: channel creation and management
+- `INVITE`: invite a user to a channel
+- `KICK`: eject a user from a channel
+- `TOPIC`: read/write a channel topic
+- `PRIVMSG` / `NOTICE` (via `Priv`): private or channel messages
 
-> Remarque : la liste ci-dessus correspond aux implémentations présentes dans `srcs/cmds/`.
+> Note: the list above matches the implementations present in `srcs/cmds/`.
 
-## Comportement important
+## Key Behavior
 
-- Le serveur attend d'abord la commande PASS, puis NICK/USER pour authentifier un client.
-- Les messages entrants sont lus avec un buffer par client et traités ligne par ligne en s'appuyant sur CRLF comme séparateur.
-- Les clients inactifs ou déconnectés sont nettoyés correctement et leurs descripteurs fermés.
+- The server expects `PASS` first, then `NICK`/`USER` to authenticate a client.
+- Incoming data is buffered per client and processed line by line, using CRLF as separator.
+- Idle or disconnected clients are cleaned up properly and their descriptors closed.
 
-## Dépendances / Environnement
+## Requirements
 
-- compilateur C++ compatible C++98 (`g++` / `clang++`)
-- système POSIX (Linux recommandé)
+- C++98-compatible compiler (`g++` / `clang++`)
+- POSIX system (Linux recommended)
 
-## Tests et débogage
+## Testing & Debugging
 
-- Compiler avec `make` puis lancer `./ircserv <PASS> <PORT>`.
-- Se connecter avec un client IRC (ex : `irssi`, `weechat`) ou `telnet`/`nc` pour tester les commandes manuellement.
+- Build with `make`, then run `./ircserv <PASSWORD> <PORT>`.
+- Connect with an IRC client (`irssi`, `weechat`) or with `telnet` / `nc` to test commands manually.
 
-## Ressources utiles
+## Resources
 
 - RFC 1459 — Internet Relay Chat Protocol: https://datatracker.ietf.org/doc/html/rfc1459
 - man pages: `socket(2)`, `bind(2)`, `listen(2)`, `accept(2)`, `poll(2)`, `fcntl(2)`
 
+## AI Usage
 
----
-
-Si tu veux, je peux :
-- ajouter des exemples d'échanges IRC (séquence PASS/NICK/USER/JOIN/PRIVMSG)
-- détailler les codes de reply implémentés dans `srcs/RPL.cpp`
-- exécuter une compilation test et afficher les erreurs éventuelles
-
-Dis-moi ce que tu préfères que je fasse ensuite.
+AI assistance was used to standardize README style across the repository.

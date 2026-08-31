@@ -74,7 +74,9 @@ char	*ft_hex_to_str(unsigned long n, int upper, t_flags flags)
 		hex = "0123456789ABCDEF";
 	else
 		hex = "0123456789abcdef";
-	res = malloc(BUFFER_SIZE);
+	res = ft_alloc_num(ft_count_hex_digits(n), flags.precision);
+	if (!res)
+		return (NULL);
 	i = 0;
 	temp_flags = flags;
 	if (upper && flags.hash)

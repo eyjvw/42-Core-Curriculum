@@ -21,6 +21,7 @@
 #include <semaphore.h>
 #include <fcntl.h>
 #include <sys/wait.h>
+#include <signal.h>
 
 #include "defines.h"
 #include "structs.h"

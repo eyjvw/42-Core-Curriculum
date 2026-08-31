@@ -1,10 +1,12 @@
 # ex01 — Serializer
 
-Description
+*This project has been created as part of the 42 curriculum by sbonneau.*
+
+## Description
 
 Implement pointer serialization and deserialization with integer types.
 
-Build & Run
+## Build & Run
 
 ```bash
 make

@@ -1,6 +1,6 @@
-*This project has been created as part of the 42 curriculum by hkeromne and sbonneau*
-
 # cub3D
+
+*This project has been created as part of the 42 curriculum by hkeromne and sbonneau.*
 
 ## Description
 
@@ -34,47 +34,55 @@ The program reads a `.cub` configuration file describing textures, colors, and a
 
 ### Requirements
 
-- **Operating System:** Linux or macOS  
-- **Compiler:** `gcc`  
+- **Operating System:** Linux or macOS
+- **Compiler:** `gcc`
 - **Libraries:**
   - MiniLibX (provided by 42)
   - Standard C libraries (`math`, `stdlib`, `unistd`, etc.)
 
-### Compilation
+### Build
 
-Clone the repository and compile the project using:
-
+```bash
 make
+```
 
-This will generate the executable:
+This generates the `cub3D` executable.
 
-./cub3D
+### Usage
 
-### Execution
-
-Run the program by providing a valid .cub configuration file:
-
+```bash
 ./cub3D maps/example.cub
+```
 
-### Controls (default)
-    W / S — Move forward / backward
-    A / D — Strafe left / right
-    ← / → — Rotate camera left / right
-    ESC — Exit the program
-    Window close button — Exit cleanly
+### Makefile rules
 
-### Map Format (.cub)
+- `make` / `make all`: build the binary
+- `make clean`: remove object files
+- `make fclean`: remove binary and artifacts
+- `make re`: full rebuild
 
-A .cub file includes:
-    Texture paths for each wall direction (NO, SO, WE, EA)
-    Floor (F) and ceiling (C) colors
-    A map composed of:
-        1 for walls
-        0 for empty spaces
-        N, S, E, W for the player’s starting position and orientation
+### Controls
+
+- `W` / `S`: move forward / backward
+- `A` / `D`: strafe left / right
+- `<-` / `->`: rotate camera left / right
+- `ESC`: exit the program
+- Window close button: clean exit
+
+## Map Format (`.cub`)
+
+A `.cub` file contains:
+
+- Texture paths for each wall direction (`NO`, `SO`, `WE`, `EA`)
+- Floor (`F`) and ceiling (`C`) colors, as `R,G,B`
+- A map composed of:
+  - `1` for walls
+  - `0` for empty spaces
+  - `N`, `S`, `E`, `W` for the player starting position and orientation
 
 Example:
 
+```
 NO ./textures/north.xpm
 SO ./textures/south.xpm
 WE ./textures/west.xpm
@@ -88,41 +96,49 @@ C 225,30,0
 10N001
 100001
 111111
+```
 
 ## Technical Choices
-    Raycasting algorithm based on DDA (Digital Differential Analysis)
-    Single-threaded rendering loop for simplicity and clarity
-    Strict error handling for invalid maps and configuration files
-    Manual memory management to comply with 42 standards
-    MiniLibX used exclusively for window creation and pixel rendering
 
-### Resources
-#### Raycasting & Graphics
-    Lode Vandevenne – Raycasting Tutorial
-    https://lodev.org/cgtutor/raycasting.html
-    Wikipedia – Ray casting
-    https://en.wikipedia.org/wiki/Ray_casting
-    Wolfenstein 3D source code (historical reference)
+- Raycasting algorithm based on DDA (Digital Differential Analysis)
+- Single-threaded rendering loop for simplicity and clarity
+- Strict error handling for invalid maps and configuration files
+- Manual memory management to comply with 42 standards
+- MiniLibX used exclusively for window creation and pixel rendering
 
-#### MiniLibX
-    42 Docs – MiniLibX documentation
-    Community tutorials and examples from 42 students
+## Notes
 
-#### C Programming
-    The C Programming Language – Kernighan & Ritchie
-    Linux man pages (man 3 mlx, man malloc, etc.)
+This project strictly follows the constraints and norms of the 42 cursus, including:
 
-### Use of AI
+- No forbidden functions
+- No memory leaks
+- Norm-compliant C code
 
-AI tools were used only as a support resource, not as a code generator for the final project. Specifically:
-    To clarify theoretical concepts such as raycasting mathematics and DDA logic
-    To review explanations of MiniLibX behavior and common pitfalls
-    To improve documentation quality, including README structure and wording
+## Resources
 
-All implementation decisions, algorithms, and final code were written and validated by the project authors in compliance with 42 rules.
-Notes
+### Raycasting & Graphics
 
-### This project strictly follows the constraints and norms of the 42 cursus, including:
-    No forbidden functions
-    No memory leaks
-    Norm-compliant C code
+- Lode Vandevenne — Raycasting Tutorial: https://lodev.org/cgtutor/raycasting.html
+- Wikipedia — Ray casting: https://en.wikipedia.org/wiki/Ray_casting
+- Wolfenstein 3D source code (historical reference)
+
+### MiniLibX
+
+- 42 Docs — MiniLibX documentation
+- Community tutorials and examples from 42 students
+
+### C Programming
+
+- The C Programming Language — Kernighan & Ritchie
+- Linux man pages (`man 3 mlx`, `man malloc`, etc.)
+
+## AI Usage
+
+AI tools were used only as a support resource, not as a code generator for the final project:
+
+- To clarify theoretical concepts such as raycasting mathematics and DDA logic
+- To review explanations of MiniLibX behavior and common pitfalls
+- To improve documentation quality, including README structure and wording
+
+All implementation decisions, algorithms, and final code were written and validated by the
+project authors in compliance with 42 rules.

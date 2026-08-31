@@ -30,6 +30,7 @@ static void	ft_init_philos(t_data *data)
 		data->philos[i].id = i + 1;
 		data->philos[i].meals_eaten = 0;
 		data->philos[i].last_meal_time = data->start_time;
+		data->philos[i].done = false;
 		data->philos[i].data = data;
 		i++;
 	}
@@ -59,11 +60,13 @@ void	ft_init(t_data *data)
 	sem_unlink(SEM_FOR_FORKS);
 	sem_unlink(SEM_FOR_PRINT);
 	sem_unlink(SEM_FOR_DEAD);
+	sem_unlink(SEM_FOR_MEAL);
 	data->forks = sem_open(SEM_FOR_FORKS, O_CREAT, 0664, data->num_philos);
 	data->print = sem_open(SEM_FOR_PRINT, O_CREAT, 0664, 1);
 	data->dead = sem_open(SEM_FOR_DEAD, O_CREAT, 0664, 0);
+	data->meal = sem_open(SEM_FOR_MEAL, O_CREAT, 0664, 1);
 	if (data->forks == SEM_FAILED || data->print == SEM_FAILED
-		|| data->dead == SEM_FAILED)
+		|| data->dead == SEM_FAILED || data->meal == SEM_FAILED)
 	{
 		ft_print_error(NULL, "sem_open failed\n");
 		ft_clean(data, true);

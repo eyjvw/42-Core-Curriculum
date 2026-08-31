@@ -1,28 +1,30 @@
 # ex05 — Harl (Logger) Basics
 
-Description
+*This project has been created as part of the 42 curriculum by sbonneau.*
+
+## Description
 
 Implement a small logger `Harl` that exposes level-based handlers (DEBUG, INFO, WARNING, ERROR).
 This exercise focuses on calling member functions based on a level string.
 
-What you practice
+## What you practice
 
 - Declaring member functions and invoking them from another member.
 - Simple string-based dispatch and control flow.
 - Formatting console output.
 
-Files
+## Files
 
 - `includes/Harl.hpp`, `src/Harl.cpp`
 - `Makefile` to build the exercise
 
-Build & Run
+## Build & Run
 
 ```bash
 make
 ./Harl
 ```
 
-Notes
+## Notes
 
 - The dispatch can be implemented with function pointer arrays, maps, or switch logic.

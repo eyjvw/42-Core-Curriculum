@@ -68,3 +68,4 @@ SRCS = main.c \
 	sources/utils/ft_strncmp.c
 
 OBJS = $(SRCS:.c=.o)
+RM = rm -f

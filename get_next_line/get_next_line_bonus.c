@@ -5,113 +5,86 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: sbonneau <sbonneau@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/10/22 07:48:12 by sbonneau          #+#    #+#             */
-/*   Updated: 2026/03/11 05:27:42 by sbonneau         ###   ########.fr       */
+/*   Created: 2025/10/22 07:51:24 by sbonneau          #+#    #+#             */
+/*   Updated: 2026/08/31 12:00:00 by sbonneau         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line_bonus.h"
 
-static char	*ft_copy(char *s1, char *s2)
+/*
+** Reads BUFFER_SIZE bytes at a time into the stash, and stops as soon as a
+** newline is available or the file descriptor is exhausted. Nothing is read
+** when the stash already holds a complete line.
+*/
+static char	*ft_fill(char *stash, int fd)
 {
-	char	*s3;
+	char	*chunk;
+	char	*joined;
+	ssize_t	bytes;
 
-	if (!s1)
-		return (ft_strjoin("", s2));
-	s3 = ft_strjoin(s1, s2);
-	free(s1);
-	if (!s3)
-		return (NULL);
-	return (s3);
-}
-
-static char	*ft_read(char *buffer, int fd)
-{
-	char		*temp;
-	ssize_t		bytes;
-
-	temp = malloc(BUFFER_SIZE + 1);
-	if (!temp)
-		return (free(buffer), NULL);
-	bytes = read(fd, temp, BUFFER_SIZE);
-	if (bytes < 0)
-		return (free(temp), free(buffer), NULL);
-	while (bytes > 0)
+	chunk = malloc(BUFFER_SIZE + 1);
+	if (!chunk)
+		return (free(stash), NULL);
+	bytes = 1;
+	while (bytes > 0 && !ft_strchr(stash, '\n'))
 	{
-		temp[bytes] = '\0';
-		buffer = ft_copy(buffer, temp);
-		if (!buffer)
-			return (free(temp), NULL);
-		if (ft_strchr(temp, '\n'))
-			break ;
-		bytes = read(fd, temp, BUFFER_SIZE);
+		bytes = read(fd, chunk, BUFFER_SIZE);
+		if (bytes < 0)
+			return (free(chunk), free(stash), NULL);
+		chunk[bytes] = '\0';
+		joined = ft_strjoin(stash, chunk);
+		free(stash);
+		stash = joined;
+		if (!stash)
+			return (free(chunk), NULL);
 	}
-	return (free(temp), buffer);
+	return (free(chunk), stash);
 }
 
-static char	*ft_line(char **str)
+/*
+** Cuts the leading line (newline included, when present) out of the stash and
+** replaces the stash with whatever follows it.
+*/
+static char	*ft_extract(char **stash)
 {
 	char	*line;
-	char	*newline_pos;
+	char	*rest;
 	size_t	len;
-	char	*temp;
 
-	if (!*str || !**str)
+	if (!*stash || !**stash)
 		return (NULL);
-	newline_pos = ft_strchr(*str, '\n');
-	if (newline_pos)
-		len = newline_pos - *str + 1;
-	else
-		len = ft_strlen(*str);
+	len = 0;
+	while ((*stash)[len] && (*stash)[len] != '\n')
+		len++;
+	if ((*stash)[len] == '\n')
+		len++;
 	line = malloc(len + 1);
 	if (!line)
 		return (NULL);
-	ft_strncpy(line, *str, len);
+	ft_strncpy(line, *stash, len);
 	line[len] = '\0';
-	if (!newline_pos)
-		return (free(*str), *str = NULL, line);
-	temp = malloc(ft_strlen(newline_pos + 1) + 1);
-	if (!temp)
+	if (!(*stash)[len])
+		return (free(*stash), *stash = NULL, line);
+	rest = malloc(ft_strlen(*stash + len) + 1);
+	if (!rest)
 		return (free(line), NULL);
-	ft_strcpy(temp, newline_pos + 1);
-	return (free(*str), *str = temp, line);
+	ft_strcpy(rest, *stash + len);
+	return (free(*stash), *stash = rest, line);
 }
 
 char	*get_next_line(int fd)
 {
-	static char	*buffer[FD_MAX];
+	static char	*stash[FD_MAX];
 	char		*line;
 
 	if (fd < 0 || fd >= FD_MAX || BUFFER_SIZE <= 0)
-	{
-		if (buffer[fd])
-			free(buffer[fd]);
 		return (NULL);
-	}
-	buffer[fd] = ft_read(buffer[fd], fd);
-	if (!buffer[fd])
+	stash[fd] = ft_fill(stash[fd], fd);
+	if (!stash[fd])
 		return (NULL);
-	line = ft_line(&buffer[fd]);
-	if (!line && buffer[fd])
-		(free(buffer[fd]), buffer[fd] = NULL);
+	line = ft_extract(&stash[fd]);
+	if (!line)
+		return (free(stash[fd]), stash[fd] = NULL, NULL);
 	return (line);
 }
-
-// int	main(int argc, char **argv)
-// {
-// 	int		fd;
-// 	char	*line;
-
-// 	if (argc != 2)
-// 		return (1);
-// 	fd = open(argv[1], O_RDONLY);
-// 	if (fd < 0)
-// 		return (1);
-// 	while ((line = get_next_line(fd)) != NULL)
-// 	{
-// 		printf("%s", line);
-// 		free(line);
-// 	}
-// 	close(fd);
-// 	return (0);
-// }

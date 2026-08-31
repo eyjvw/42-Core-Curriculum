@@ -6,7 +6,7 @@
 /*   By: sbonneau <sbonneau@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/22 07:47:31 by sbonneau          #+#    #+#             */
-/*   Updated: 2026/03/11 05:27:42 by sbonneau         ###   ########.fr       */
+/*   Updated: 2026/08/31 12:00:00 by sbonneau         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,7 +47,7 @@ char	*ft_strjoin(char *s1, char *s2)
 	size_t	len2;
 	char	*result;
 
-	if (!s1 || !s2)
+	if (!s2)
 		return (NULL);
 	len1 = ft_strlen(s1);
 	len2 = ft_strlen(s2);
@@ -62,6 +62,8 @@ char	*ft_strjoin(char *s1, char *s2)
 
 char	*ft_strchr(char *s, char c)
 {
+	if (!s)
+		return (NULL);
 	while (*s)
 	{
 		if (*s == c)
@@ -78,6 +80,8 @@ size_t	ft_strlen(char *s)
 	size_t	i;
 
 	i = 0;
+	if (!s)
+		return (0);
 	while (s[i])
 		i++;
 	return (i);

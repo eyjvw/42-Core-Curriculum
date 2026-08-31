@@ -21,6 +21,7 @@ void		ft_init(t_data *data);
 void		ft_clean(t_data *data, bool unlink);
 void		ft_print_error(sem_t *sem, char *s);
 void		ft_print(t_philo *philo, char *s);
+void		ft_die(t_philo *philo);
 void		ft_sleep(t_philo *philo, long long ms);
 void		*ft_monitor(void *arg);
 void		ft_kill_all(t_data *data);

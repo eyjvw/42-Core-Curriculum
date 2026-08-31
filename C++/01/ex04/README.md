@@ -1,22 +1,24 @@
 # ex04 — Sed (find & replace)
 
-Description
+*This project has been created as part of the 42 curriculum by sbonneau.*
+
+## Description
 
 Small utility that reads a file, replaces every occurrence of string `s1` with
 `s2`, and writes the result to a new file named `<filename>.replace`.
 
-What you practice
+## What you practice
 
 - String search and replacement in lines of text.
 - File I/O with `std::ifstream` / `std::ofstream` and error handling.
 - Validating arguments and ensuring safe output to a new file.
 
-Files
+## Files
 
 - `src/main.cpp` — implements the search-and-replace logic
 - `Makefile` — build rules (uses `mk/` fragments)
 
-Usage
+## Usage
 
 ```bash
 make
@@ -24,7 +26,7 @@ make
 # produces filename.replace with s1 replaced by s2 throughout the file
 ```
 
-Behavior notes
+## Behavior notes
 
 - If `s1` is empty the program prints an error and exits.
 - The program writes to a new file named `<filename>.replace` (it does not

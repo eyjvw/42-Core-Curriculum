@@ -30,10 +30,8 @@ static bool	ft_check_one_dead(t_data *data)
 		if (now - data->philos[i].last_meal_time > data->time_to_die)
 		{
 			(pthread_mutex_unlock(&data->meal), ft_set_death(data));
-			pthread_mutex_lock(&data->print);
-			printf("%4lld %6d died\n", now - data->start_time,
-				data->philos[i].id);
-			return (pthread_mutex_unlock(&data->print), 1);
+			ft_print_death(data, data->philos[i].id, now);
+			return (1);
 		}
 		pthread_mutex_unlock(&data->meal);
 		i++;

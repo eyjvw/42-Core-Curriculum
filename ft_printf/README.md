@@ -76,14 +76,17 @@ ft_printf("%10.5d\n", 42);  // Width and precision
 
 ### AI Usage
 
-AI assistance (GitHub Copilot) was used for the following tasks:
+AI assistance was used for the following tasks:
 
-1. **Code Refactoring**: Helping split large functions into smaller, norm-compliant functions (max 25 lines, max 5 functions per file)
-2. **Norm Compliance**: Identifying and fixing norminette errors (variable alignment, function arguments, line counts)
-3. **Bug Identification**: Detecting edge cases and logic errors in precision and flag handling
-4. **Documentation**: Generating comments and README structure
+1. **Code review**: differential testing against the system `printf` across 51
+   format cases, which found a `%#08x` padding order bug and a heap overflow on
+   large precisions; both were then fixed.
+2. **Code refactoring**: splitting files to stay within the norm's 5-function
+   and 25-line limits.
+3. **Documentation**.
 
-The core algorithm design, implementation logic, and debugging were done manually. AI was primarily used as a coding assistant to ensure compliance with 42 standards and improve code organization.
+The algorithm and the implementation are the author's; AI was used to review
+and stress-test them, not to generate them.
 
 ## Algorithm & Data Structure Explanation
 
@@ -155,7 +158,7 @@ For each format specifier:
        flags.zero = 0;
    ```
 
-4. **Memory management**: Dynamic allocation (`malloc`) is used for conversion buffers with a fixed `BUFFER_SIZE` (50 bytes), sufficient for all standard conversions. Each allocated string is freed after use to prevent leaks.
+4. **Memory management**: Conversion buffers are allocated by `ft_alloc_num()`, which sizes them from *both* the value's own digit count and the requested precision, plus room for a sign or `0x` prefix. A fixed-size buffer would overflow on a large precision such as `%.100d`, where the precision alone dictates the length. Each allocated string is freed after use.
 
 5. **Precision edge case**: When precision is `0` and value is `0`, nothing is printed for numeric types (standard printf behavior):
    ```c

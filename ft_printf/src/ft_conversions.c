@@ -62,7 +62,12 @@ char	*ft_int_to_str(long n, t_flags flags)
 	int		digits;
 	int		prec;
 
-	res = malloc(BUFFER_SIZE);
+	digits = ft_count_digits(n);
+	if (n < 0)
+		digits = ft_count_digits(-n);
+	res = ft_alloc_num(digits, flags.precision);
+	if (!res)
+		return (NULL);
 	i = 0;
 	ft_put_sign(res, &i, &n, flags);
 	digits = ft_count_digits(n);

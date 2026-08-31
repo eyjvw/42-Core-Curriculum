@@ -10,45 +10,47 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../../includes/philosophers.h"
+#include "philosophers.h"
 
-static size_t	ft_strlen(char *s)
+static int	ft_putnbr(char *buf, int i, long long n)
 {
-	size_t	i;
-
-	i = 0;
-	if (!s)
-		return (i);
-	while (s[i])
-		i++;
-	return (i);
+	if (n >= 10)
+		i = ft_putnbr(buf, i, n / 10);
+	buf[i] = '0' + (n % 10);
+	return (i + 1);
 }
 
-static void	ft_putstr_fd(int fd, char *s)
+/*
+** One "timestamp id state" line, emitted with a single write() so that two
+** logs can never interleave, and so that nothing stays stuck in a stdio
+** buffer if the process is killed.
+*/
+static void	ft_log(t_data *data, int id, long long now, char *s)
 {
-	if (!s)
-		return ;
-	write(fd, s, ft_strlen(s));
-}
+	char	buf[128];
+	int		i;
 
-void	ft_print_error(pthread_mutex_t *mutex, char *s)
-{
-	if (mutex)
-		pthread_mutex_lock(mutex);
-	ft_putstr_fd(2, RED);
-	ft_putstr_fd(2, s);
-	ft_putstr_fd(2, RESET);
-	if (mutex)
-		pthread_mutex_unlock(mutex);
+	i = ft_putnbr(buf, 0, now - data->start_time);
+	buf[i++] = ' ';
+	i = ft_putnbr(buf, i, id);
+	buf[i++] = ' ';
+	while (*s)
+		buf[i++] = *s++;
+	buf[i++] = '\n';
+	write(1, buf, i);
 }
 
 void	ft_print(t_philo *philo, char *s)
 {
+	pthread_mutex_lock(&philo->data->print);
 	if (!ft_get_death(philo->data))
-	{
-		pthread_mutex_lock(&philo->data->print);
-		printf("%4lld %6d %s\n",
-			ft_timestamp(philo->data) - philo->data->start_time, philo->id, s);
-		pthread_mutex_unlock(&philo->data->print);
-	}
+		ft_log(philo->data, philo->id, ft_timestamp(philo->data), s);
+	pthread_mutex_unlock(&philo->data->print);
+}
+
+void	ft_print_death(t_data *data, int id, long long now)
+{
+	pthread_mutex_lock(&data->print);
+	ft_log(data, id, now, DIED);
+	pthread_mutex_unlock(&data->print);
 }

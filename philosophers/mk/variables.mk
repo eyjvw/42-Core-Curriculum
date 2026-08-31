@@ -13,6 +13,7 @@ SOURCES = $(SRC)/main.c \
 		  $(SRC)/src/philo/ft_timestamp.c \
 		  $(SRC)/src/utils/ft_ato.c \
 		  $(SRC)/src/utils/ft_clean.c \
+		  $(SRC)/src/utils/ft_error.c \
 		  $(SRC)/src/utils/ft_init.c \
 		  $(SRC)/src/utils/ft_parsing.c \
 		  $(SRC)/src/utils/ft_prints.c
@@ -27,6 +28,7 @@ BONUS_SOURCES = $(SRC_BONUS)/main.c \
 				$(SRC_BONUS)/src/philo/ft_wait.c \
 				$(SRC_BONUS)/src/utils/ft_ato.c \
 				$(SRC_BONUS)/src/utils/ft_clean.c \
+				$(SRC_BONUS)/src/utils/ft_error.c \
 				$(SRC_BONUS)/src/utils/ft_init.c \
 				$(SRC_BONUS)/src/utils/ft_parsing.c \
 				$(SRC_BONUS)/src/utils/ft_prints.c

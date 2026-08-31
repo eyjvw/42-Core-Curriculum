@@ -49,9 +49,11 @@ char	*ft_uint_to_str(unsigned int n, t_flags flags)
 	int		digits;
 	int		prec;
 
-	res = malloc(BUFFER_SIZE);
-	i = 0;
 	digits = ft_count_uint_digits(n);
+	res = ft_alloc_num(digits, flags.precision);
+	if (!res)
+		return (NULL);
+	i = 0;
 	prec = flags.precision;
 	if (prec >= 0 && prec > digits)
 	{

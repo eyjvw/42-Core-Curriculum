@@ -1,31 +1,36 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   get_next_line.h                                    :+:      :+:    :+:   */
+/*   ft_error.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: sbonneau <sbonneau@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/10/22 04:05:10 by sbonneau          #+#    #+#             */
+/*   Created: 2026/08/31 12:00:00 by sbonneau          #+#    #+#             */
 /*   Updated: 2026/08/31 12:00:00 by sbonneau         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+#include "philosophers_bonus.h"
 
-#ifndef GET_NEXT_LINE_H
-# define GET_NEXT_LINE_H
+/*
+** The length is computed as it writes, one byte at a time: a plain
+** strlen()-shaped loop gets recognised by the optimiser and turned into a call
+** to strlen(), which is not part of the functions this project may use.
+*/
+static void	ft_putstr_fd(int fd, char *s)
+{
+	if (!s)
+		return ;
+	while (*s)
+		write(fd, s++, 1);
+}
 
-# ifndef BUFFER_SIZE
-#  define BUFFER_SIZE 400
-# endif
-
-# include <stdlib.h>
-# include <unistd.h>
-
-char	*get_next_line(int fd);
-
-void	ft_strncpy(char *dst, char *src, size_t n);
-void	ft_strcpy(char *dst, char *src);
-char	*ft_strjoin(char *s1, char *s2);
-char	*ft_strchr(char *s, char c);
-size_t	ft_strlen(char *s);
-
-#endif
+void	ft_print_error(sem_t *sem, char *s)
+{
+	if (sem)
+		sem_wait(sem);
+	ft_putstr_fd(2, RED);
+	ft_putstr_fd(2, s);
+	ft_putstr_fd(2, RESET);
+	if (sem)
+		sem_post(sem);
+}

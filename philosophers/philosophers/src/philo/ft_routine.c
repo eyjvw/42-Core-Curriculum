@@ -59,15 +59,28 @@ static void	ft_eat(t_philo *philo)
 	pthread_mutex_unlock(first);
 }
 
+/*
+** Thinking is not instantaneous: a philosopher that grabs its forks again the
+** moment it drops them can starve a neighbour. Waiting for half of the slack
+** left by a full eat/sleep cycle keeps every philosopher served well inside
+** time_to_die, even with 200 of them.
+*/
 static void	ft_sleep_think(t_philo *philo)
 {
+	long long	think;
+
 	if (!ft_get_death(philo->data))
 	{
 		ft_print(philo, SLEEPING);
 		ft_sleep(philo->data, philo->data->time_to_sleep);
 	}
-	if (!ft_get_death(philo->data))
-		ft_print(philo, THINKING);
+	if (ft_get_death(philo->data))
+		return ;
+	ft_print(philo, THINKING);
+	think = philo->data->time_to_die - philo->data->time_to_eat
+		- philo->data->time_to_sleep;
+	if (think > 0)
+		ft_sleep(philo->data, think / 2);
 }
 
 void	*ft_routine(void *arg)
@@ -78,7 +91,7 @@ void	*ft_routine(void *arg)
 	if (philo->data->num_philos == 1)
 		return (ft_one_philo(philo), NULL);
 	if (philo->id % 2 == 0)
-		usleep(100);
+		ft_sleep(philo->data, philo->data->time_to_eat);
 	while (!ft_get_death(philo->data))
 	{
 		ft_eat(philo);

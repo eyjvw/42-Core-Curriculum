@@ -18,5 +18,3 @@
 
 #include "structs.h"
 #include "functions.h"
-
-#define BUFFER_SIZE 50

@@ -11,7 +11,9 @@
 
 Goal: avoid deadlocks/starvation while respecting timing constraints.
 
-## Program Arguments
+## Instructions
+
+### Program Arguments
 
 ```bash
 ./philo number_of_philosophers time_to_die time_to_eat time_to_sleep [number_of_times_each_philosopher_must_eat]
@@ -20,7 +22,7 @@ Goal: avoid deadlocks/starvation while respecting timing constraints.
 
 All times are in milliseconds.
 
-## Build
+### Build
 
 ```bash
 make
@@ -36,36 +38,63 @@ make bonus
 - `make re` : rebuild mandatory
 - `make re_bonus` : rebuild bonus
 
-## What Was Refactored
+## Algorithm & Design
 
-### Build system
+### Deadlock avoidance — ordered fork acquisition
 
-- Root `Makefile` was refactored into:
-  - `mk/variables.mk`
-  - `mk/colors.mk`
-  - `mk/rules.mk`
-- Include paths were normalized to compile with explicit include directories, avoiding relative include directives in source files.
+Every philosopher needs two forks, so the naive "left then right" order lets all
+`N` philosophers hold their left fork and wait forever on their right one. Each
+philosopher instead locks the two mutexes in ascending **address** order
+(`ft_check()` in `src/philo/ft_routine.c`). That imposes a global resource
+hierarchy: the cycle in the wait-for graph is broken, so a deadlock is
+impossible by construction — no timeouts or `trylock` retries needed.
 
-### Mandatory fixes (`philo`)
+### Starvation avoidance — parity start + a real thinking phase
 
-- Fixed potential segfault in `ft_print_error` when called with `NULL` mutex.
-- Added a dedicated `meal` mutex to protect shared fields:
-  - `last_meal_time`
-  - `meals_eaten`
-  - `done`
-- Fixed lock-order issues by always locking forks in deterministic pointer order.
-- Improved thread-create failure handling (set death flag, join already-started threads, then clean).
-- Avoided global cleanup from `ft_timestamp` error path inside worker context.
+Deadlock freedom is not enough: a philosopher that re-grabs its forks the moment
+it releases them can keep a neighbour from ever eating. Two things space them
+out:
 
-### Bonus fixes (`philo_bonus`)
+- **Parity stagger.** Even-numbered philosophers wait `time_to_eat` before their
+  first meal, so odd and even philosophers settle into two alternating groups
+  and every philosopher is served roughly every `2 * time_to_eat`.
+- **Non-zero thinking.** After sleeping, a philosopher thinks for half of the
+  slack in its cycle, `(time_to_die - time_to_eat - time_to_sleep) / 2`, before
+  competing for forks again.
 
-- Fixed potential segfault in `ft_print_error` with `NULL` semaphore.
-- Added safety checks for `sem_open` failures.
-- Guarded `sem_close` against `NULL`/`SEM_FAILED` handles.
-- Removed unsafe cleanup calls from child monitor/routine exit paths.
-- Detached monitor thread in child to avoid thread-resource leak.
-- Fixed `must_eat` completion condition (`>=` instead of `>`).
-- Added fork failure handling and child reaping in kill path to reduce zombie leaks.
+Without these, `200 800 200 200` starves a philosopher within the first 800 ms.
+
+### Death detection
+
+A single monitor loop (the main thread in the mandatory part, one thread per
+process in the bonus) polls every 800 µs — well inside the 10 ms the subject
+allows for reporting a death. Timestamps and meal counters are read under the
+`meal` mutex/semaphore, never unsynchronised.
+
+### Log integrity
+
+The death flag is tested **while the print lock is held**, so a philosopher that
+was already queued on the lock when the simulation ended cannot print after the
+`died` line. Each line is emitted with a single `write()` call: logs can never
+interleave, and nothing is lost in a stdio buffer when the bonus philosophers —
+separate processes — are killed at the end of the simulation.
+
+### Single philosopher
+
+With one philosopher there is only one fork. They take it, wait, and die: the
+special case is handled explicitly instead of blocking forever on a second fork
+that does not exist.
+
+## Concurrency Invariants
+
+| Shared state | Guarded by | Notes |
+|---|---|---|
+| `last_meal_time`, `meals_eaten`, `done` | `meal` mutex (bonus: `meal` semaphore) | Written by the philosopher, read by the monitor |
+| `someone_died` | `dead` mutex | Bonus signals the parent through the `dead` semaphore |
+| stdout | `print` mutex / semaphore | Death check happens inside the critical section |
+
+Both parts are verified clean under ThreadSanitizer, and the mandatory part
+under AddressSanitizer/UBSan as well.
 
 ## Project Structure
 
@@ -88,10 +117,12 @@ make bonus
 
 ## AI Usage
 
-AI assistance (GitHub Copilot) was used for:
+AI assistance was used for:
 
-1. Concurrency review (mutex/lock-order/race fixes)
-2. Build refactor (`mk/` split and include normalization)
-3. Documentation generation
+1. Concurrency review — locating data races with ThreadSanitizer, and reviewing
+   lock ordering and the starvation behaviour at high philosopher counts.
+2. Build refactor (`mk/` split and include normalization).
+3. Documentation.
 
-Core project implementation and algorithmic behavior remain aligned with the original design.
+The design decisions above, the algorithm, and the implementation are the
+author's; AI was used to review and stress-test them, not to generate them.

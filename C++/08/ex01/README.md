@@ -1,10 +1,12 @@
 # ex01 — Span
 
-Description
+*This project has been created as part of the 42 curriculum by sbonneau.*
+
+## Description
 
 Compute shortest and longest spans across stored integers.
 
-Build & Run
+## Build & Run
 
 ```bash
 make

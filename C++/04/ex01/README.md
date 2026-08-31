@@ -1,10 +1,12 @@
 # ex01 — Deep Copy with Brain
 
-Description
+*This project has been created as part of the 42 curriculum by sbonneau.*
+
+## Description
 
 Implement deep copy behavior for classes containing dynamic members (`Brain`).
 
-Build & Run
+## Build & Run
 
 ```bash
 make

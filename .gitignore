@@ -1,0 +1,121 @@
+# ---------------------------------------------------------------------------
+# 42 Core Curriculum — root .gitignore
+# ---------------------------------------------------------------------------
+
+# --- Compiled objects & libraries ------------------------------------------
+*.o
+*.obj
+*.d
+*.a
+*.so
+*.so.*
+*.dylib
+*.lo
+*.slo
+*.gch
+*.pch
+obj/
+objs/
+
+# --- Binaries ---------------------------------------------------------------
+*.out
+*.app
+*.exe
+
+# C / C++ project executables (Makefile NAME targets)
+libft/libft.a
+ft_printf/libftprintf.a
+get_next_line/get_next_line
+pipex/pipex
+push_swap/push_swap
+push_swap/checker
+philosophers/philo
+philosophers/philo_bonus
+so_long/so_long
+cub3d/cub3D
+minishell/minishell
+ft_irc/ircserv
+
+# C++ modules: one binary per exercise, no extension
+C++/*/ex*/[A-Z]*
+!C++/*/ex*/Makefile
+!C++/*/ex*/README.md
+
+# --- Vendored dependencies --------------------------------------------------
+minilibx-linux/
+minilibx/
+mlx/
+node_modules/
+
+# --- Build & bundler output -------------------------------------------------
+dist/
+dist-ssr/
+build/
+.cache/
+.vite/
+.turbo/
+*.tsbuildinfo
+
+# --- Environment & secrets --------------------------------------------------
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.crt
+*.csr
+*.p12
+secrets/
+
+# --- Databases (SQLite, ft_transcendence) -----------------------------------
+*.sqlite
+*.sqlite3
+*.db
+*.db-journal
+*.db-wal
+*.db-shm
+
+# --- Docker / runtime data --------------------------------------------------
+/data/
+Inception/data/
+volumes/
+
+# --- Logs -------------------------------------------------------------------
+logs/
+*.log
+# Exercise fixture logs are versioned on purpose
+!C++/**/*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+bun-debug.log*
+
+# --- Debug & analysis -------------------------------------------------------
+*.dSYM/
+vgcore.*
+/core
+/core.[0-9]*
+callgrind.out.*
+massif.out.*
+perf.data*
+.gdb_history
+
+# --- Editors & OS -----------------------------------------------------------
+.vscode/*
+!.vscode/extensions.json
+.idea/
+*.swp
+*.swo
+*.sw?
+*~
+\#*\#
+.DS_Store
+Thumbs.db
+
+# --- Misc -------------------------------------------------------------------
+*.tmp
+*.bak
+*.orig
+*.rej
+a.out
