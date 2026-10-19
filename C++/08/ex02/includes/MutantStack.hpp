@@ -31,12 +31,16 @@ class MutantStack : public std::stack<T>
         
         iterator begin();
         iterator end();
+        const_iterator begin() const;
+        const_iterator end() const;
         reverse_iterator rbegin();
         reverse_iterator rend();
-        const_iterator cbegin();
-        const_iterator cend();
-        const_reverse_iterator crbegin();
-        const_reverse_iterator crend();
+        const_reverse_iterator rbegin() const;
+        const_reverse_iterator rend() const;
+        const_iterator cbegin() const;
+        const_iterator cend() const;
+        const_reverse_iterator crbegin() const;
+        const_reverse_iterator crend() const;
 };
 
 #include "MutantStack.tpp"

@@ -48,6 +48,8 @@ void Kick::Kicking(Server &server)
 	package.channel =			package.client->getChannel(kickChannel);
 	Client	*target	=			server.getClient(kickNick);
 
+	if (package.cmdData.size() <= KICK_MSG)
+		package.cmdData.push_back(package.client->getNick());
 	package.channel->removeClient(target->getFd());
 	package.channel->removeOperator(target->getFd());
 	package.channel->removeInvited(target->getFd());

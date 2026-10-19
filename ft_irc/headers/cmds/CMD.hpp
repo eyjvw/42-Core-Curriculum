@@ -17,6 +17,7 @@
 # include "User.hpp"
 # include "Mode.hpp"
 # include "Kick.hpp"
+# include "Part.hpp"
 # include "Topic.hpp"
 # include "Invite.hpp"
 # include "Server.hpp"
@@ -35,6 +36,7 @@
 # define CMD_TOPIC	"TOPIC"
 # define CMD_INVITE "INVITE"
 # define CMD_MODE	"MODE"
+# define CMD_PART	"PART"
 
 # define DEFAULT_QUIT_MSG "Got to sleep"
 
@@ -58,7 +60,9 @@ enum	cmdDataIds
 	INVITE_CHANNEL	= 1,
 	INVITE_NICK		= 0,
 	MODE_CHANNEL	= 0,
-	MODE_MODES		= 1
+	MODE_MODES		= 1,
+	PART_CHANNEL	= 0,
+	PART_REASON		= 1
 };
 
 class Server;
@@ -78,4 +82,5 @@ class CMD
 		static void Topic(Server &server);
 		static void	Invite(Server &server);
 		static void	Mode(Server &server);
+		static void	Part(Server &server);
 };

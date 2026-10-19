@@ -48,7 +48,7 @@ static void	ft_set_values(t_data *data, int ac, char **av)
 {
 	data->forks = NULL;
 	data->print = NULL;
-	data->dead = NULL;
+	data->meal = NULL;
 	data->pids = NULL;
 	data->philos = NULL;
 	data->num_philos = ft_atoi(av[1]);
@@ -80,6 +80,11 @@ static void	ft_check_values(t_data *data)
 		exit(EXIT_FAILURE);
 	}
 	if (data->time_to_sleep < 0)
+	{
+		ft_print_error(NULL, NEGATIVE_ARGS);
+		exit(EXIT_FAILURE);
+	}
+	if (data->must_eat == 0)
 	{
 		ft_print_error(NULL, NEGATIVE_ARGS);
 		exit(EXIT_FAILURE);

@@ -41,14 +41,40 @@ Intern::~Intern(void)
     std::cout << "[Intern] Destructor called" << std::endl;
 }
 
+static AForm *createPresidential(const std::string &target)
+{
+    return new PresidentialPardonForm(target);
+}
+
+static AForm *createRobotomy(const std::string &target)
+{
+    return new RobotomyRequestForm(target);
+}
+
+static AForm *createShrubbery(const std::string &target)
+{
+    return new ShrubberyCreationForm(target);
+}
+
 AForm* Intern::makeForm(const std::string formName, const std::string targetName) const
 {
-    if (formName == "PresidentialPardonForm")
-        return new PresidentialPardonForm(targetName);
-    if (formName == "RobotomyRequestForm")
-        return new RobotomyRequestForm(targetName);
-    if (formName == "ShrubberyCreationForm")
-        return new ShrubberyCreationForm(targetName);
+    const std::string names[3] = {"presidential pardon", "robotomy request", "shrubbery creation"};
+    AForm *(*creators[3])(const std::string &) = {&createPresidential, &createRobotomy, &createShrubbery};
+
+    for (int i = 0; i < 3; i++)
+    {
+        if (formName == names[i])
+        {
+            AForm *form = creators[i](targetName);
+
+            std::cout << "Intern creates " << form->getName() << std::endl;
+            return (form);
+        }
+    }
     throw Intern::InvalidForm();
 }
 
+const char *Intern::InvalidForm::what() const throw()
+{
+    return ("This form doesn't exist");
+}

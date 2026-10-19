@@ -1,6 +1,7 @@
 #pragma once
 
 #include <iostream>
+#include <climits>
 
 #define CLAPTRAP_HIT_POINTS 10
 #define CLAPTRAP_ENERGY_POINTS 10
@@ -19,9 +20,9 @@ class ClapTrap
         ClapTrap(const std::string name);
         ClapTrap(const ClapTrap &src);
         ClapTrap &operator=(const ClapTrap &src);
-        ~ClapTrap(void);
+        virtual ~ClapTrap(void);
 
-        void attack(const std::string &target);
+        virtual void attack(const std::string &target);
         void takeDamage(unsigned int amount);
         void beRepaired(unsigned int amount);
 };

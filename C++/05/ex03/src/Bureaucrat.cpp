@@ -22,15 +22,14 @@ Bureaucrat::Bureaucrat(const std::string name, int grade): name(name)
     if (grade < 1)
         throw Bureaucrat::GradeTooHighException();
     if (grade > 150)
-        throw Bureaucrat::GradeTooHighException();
+        throw Bureaucrat::GradeTooLowException();
     std::cout << "[Bureaucrat] Settings constructor called" << std::endl;
     this->grade = grade;
 }
 
-Bureaucrat::Bureaucrat(const Bureaucrat &other)
+Bureaucrat::Bureaucrat(const Bureaucrat &other): name(other.name), grade(other.grade)
 {
     std::cout << "[Bureaucrat] Copy constructor called" << std::endl;
-    *this = other;
 }
 
 Bureaucrat &Bureaucrat::operator=(const Bureaucrat &other)
@@ -69,7 +68,7 @@ void Bureaucrat::incrementGrade(void)
 void Bureaucrat::decrementGrade(void)
 {
     if (this->grade == 150)
-        throw Bureaucrat::GradeTooLowExecption();
+        throw Bureaucrat::GradeTooLowException();
     this->grade++;
 }
 
@@ -78,23 +77,39 @@ void Bureaucrat::signForm(AForm &form) const
     try
     {
         form.beSigned(*this);
-        std::cout << "[Bureaucrat] " << this->getName() << " sign the form " << form.getName() << std::endl;
+        std::cout << "[Bureaucrat] " << this->getName() << " signed " << form.getName() << std::endl;
     }
     catch(const std::exception &e)
     {
-        std::cerr << "[Bureaucrat] " << this->getName() << " can't sign the form " << form.getName() << " because " << e.what() << std::endl;
+        std::cerr << "[Bureaucrat] " << this->getName() << " couldn't sign " << form.getName() << " because " << e.what() << std::endl;
     }
 }
 
 void Bureaucrat::executeForm(const AForm &form) const
 {
-    if (!form.getIsSigned())
-        throw AForm::NotSigned();
-    form.execute(*this);
+    try
+    {
+        form.execute(*this);
+        std::cout << "[Bureaucrat] " << this->getName() << " executed " << form.getName() << std::endl;
+    }
+    catch(const std::exception &e)
+    {
+        std::cerr << "[Bureaucrat] " << this->getName() << " couldn't execute " << form.getName() << " because " << e.what() << std::endl;
+    }
 }
 
 std::ostream &operator<<(std::ostream &os, const Bureaucrat &bureaucrat)
 {
     os << bureaucrat.getName() << ", bureaucrat grade " << bureaucrat.getGrade();
     return (os);
+}
+
+const char *Bureaucrat::GradeTooHighException::what() const throw()
+{
+    return ("Grade can't be above 1");
+}
+
+const char *Bureaucrat::GradeTooLowException::what() const throw()
+{
+    return ("Grade can't go under 150");
 }

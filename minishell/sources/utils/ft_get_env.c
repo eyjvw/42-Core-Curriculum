@@ -20,5 +20,5 @@ char	*ft_get_env(t_env *env, char *key)
 			return (env->value);
 		env = env->next;
 	}
-	return ("");
+	return (NULL);
 }

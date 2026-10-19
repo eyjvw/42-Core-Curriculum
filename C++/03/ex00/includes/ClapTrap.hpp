@@ -1,6 +1,7 @@
 #pragma once
 
 #include <iostream>
+#include <climits>
 
 #define HIT_POINTS 10
 #define ENERGY_POINTS 10

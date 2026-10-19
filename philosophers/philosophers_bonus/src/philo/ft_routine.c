@@ -77,7 +77,10 @@ void	ft_routine(t_philo *philo)
 	if (philo->id % 2 == 0)
 		ft_sleep(philo, philo->data->time_to_eat);
 	if (pthread_create(&monitor, NULL, ft_monitor, philo) != 0)
+	{
+		ft_print_error(NULL, THREAD_FAILED);
 		ft_child_exit(philo, EXIT_FAILURE);
+	}
 	while (1)
 	{
 		ft_eat(philo);

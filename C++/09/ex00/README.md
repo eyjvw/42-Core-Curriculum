@@ -6,9 +6,11 @@
 
 Parse historical exchange data and evaluate input values by date.
 
+Container: `std::map` (exchange rates indexed by date).
+
 ## Build & Run
 
 ```bash
 make
-./btc
+./btc data/input.txt
 ```

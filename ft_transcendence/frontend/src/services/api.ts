@@ -145,9 +145,9 @@ export const api = {
   resendVerification: ()                             => apiCall<BasicResponse>('verify/resend','POST'),
   updateProfile:      (payload: ProfileUpdatePayload)=> apiCall<UserResponse>('profile',       'PUT',  payload),
   logout:             ()                             => apiCall<BasicResponse>('logout',       'POST'),
-  enable2FA:          ()                             => apiCall<{ secret?: string; uri?: string }>('2fa/enable',  'POST'),
+  enable2FA:          ()                             => apiCall<{ secret?: string; uri?: string; qr?: string }>('2fa/enable',  'POST'),
   verify2FA:          (code: string)                 => apiCall<BasicResponse>('2fa/verify',   'POST', { code }),
-  disable2FA:         ()                             => apiCall<BasicResponse>('2fa/disable',  'POST'),
+  disable2FA:         (code: string)                 => apiCall<BasicResponse>('2fa/disable',  'POST', { code }),
 
   getFriends:         ()                             => socialCall<FriendsListResponse>('friends',          'GET'),
   getFriendRequests:  ()                             => socialCall<FriendRequestsResponse>('friends/requests', 'GET'),

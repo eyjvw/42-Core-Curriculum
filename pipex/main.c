@@ -15,6 +15,9 @@
 static void	ft_child_process(t_pipex *px, int i)
 {
 	close(px->pipe_fd[0]);
+	if ((i == 0 && px->infile == -1)
+		|| (i == px->cmds_count - 1 && px->outfile == -1))
+		(ft_close(px), exit(1));
 	if (i == 0)
 		dup2(px->infile, STDIN_FILENO);
 	else
@@ -24,15 +27,30 @@ static void	ft_child_process(t_pipex *px, int i)
 	else
 		dup2(px->outfile, STDOUT_FILENO);
 	close(px->pipe_fd[1]);
+	ft_close(px);
 	ft_exec(px, px->av[2 + px->here_doc + i]);
 }
 
-void	ft_pipex(t_pipex *px)
+static int	ft_wait_all(pid_t last)
+{
+	int	status;
+
+	status = 0;
+	waitpid(last, &status, 0);
+	while (wait(NULL) > 0)
+		;
+	if (WIFSIGNALED(status))
+		return (128 + WTERMSIG(status));
+	return (WEXITSTATUS(status));
+}
+
+int	ft_pipex(t_pipex *px)
 {
 	int		i;
 	pid_t	pid;
 
 	i = 0;
+	pid = -1;
 	while (i < px->cmds_count)
 	{
 		if (pipe(px->pipe_fd) == -1)
@@ -45,28 +63,27 @@ void	ft_pipex(t_pipex *px)
 		close(px->pipe_fd[1]);
 		if (i > 0)
 			close(px->prev_fd);
+		else if (px->infile != -1)
+			(close(px->infile), px->infile = -1);
 		px->prev_fd = px->pipe_fd[0];
 		i++;
 	}
 	close(px->prev_fd);
-	while (wait(NULL) > 0)
-		;
+	return (ft_wait_all(pid));
 }
 
 int	main(int ac, char **av, char **env)
 {
 	t_pipex	px;
+	int		status;
 
-	if (ac < 5)
+	if (ac < 5 || (ac < 6 && ft_strcmp(av[1], "here_doc") == 0))
 		return (ft_putstr_fd(2, ARG_ERROR), 1);
 	ft_init(&px, ac, av, env);
 	ft_open(&px);
 	if (px.here_doc)
-	{
 		ft_here_doc(&px);
-		px.infile = px.pipe_fd[0];
-	}
-	ft_pipex(&px);
+	status = ft_pipex(&px);
 	ft_close(&px);
-	return (0);
+	return (status);
 }

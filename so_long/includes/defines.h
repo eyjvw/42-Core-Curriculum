@@ -15,6 +15,9 @@
 #define BUFFER_SIZE 1000
 #define TITLE_SIZE 256
 #define TILE_SIZE 48
+#define MAX_MAP_WIDTH 80
+#define MAX_MAP_HEIGHT 45
+#define MAX_FILE_SIZE 65536
 
 #define KEY_ESC 65307
 #define KEY_W 119
@@ -35,10 +38,20 @@
 #define ERR_READ_MAP "Erreur de la lecture de la map\n"
 #define ERR_NOT_RECTANGULAR "Map non rectangulaire\n"
 #define ERR_NOT_CLOSE "Map non ferme\n"
-#define ERR_ELEMS "Map avec des elements non valides\n"
+#define ERR_ELEMS "Map avec un caractere invalide (autorises : 01CEPM)\n"
+#define ERR_NO_PLAYER "Map sans joueur (P)\n"
+#define ERR_MANY_PLAYERS "Map avec plusieurs joueurs (P)\n"
+#define ERR_NO_EXIT "Map sans sortie (E)\n"
+#define ERR_MANY_EXITS "Map avec plusieurs sorties (E)\n"
+#define ERR_NO_COLLECTIBLE "Map sans collectible (C)\n"
 #define ERR_NOT_POSSIBLE "Map impossible\n"
 #define ERR_INVALID_FILE "Fichier invalide\n"
 #define ERR_NO_DATA "Aucune donnee lors de la lecture\n"
+#define ERR_EXTENSION "La map doit avoir l'extension .ber\n"
+#define ERR_EMPTY_LINE "Map contenant une ligne vide\n"
+#define ERR_TOO_BIG "Map trop grande pour l'ecran\n"
+#define ERR_TOO_LARGE "Map trop grande (80x45 cases maximum)\n"
+#define ERR_FILE_TOO_BIG "Fichier trop volumineux (64 Ko maximum)\n"
 #define ERR_MLX_INIT "Erreur lors de l'initialisation de MLX\n"
 #define ERR_WINDOW "Erreur lors de la creation de la fenetre\n"
 #define ERR_CANT_LOAD "Impossible de charger "

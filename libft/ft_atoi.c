@@ -11,12 +11,13 @@
 /* ************************************************************************** */
 
 #include "libft.h"
+#include <limits.h>
 
 int	ft_atoi(const char *nptr)
 {
-	int	i;
-	int	sign;
-	int	num;
+	int		i;
+	int		sign;
+	long	num;
 
 	i = 0;
 	sign = 1;
@@ -31,8 +32,10 @@ int	ft_atoi(const char *nptr)
 	}
 	while (nptr[i] >= '0' && nptr[i] <= '9')
 	{
+		if (num > (LONG_MAX - (nptr[i] - '0')) / 10)
+			return (-(sign == 1));
 		num = (num * 10) + (nptr[i] - '0');
 		i++;
 	}
-	return (sign * num);
+	return ((int)(sign * num));
 }

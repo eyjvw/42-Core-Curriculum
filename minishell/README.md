@@ -65,7 +65,7 @@ minishell/
 ### Parser (AST-based)
 - Tokenizes input into meaningful units
 - Parses into Abstract Syntax Tree
-- Handles operator precedence (`&&` > `||` > `|`)
+- Handles operator precedence (`|` binds tighter than `&&` / `||`, which are left-associative; parentheses override)
 - Supports nested groups and pipes
 
 ### Execution
@@ -77,8 +77,8 @@ minishell/
 ### Expansion
 - Variable expansion with `$VAR` syntax
 - Special variables: `$?` (exit status), `$0` (program name)
-- Wildcard patterns (`*`, `?`)
-- Quote handling (single, double, escape)
+- Wildcard patterns (`*`, current directory only)
+- Quote handling (single, double)
 
 ### Signals
 - `Ctrl+C` (SIGINT) - Interrupt current command

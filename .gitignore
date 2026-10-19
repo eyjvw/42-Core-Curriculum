@@ -40,6 +40,10 @@ ft_irc/ircserv
 C++/*/ex*/[A-Z]*
 !C++/*/ex*/Makefile
 !C++/*/ex*/README.md
+C++/00/ex00/megaphone
+C++/00/ex01/phonebook
+C++/01/ex06/harlFilter
+C++/09/ex00/btc
 
 # --- Vendored dependencies --------------------------------------------------
 minilibx-linux/

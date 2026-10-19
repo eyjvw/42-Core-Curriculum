@@ -36,37 +36,25 @@ class AForm
         class GradeTooHighException : public std::exception
         {
             public:
-                const char *what() const throw()
-                {
-                    return ("Grade too high for the form");
-                }
+                const char *what() const throw();
         };
 
-        class GradeTooLowExecption : public std::exception
+        class GradeTooLowException : public std::exception
         {
             public:
-                const char *what() const throw()
-                {
-                    return ("Grade to low for the form");
-                }
+                const char *what() const throw();
         };
         
         class CantExecute : public std::exception
         {
             public:
-                const char* what() const throw()
-                {
-                    return ("Can't execute the contract because the executer rank is too low");
-                }
+                const char* what() const throw();
         };
         
         class NotSigned : public std::exception
         {
             public:
-                const char* what() const throw()
-                {
-                    return ("Can't execute the contract because it's not signed");
-                }
+                const char* what() const throw();
         };
 
         const std::string &getName(void) const;

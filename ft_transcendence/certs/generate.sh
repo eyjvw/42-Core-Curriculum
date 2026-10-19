@@ -30,7 +30,7 @@ openssl req -x509 -newkey rsa:2048 \
 	-addext "extendedKeyUsage=serverAuth"
 
 chmod 644 "$CERT_FILE"
-chmod 644 "$KEY_FILE"
+chmod 600 "$KEY_FILE"
 
 echo "[certs] Certificate generated with SANs: $SAN"
 echo "        cert: $CERT_FILE"

@@ -11,8 +11,9 @@ export default function TwoFactorSettings({ isEnabled, onUpdate }: TwoFactorSett
   const { t }						= useTranslation();
   const [loading, setLoading]		= useState(false);
   const [error, setError]			= useState('');
-  const [setupData, setSetupData]	= useState<{ secret: string; uri: string } | null>(null);
+  const [setupData, setSetupData]	= useState<{ secret: string; uri: string; qr: string } | null>(null);
   const [verifyCode, setVerifyCode]	= useState('');
+  const [disableCode, setDisableCode]	= useState('');
 
   const handleEnable = async () => {
     setLoading(true);
@@ -21,8 +22,8 @@ export default function TwoFactorSettings({ isEnabled, onUpdate }: TwoFactorSett
     
 	if (result.error)
 		setError(result.error);
-	else if (result.secret && result.uri)
-		setSetupData({ secret: result.secret, uri: result.uri });
+	else if (result.secret && result.uri && result.qr)
+		setSetupData({ secret: result.secret, uri: result.uri, qr: result.qr });
 	setLoading(false);
   };
 
@@ -44,16 +45,20 @@ export default function TwoFactorSettings({ isEnabled, onUpdate }: TwoFactorSett
 	setLoading(false);
   };
 
-  const handleDisable = async () => {
+  const handleDisable = async (e: React.FormEvent) => {
+    e.preventDefault();
     setLoading(true);
     setError('');
     
-    const result = await api.disable2FA();
+    const result = await api.disable2FA(disableCode);
     
     if (result.error)
 		setError(result.error);
     else if (result.success)
+    {
+		setDisableCode('');
 		onUpdate();
+    }
     setLoading(false);
   };
 
@@ -65,7 +70,7 @@ export default function TwoFactorSettings({ isEnabled, onUpdate }: TwoFactorSett
         
         <div className="qr-section">
           <img 
-            src={`https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(setupData.uri)}`} 
+            src={setupData.qr}
             alt="2FA QR Code"
           />
           <p className="secret-code">
@@ -112,13 +117,22 @@ export default function TwoFactorSettings({ isEnabled, onUpdate }: TwoFactorSett
       {error && <div className="error-message">{error}</div>}
       
       {isEnabled ? (
-        <button 
-          className="profile-danger" 
-          onClick={handleDisable} 
-          disabled={loading}
-        >
-          {loading ? t('common.loading') : t('twoFactor.disable')}
-        </button>
+        <form onSubmit={handleDisable}>
+          <div className="form-group">
+            <input
+              type="text"
+              placeholder={t('twoFactor.enterCode')}
+              value={disableCode}
+              onChange={(e) => setDisableCode(e.target.value)}
+              maxLength={6}
+              required
+              disabled={loading}
+            />
+          </div>
+          <button type="submit" className="profile-danger" disabled={loading}>
+            {loading ? t('common.loading') : t('twoFactor.disable')}
+          </button>
+        </form>
       ) : (
         <button 
           className="profile-primary" 

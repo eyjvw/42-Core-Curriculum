@@ -10,7 +10,7 @@ class AMateria
     public:
         AMateria(void);
         AMateria(AMateria const &src);
-        void	operator=(AMateria const &src);
+        AMateria	&operator=(AMateria const &src);
         virtual ~AMateria(void);
 
         AMateria(std::string const & type);

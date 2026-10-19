@@ -22,7 +22,7 @@ Bureaucrat::Bureaucrat(const std::string name, int grade): name(name)
     if (grade < 1)
         throw Bureaucrat::GradeTooHighException();
     if (grade > 150)
-        throw Bureaucrat::GradeTooLowExecption();
+        throw Bureaucrat::GradeTooLowException();
     std::cout << "[Bureaucrat] Settings constructor called" << std::endl;
     this->grade = grade;
 }
@@ -68,7 +68,7 @@ void Bureaucrat::incrementGrade(void)
 void Bureaucrat::decrementGrade(void)
 {
     if (this->grade == 150)
-        throw Bureaucrat::GradeTooLowExecption();
+        throw Bureaucrat::GradeTooLowException();
     this->grade++;
 }
 
@@ -76,4 +76,14 @@ std::ostream &operator<<(std::ostream &os, const Bureaucrat &bureaucrat)
 {
     os << bureaucrat.getName() << ", bureaucrat grade " << bureaucrat.getGrade();
     return (os);
+}
+
+const char *Bureaucrat::GradeTooHighException::what() const throw()
+{
+    return ("Grade can't be above 1");
+}
+
+const char *Bureaucrat::GradeTooLowException::what() const throw()
+{
+    return ("Grade can't go under 150");
 }

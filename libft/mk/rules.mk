@@ -1,17 +1,15 @@
 all: $(NAME)
 	@echo "$(GREEN)✅ Compilation completed: $(NAME)$(RESET)"
 
-$(NAME): $(OBJ_DIR) $(OBJECTS)
+$(NAME): $(OBJECTS)
 	@echo "$(BLUE)📦 Creating library...$(RESET)"
 	@$(AR) $(NAME) $(OBJECTS)
 	@echo "$(CYAN)📚 $(NAME) created successfully.$(RESET)"
 
-$(OBJ_DIR):
-	@mkdir -p $(OBJ_DIR)
-
-$(OBJ_DIR)/%.o: %.c libft.h
+$(OBJ_DIR)/%.o: %.c
 	@echo "$(YELLOW)🔧 Compiling $<...$(RESET)"
-	@$(CC) -c $(CFLAGS) $< -o $@
+	@mkdir -p $(dir $@)
+	@$(CC) $(CFLAGS) -MMD -MP -c $< -o $@
 
 clean:
 	@echo "$(RED)🧹 Removing object files...$(RESET)"
@@ -23,11 +21,17 @@ fclean: clean
 	@$(RM) $(NAME)
 	@echo "$(RED)✔️ Fclean done.$(RESET)"
 
-bonus: $(OBJ_DIR) $(OBJECTS) $(BONUS_OBJECTS)
+bonus: $(BONUS_FLAG)
+
+$(BONUS_FLAG): $(OBJECTS) $(BONUS_OBJECTS)
 	@echo "$(BLUE)📦 Creating library with bonus...$(RESET)"
 	@$(AR) $(NAME) $(OBJECTS) $(BONUS_OBJECTS)
+	@touch $(BONUS_FLAG)
 	@echo "$(CYAN)📚 $(NAME) created with bonus successfully.$(RESET)"
 
-re: fclean all
+re: fclean
+	@$(MAKE) --no-print-directory all
+
+-include $(DEPS)
 
 .PHONY: all bonus clean fclean re

@@ -1,29 +1,29 @@
 all: $(NAME)
 	@echo "$(GREEN)✅ Compilation completed: $(NAME)$(RESET)"
 
-$(NAME): $(OBJ_DIR) $(OBJECTS)
+$(NAME): $(OBJECTS)
 	@echo "$(BLUE)🔗 Linking $(NAME)...$(RESET)"
 	@$(CC) $(CFLAGS) -o $(NAME) $(OBJECTS)
 	@echo "$(CYAN)🚀 $(NAME) ready.$(RESET)"
 
-$(OBJ_DIR):
-	@mkdir -p $(OBJ_DIR)
-
-$(OBJ_DIR)/%.o: %.c includes/pipex.h
+$(OBJ_DIR)/%.o: %.c
 	@echo "$(YELLOW)🔧 Compiling $<...$(RESET)"
 	@mkdir -p $(dir $@)
-	@$(CC) -c $(CFLAGS) $< -o $@
+	@$(CC) $(CFLAGS) -MMD -MP -c $< -o $@
 
 clean:
 	@echo "$(RED)🧹 Removing object files...$(RESET)"
 	@$(RM) -r $(OBJ_DIR)
-	@echo "$(RED)✔️  Clean done.$(RESET)"
+	@echo "$(RED)✔️ Clean done.$(RESET)"
 
 fclean: clean
 	@echo "$(RED)🧨 Removing binary...$(RESET)"
 	@$(RM) $(NAME)
-	@echo "$(RED)✔️  Fclean done.$(RESET)"
+	@echo "$(RED)✔️ Fclean done.$(RESET)"
 
-re: fclean all
+re: fclean
+	@$(MAKE) --no-print-directory all
+
+-include $(DEPS)
 
 .PHONY: all clean fclean re

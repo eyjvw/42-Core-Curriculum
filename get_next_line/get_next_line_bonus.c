@@ -80,6 +80,8 @@ char	*get_next_line(int fd)
 
 	if (fd < 0 || fd >= FD_MAX || BUFFER_SIZE <= 0)
 		return (NULL);
+	if (read(fd, NULL, 0) < 0)
+		return (free(stash[fd]), stash[fd] = NULL, NULL);
 	stash[fd] = ft_fill(stash[fd], fd);
 	if (!stash[fd])
 		return (NULL);

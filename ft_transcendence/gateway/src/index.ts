@@ -15,7 +15,7 @@ function applyCors(req: Request, headers: Headers = new Headers()): Headers
             const allowedPort = Bun.env.FRONTEND_PORT || "3000";
             const gatewayPort = String(Bun.env.PORT || "8000");
             const externalPort = Bun.env.EXTERNAL_PORT || allowedPort;
-            if (origin.port === allowedPort || origin.port === gatewayPort || origin.port === externalPort)
+            if (origin.hostname === new URL(req.url).hostname && (origin.port === allowedPort || origin.port === gatewayPort || origin.port === externalPort))
             {
                 headers.set("Access-Control-Allow-Origin", requestOrigin);
                 headers.set("Access-Control-Allow-Credentials", "true");
@@ -33,8 +33,8 @@ function applyCors(req: Request, headers: Headers = new Headers()): Headers
 }
 
 const getResponse =			(str: string | null, stat: number, req: Request):	Response => { return (new Response(str,	{ status: stat, headers: applyCors(req) })); };
-const getWebSock  =			async (req: Request, url: URL):						Response => { return (await Bun.fetch(Bun.env.WS_ROUTE! + url.pathname + url.search, req)); };
-const getUpstream =			async (path: string, req: Request):					Response => { return (await Bun.fetch(path, { method: req.method, headers: req.headers, body: req.body })); };
+const getWebSock  =			async (req: Request, url: URL):						Promise<Response> => { return (await Bun.fetch(Bun.env.WS_ROUTE! + url.pathname + url.search, req)); };
+const getUpstream =			async (path: string, req: Request):					Promise<Response> => { return (await Bun.fetch(path, { method: req.method, headers: req.headers, body: req.body })); };
 const successfulResponse =	(upstream: Response, headers: Headers):				Response => { return (new Response(upstream.body, { status: upstream.status, statusText: upstream.statusText, headers })); };
 
 function serverError		(req: Request): Response { return (getResponse("Internal Server Error", 500, req)); };

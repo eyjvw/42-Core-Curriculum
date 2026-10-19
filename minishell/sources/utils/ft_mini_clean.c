@@ -42,7 +42,20 @@ static void	ft_clean_ast(t_ast *ast)
 	}
 	if (ast->file)
 		free(ast->file);
+	if (ast->fd >= 0)
+		close(ast->fd);
 	free(ast);
+}
+
+void	ft_close_fds(t_ast *ast)
+{
+	if (!ast)
+		return ;
+	if (ast->fd >= 0)
+		close(ast->fd);
+	ast->fd = -1;
+	ft_close_fds(ast->left);
+	ft_close_fds(ast->right);
 }
 
 void	ft_mini_clean(t_shell *shell)

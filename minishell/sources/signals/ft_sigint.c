@@ -12,15 +12,14 @@
 
 #include "../../includes/minishell.h"
 
-static void	ft_sigint_heredoc(int sig)
+static void	ft_sigint_exec(int sig)
 {
-	(void)sig;
-	write(1, "\n", 1);
+	g_signal = sig;
 }
 
 static void	ft_sigint_prompt(int sig)
 {
-	(void)sig;
+	g_signal = sig;
 	rl_replace_line("", 0);
 	write(1, "\n", 1);
 	rl_on_new_line();
@@ -31,6 +30,8 @@ void	ft_sigint(t_state_type type)
 {
 	if (type == PROMPT)
 		signal(SIGINT, ft_sigint_prompt);
+	else if (type == EXEC)
+		signal(SIGINT, ft_sigint_exec);
 	else if (type == STATE_HERE_DOC)
-		signal(SIGINT, ft_sigint_heredoc);
+		signal(SIGINT, SIG_DFL);
 }

@@ -48,7 +48,8 @@ static void	ft_apply(char *line, t_all *all)
 	else if (!ft_strcmp(line, "rrr\n"))
 		rrr(all);
 	else
-		return (ft_putstr_fd(2, "Error\n"), ft_clean_exit(all, 1));
+		return (free(line), get_next_line(-1), ft_putstr_fd(2, "Error\n"),
+			ft_clean_exit(all, 1));
 }
 
 int	main(int ac, char **av)

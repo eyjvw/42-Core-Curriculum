@@ -4,6 +4,7 @@ SOURCES = src/main.cpp src/ClapTrap.cpp src/ScavTrap.cpp src/FragTrap.cpp src/Di
 
 OBJ_DIR = obj
 OBJECTS = $(addprefix $(OBJ_DIR)/,$(SOURCES:.cpp=.o))
+DEPS = $(OBJECTS:.o=.d)
 
 CXX = c++
 CXXFLAGS = -Wall -Wextra -Werror -std=c++98 -I includes/

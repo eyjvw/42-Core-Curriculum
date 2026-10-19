@@ -13,17 +13,21 @@
 #include "../includes/Form.hpp"
 #include "../includes/Bureaucrat.hpp"
 
-Form::Form(void): name("Default"), signGrade(150), execGrade(150)
+Form::Form(void): name("Default"), signGrade(150), execGrade(150), isSigned(false)
 {
     std::cout << "[Form] Default constructor called" << std::endl;
 }
 
 Form::Form(const std::string name, const int signGrade, const int execGrade): name(name), signGrade(signGrade), execGrade(execGrade), isSigned(false)
 {
+    if (signGrade < 1 || execGrade < 1)
+        throw Form::GradeTooHighException();
+    if (signGrade > 150 || execGrade > 150)
+        throw Form::GradeTooLowException();
     std::cout << "[Form] Settings constructor called" << std::endl;
 }
 
-Form::Form(const Form &other): name(other.getName()), signGrade(other.getSignGrade()), execGrade(other.getExecGrade())
+Form::Form(const Form &other): name(other.getName()), signGrade(other.getSignGrade()), execGrade(other.getExecGrade()), isSigned(other.getIsSigned())
 {
     std::cout << "[Form] Copy constructor called" << std::endl;
 }
@@ -62,7 +66,7 @@ int Form::getExecGrade(void) const
 void Form::beSigned(const Bureaucrat &bureaucrat)
 {
     if (bureaucrat.getGrade() > this->signGrade)
-        throw Form::GradeTooLowExecption();
+        throw Form::GradeTooLowException();
     this->isSigned = true;
 }
 
@@ -79,4 +83,14 @@ std::ostream &operator<<(std::ostream &os, const Form &form)
     << "[Form] Grade to execute : " << form.getExecGrade() << std::endl;
     
     return (os);
+}
+
+const char *Form::GradeTooHighException::what() const throw()
+{
+    return ("Grade too high for the form");
+}
+
+const char *Form::GradeTooLowException::what() const throw()
+{
+    return ("Grade too low for the form");
 }

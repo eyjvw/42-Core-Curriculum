@@ -41,12 +41,20 @@ static void	ft_remove_env(t_shell *shell, char *key)
 int	ft_unset(t_shell *shell, char **argv)
 {
 	int	i;
+	int	ret;
 
 	i = 1;
+	ret = 0;
 	while (argv[i])
 	{
-		ft_remove_env(shell, argv[i]);
+		if (ft_valid_id(argv[i], ft_strlen(argv[i])))
+			ft_remove_env(shell, argv[i]);
+		else
+		{
+			ft_invalid_id("unset", argv[i]);
+			ret = 1;
+		}
 		i++;
 	}
-	return (0);
+	return (ret);
 }

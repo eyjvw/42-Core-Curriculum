@@ -12,75 +12,82 @@
 
 #include "push_swap.h"
 
-static int	ft_count_numbers(char *str)
+static int	ft_count_numbers(int ac, char **av)
 {
+	int		i;
 	int		count;
+	int		words;
 	char	**split;
 
-	split = ft_split(str, ' ');
-	if (!split)
-		return (0);
 	count = 0;
-	while (split[count])
-		count++;
-	ft_free_split(split, count);
+	i = 1;
+	while (i < ac)
+	{
+		split = ft_split(av[i], ' ');
+		if (!split)
+			return (0);
+		words = 0;
+		while (split[words])
+			words++;
+		ft_free_split(split, words);
+		if (words == 0)
+			return (0);
+		count += words;
+		i++;
+	}
 	return (count);
 }
 
-static void	ft_one_av(char **av, int *numbers, t_all *all)
+static void	ft_parse_arg(char *arg, int *numbers, int *n, t_all *all)
 {
 	int		i;
+	int		count;
 	char	**split;
 
-	split = ft_split(av[1], ' ');
+	split = ft_split(arg, ' ');
 	if (!split)
-		return (ft_putstr_fd(2, "Error\n"), ft_clean_exit(all, 1));
+		return (ft_putstr_fd(2, "Error\n"), free(numbers),
+			ft_clean_exit(all, 1));
+	count = 0;
+	while (split[count])
+		count++;
 	i = 0;
 	while (split[i])
 	{
 		if (!ft_is_num(split[i]))
 			return (ft_putstr_fd(2, "Error\n"), free(numbers),
-				ft_clean_exit(all, 1));
-		numbers[i] = ft_atoi(split[i], numbers);
+				ft_free_split(split, count), ft_clean_exit(all, 1));
+		numbers[*n] = ft_atoi(split[i], numbers);
+		(*n)++;
 		i++;
 	}
-	ft_free_split(split, i);
-}
-
-static void	ft_multiple_av(int ac, char **av, int *numbers, t_all *all)
-{
-	int	i;
-
-	i = 1;
-	while (i < ac)
-	{
-		if (!ft_is_num(av[i]))
-			return (ft_putstr_fd(2, "Error\n"), free(numbers),
-				ft_clean_exit(all, 1));
-		numbers[i - 1] = ft_atoi(av[i], numbers);
-		i++;
-	}
+	ft_free_split(split, count);
 }
 
 static void	ft_parsing(int ac, char **av, int *numbers, t_all *all)
 {
-	if (ac == 2)
-		ft_one_av(av, numbers, all);
-	else
-		ft_multiple_av(ac, av, numbers, all);
+	int	i;
+	int	n;
+
+	i = 1;
+	n = 0;
+	while (i < ac)
+	{
+		ft_parse_arg(av[i], numbers, &n, all);
+		i++;
+	}
 }
 
 void	ft_check_and_init(t_all *all, int ac, char **av)
 {
-	int		*numbers;
-	int		size;
+	int	*numbers;
+	int	size;
 
 	if (ac < 2)
+		ft_clean_exit(all, 0);
+	size = ft_count_numbers(ac, av);
+	if (size <= 0)
 		return (ft_putstr_fd(2, "Error\n"), ft_clean_exit(all, 1));
-	if (ac == 2)
-		size = ft_count_numbers(av[1]);
-	else
-		size = ac - 1;
 	numbers = malloc(sizeof(int) * size);
 	if (!numbers)
 		return (ft_putstr_fd(2, "Error\n"), ft_clean_exit(all, 1));

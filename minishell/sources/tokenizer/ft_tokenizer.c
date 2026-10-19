@@ -12,7 +12,7 @@
 
 #include "../../includes/minishell.h"
 
-void	ft_tokenizer(t_shell *shell)
+bool	ft_tokenizer(t_shell *shell)
 {
 	int			i;
 
@@ -25,14 +25,12 @@ void	ft_tokenizer(t_shell *shell)
 		if (!shell->input[i])
 			break ;
 		if (ft_ismeta(shell->input[i]))
-			ft_tokenizer_meta(&shell->tokens, shell->input, &i);
-		else
 		{
-			if (!ft_tokenizer_word(&shell->tokens, shell->input, &i))
-			{
-				shell->tokens = NULL;
-				return ;
-			}
+			if (!ft_tokenizer_meta(&shell->tokens, shell->input, &i))
+				return (false);
 		}
+		else if (!ft_tokenizer_word(&shell->tokens, shell->input, &i))
+			return (false);
 	}
+	return (true);
 }

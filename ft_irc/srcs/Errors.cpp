@@ -53,6 +53,8 @@ std::string	codeToErr(short code)
 		return (ERR_NOTREGISTERED_STR);
 	else if (code == ERR_UNKNOWNCOMMAND)
 		return (ERR_UNKNOWNCOMMAND_STR(package.cmd));
+	else if (code == ERR_INPUTTOOLONG)
+		return (ERR_INPUTTOOLONG_STR);
 	
 	return ("");
 }

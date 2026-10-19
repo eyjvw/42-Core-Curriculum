@@ -12,39 +12,25 @@
 
 #include "../../includes/minishell.h"
 
-static void	ft_free_split(char **split)
-{
-	int	i;
-
-	if (!split)
-		return ;
-	i = 0;
-	while (split[i])
-	{
-		if (split[i])
-			free(split[i]);
-		i++;
-	}
-	free(split);
-}
-
 void	ft_init_env(t_shell *shell, char **env)
 {
 	int		i;
-	char	**split;
+	char	*eq;
+	char	*key;
 	t_env	*new;
 
 	i = 0;
 	while (env[i])
 	{
-		split = ft_split(env[i], '=');
-		if (split && split[0])
+		eq = ft_strchr(env[i], '=');
+		if (eq)
 		{
-			new = ft_create_env(split[0], split[1]);
+			key = ft_substr(env[i], 0, eq - env[i]);
+			new = ft_create_env(key, eq + 1);
 			if (new)
 				ft_lst_addback((void **)&shell->env, new);
+			free(key);
 		}
-		ft_free_split(split);
 		i++;
 	}
 }

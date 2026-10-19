@@ -14,27 +14,15 @@
 
 int	ft_pwd(t_shell *shell)
 {
-	t_env	*env;
 	char	*cwd;
 
-	env = shell->env;
-	cwd = NULL;
-	while (env)
-	{
-		if (env->key && !ft_strcmp(env->key, "PWD"))
-		{
-			printf("%s\n", env->value);
-			return (EXIT_SUCCESS);
-		}
-		env = env->next;
-	}
 	cwd = getcwd(NULL, 0);
-	if (cwd)
-	{
-		printf("%s\n", cwd);
-		free(cwd);
-		return (EXIT_SUCCESS);
-	}
-	else
-		return (perror("pwd"), EXIT_FAILURE);
+	if (!cwd && ft_get_env(shell->env, "PWD"))
+		cwd = ft_strdup(ft_get_env(shell->env, "PWD"));
+	if (!cwd)
+		return (perror("minishell: pwd"), EXIT_FAILURE);
+	ft_putstr_fd(STDOUT_FILENO, cwd);
+	ft_putstr_fd(STDOUT_FILENO, "\n");
+	free(cwd);
+	return (EXIT_SUCCESS);
 }

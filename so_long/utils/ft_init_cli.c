@@ -22,13 +22,11 @@ static char	**get_ascii(void)
 	if (fd == -1)
 		return (NULL);
 	buffer = ft_read(fd);
+	close(fd);
 	if (!buffer)
 		return (NULL);
 	ascii = ft_split(buffer, '\n');
-	if (!ascii)
-		return (NULL);
 	free(buffer);
-	close(fd);
 	return (ascii);
 }
 

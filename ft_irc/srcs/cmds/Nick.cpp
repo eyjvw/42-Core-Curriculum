@@ -22,7 +22,7 @@ bool Nick::Check(Server &server)
 	package.errNick	=	nick;
 	if (!Ft::isValidNickname(nick))
 		return (package.setError(ERR_ONEUSNICKNAME), false);
-	if (server.isClient(nick))
+	if (server.isClient(nick) && server.getClient(nick) != package.client)
 		return (package.setError(ERR_NICKNAMEINUSE), false);
 
 	return (true);

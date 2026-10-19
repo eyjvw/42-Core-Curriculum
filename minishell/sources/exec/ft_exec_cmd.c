@@ -12,48 +12,63 @@
 
 #include "../../includes/minishell.h"
 
+static void	ft_exec_fail(t_shell *shell, char *cmd, char *path)
+{
+	int	code;
+
+	code = EXIT_FOUND_BUT_NOT_EXECUTABLE;
+	if (errno == ENOENT)
+		code = EXIT_COMMAND_NOT_FOUND;
+	ft_error(cmd, NULL, strerror(errno));
+	free(path);
+	ft_exit_child(shell, code);
+}
+
 static void	ft_child_exec(t_shell *shell, t_ast *node)
 {
-	char	*path;
-	char	**env;
+	char		*path;
+	char		**env;
+	struct stat	st;
 
+	ft_close_fds(shell->ast);
 	path = ft_get_path(shell, node->argv[0]);
 	if (!path)
 	{
-		ft_putstr_fd(2, node->argv[0]);
-		ft_putstr_fd(2, COMMAND_NOT_FOUND);
-		ft_final_clean(shell);
-		exit(EXIT_COMMAND_NOT_FOUND);
+		ft_error(node->argv[0], NULL, COMMAND_NOT_FOUND);
+		ft_exit_child(shell, EXIT_COMMAND_NOT_FOUND);
 	}
-	env = ft_env_to_arr(shell->env);
-	execve(path, node->argv, env);
-	perror(node->argv[0]);
-	free(path);
-	ft_final_clean(shell);
-	exit(EXIT_FOUND_BUT_NOT_EXECUTABLE);
+	if (stat(path, &st) == 0 && S_ISDIR(st.st_mode))
+		errno = EISDIR;
+	else
+	{
+		env = ft_env_to_arr(shell->env);
+		execve(path, node->argv, env);
+		ft_free_arr(env);
+	}
+	ft_exec_fail(shell, node->argv[0], path);
 }
 
 int	ft_exec_cmd(t_shell *shell, t_ast *node)
 {
 	pid_t	pid;
-	int		status;
+	char	**argv;
 
-	if (!node->argv || !node->argv[0])
+	argv = ft_expand_argv(shell, node->argv);
+	if (!argv)
+		return (1);
+	ft_free_arr(node->argv);
+	node->argv = argv;
+	if (!argv[0])
 		return (0);
-	if (ft_is_builtin(node->argv[0]))
-		return (ft_exec_builtin(shell, node->argv));
+	if (ft_is_builtin(argv[0]))
+		return (ft_exec_builtin(shell, argv));
 	pid = fork();
 	if (pid < 0)
-		return (perror("fork"), 1);
+		return (perror("minishell: fork"), 1);
 	if (pid == 0)
 	{
 		ft_reset();
 		ft_child_exec(shell, node);
 	}
-	waitpid(pid, &status, 0);
-	if (WIFEXITED(status))
-		return (WEXITSTATUS(status));
-	if (WIFSIGNALED(status))
-		return (EXIT_COMMAND_FAILED + WTERMSIG(status));
-	return (1);
+	return (ft_wait(shell, pid));
 }

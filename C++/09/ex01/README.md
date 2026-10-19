@@ -6,9 +6,11 @@
 
 Evaluate arithmetic expressions written in Reverse Polish Notation.
 
+Container: `std::stack` backed by `std::list` (`std::map`, `std::vector` and `std::deque` are used by ex00 and ex02).
+
 ## Build & Run
 
 ```bash
 make
-./RPN
+./RPN "8 9 * 9 - 9 - 9 - 4 - 1 +"
 ```

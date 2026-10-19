@@ -12,7 +12,7 @@
 
 #include "../../includes/minishell.h"
 
-static int	ft_read_quotes(char *s, int i, bool *error)
+static int	ft_read_quotes(char *s, int i, char *error)
 {
 	char	quote;
 
@@ -21,13 +21,13 @@ static int	ft_read_quotes(char *s, int i, bool *error)
 		i++;
 	if (!s[i])
 	{
-		*error = true;
+		*error = quote;
 		return (i);
 	}
 	return (i + 1);
 }
 
-static int	ft_read_word(char *s, int i, bool *error)
+static int	ft_read_word(char *s, int i, char *error)
 {
 	while (s[i] && !ft_isspace(s[i]) && !ft_ismeta(s[i]))
 	{
@@ -42,14 +42,19 @@ static int	ft_read_word(char *s, int i, bool *error)
 bool	ft_tokenizer_word(t_tokens **tokens, char *s, int *start)
 {
 	int		i;
-	bool	error;
+	char	error[3];
 	char	*word;
+	char	*msg;
 
-	error = false;
-	i = ft_read_word(s, *start, &error);
-	if (error)
+	error[0] = '\0';
+	i = ft_read_word(s, *start, error);
+	if (error[0])
 	{
-		ft_putstr_fd(2, "syntax error: unclosed quote\n");
+		error[1] = '\'';
+		error[2] = '\0';
+		msg = ft_strjoin("unexpected EOF while looking for matching `", error);
+		ft_error(NULL, NULL, msg);
+		free(msg);
 		return (false);
 	}
 	word = ft_substr(s, *start, i - *start);

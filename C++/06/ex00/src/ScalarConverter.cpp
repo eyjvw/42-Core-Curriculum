@@ -40,154 +40,130 @@ ScalarConverter::~ScalarConverter(void)
 
 static void printResult(std::string c, std::string i, std::string f, std::string d)
 {
-    std::cout << "char : " << c << std::endl
-    << "int : " << i << std::endl
-    << "float : " << f << std::endl
-    << "double : " << d << std::endl;
+    std::cout << "char: " << c << std::endl
+    << "int: " << i << std::endl
+    << "float: " << f << std::endl
+    << "double: " << d << std::endl;
 }
 
-static bool correctArgs(const std::string &input)
+static bool isPseudoLiteral(const std::string &input)
 {
-    size_t i = 0;
-    size_t len = input.length();
-
-    if (len == 1)
-        return (isprint(static_cast<unsigned char>(input[0])));
     if (input == "nan" || input == "nanf")
-        return (printResult("impossible", "impossible", "nanf", "nan"), false);
+        return (printResult("impossible", "impossible", "nanf", "nan"), true);
     if (input == "-inff" || input == "-inf")
-        return (printResult("impossible", "impossible", "-inff", "-inf"), false);
+        return (printResult("impossible", "impossible", "-inff", "-inf"), true);
     if (input == "+inff" || input == "+inf")
-        return (printResult("impossible", "impossible", "+inff", "+inf"), false);
-    while (i < len && !isdigit(static_cast<unsigned char>(input[i])))
-        i++;
-    return (i < len);
+        return (printResult("impossible", "impossible", "+inff", "+inf"), true);
+    return (false);
 }
 
-static std::string cStr(const char c, const int i)
+// Returns 'c' (char), 'i' (int), 'f' (float), 'd' (double) or 0 if the literal is invalid
+static char literalType(const std::string &input)
+{
+    size_t len = input.length();
+    size_t i = 0;
+    size_t digits = 0;
+    size_t dots = 0;
+
+    if (len == 1 && !isdigit(static_cast<unsigned char>(input[0])))
+        return (isprint(static_cast<unsigned char>(input[0])) ? 'c' : 0);
+    if (len == 3 && input[0] == '\'' && input[2] == '\'')
+        return (isprint(static_cast<unsigned char>(input[1])) ? 'c' : 0);
+    if (len > 0 && (input[0] == '+' || input[0] == '-'))
+        i++;
+    if (len > 0 && input[len - 1] == 'f')
+        len--;
+    for (; i < len; i++)
+    {
+        if (isdigit(static_cast<unsigned char>(input[i])))
+            digits++;
+        else if (input[i] == '.')
+            dots++;
+        else
+            return (0);
+    }
+    if (digits == 0 || dots > 1)
+        return (0);
+    if (len != input.length())
+        return (dots == 1 ? 'f' : 0);
+    return (dots == 1 ? 'd' : 'i');
+}
+
+static std::string cStr(const double d)
+{
+    std::ostringstream temp;
+    char c;
+
+    if (d != d || d < 0 || d > 127)
+        return ("impossible");
+    c = static_cast<char>(d);
+    if (!isprint(static_cast<unsigned char>(c)))
+        return ("Non displayable");
+    temp << "\'" << c << "\'";
+    return (temp.str());
+}
+
+static std::string iStr(const double d)
+{
+    std::ostringstream temp;
+
+    if (d != d || d <= static_cast<double>(INT_MIN) - 1.0 || d >= static_cast<double>(INT_MAX) + 1.0)
+        return ("impossible");
+    temp << static_cast<int>(d);
+    return (temp.str());
+}
+
+static std::string fStr(const double d)
 {
     std::ostringstream temp;
     std::string x;
 
-    if (i < 0 || i > 127)
+    if (d != d || d < -FLT_MAX || d > FLT_MAX)
         return ("impossible");
-    if (!isprint(i))
-        return ("Non displayable");
-    temp << "\'" << c << "\'";
+    temp << std::setprecision(6) << static_cast<float>(d);
     x = temp.str();
-    return x;
-}
-
-static std::string iStr(const int toInt, const double d)
-{
-    std::ostringstream temp;
-    std::string i;
-
-    if (d < INT_MIN || d > INT_MAX)
-        return ("impossible");
-    else
-    {
-        temp << toInt;
-        i = temp.str();
-        return (i);
-    }
-}
-
-static std::string fStr(const float f, const double d)
-{
-	std::ostringstream temp;
-	std::string x;
-
-    if (d < -FLT_MAX || d > FLT_MAX)
-		return ("impossible");
-	else
-	{
-		temp << std::setprecision(6) << f;
-		x = temp.str();
-		if (x.find('.') == std::string::npos)
-			x += ".0f";
-		else
-			x += 'f';
-		return (x);
-	}
+    if (x.find_first_of(".e") == std::string::npos)
+        x += ".0";
+    return (x + 'f');
 }
 
 static std::string dStr(const double d)
 {
-	std::ostringstream temp;
-	std::string x;
+    std::ostringstream temp;
+    std::string x;
 
-	temp << std::setprecision(15) << d;
-	x = temp.str();
-	if (x.find('.') == std::string::npos)
-		x += ".0";
-	return (x);
+    if (d != d || d < -DBL_MAX || d > DBL_MAX)
+        return ("impossible");
+    temp << std::setprecision(15) << d;
+    x = temp.str();
+    if (x.find_first_of(".e") == std::string::npos)
+        x += ".0";
+    return (x);
 }
 
 void ScalarConverter::convert(const std::string input)
 {
-    size_t len = input.length();
-    char c = 0;
-    int i = 0;
-    float f = 0;
-    double d = 0;
-    long tempInt = 0;
-    long double tempDouble = 0;
-        
-    if (!correctArgs(input))
-        return;
-    if (len == 1 && isalpha(input[0]))
-    {
-        c = input[0];
-        i = static_cast<int>(c);
-        f = static_cast<float>(c);
-        d = static_cast<double>(c);
-    }
-    else if (input[len - 1] == 'f')
-    {
-        tempDouble = atof(input.c_str());
-        
-        if ((tempDouble < FLT_MIN || tempDouble > FLT_MAX) && tempDouble != 0)
-        {
-            std::cerr << "Float overflow" << std::endl;
-            return;
-        }
-    
-        f = atof(input.c_str());
-        c = static_cast<char>(f);
-        i = static_cast<int>(f);
-        d = static_cast<double>(f);
-    }
-    else if (input.find('.') != std::string::npos)
-    {
-        tempDouble = strtold(input.c_str(), NULL);
-        
-        if (tempDouble < DBL_MIN || tempDouble > DBL_MAX)
-        {
-            std::cerr << "Double overflow" << std::endl;
-            return;
-        }
+    char type;
+    double d;
+    long l;
 
-        d = atof(input.c_str());
-        i = static_cast<int>(d);
-        c = static_cast<char>(d);
-        f = static_cast<float>(d);
+    if (isPseudoLiteral(input))
+        return;
+    type = literalType(input);
+    if (type == 0)
+        return (printResult("impossible", "impossible", "impossible", "impossible"));
+    errno = 0;
+    if (type == 'c')
+        d = static_cast<double>(input.length() == 3 ? input[1] : input[0]);
+    else if (type == 'i')
+    {
+        l = strtol(input.c_str(), NULL, 10);
+        if (errno == ERANGE || l < INT_MIN || l > INT_MAX)
+            d = strtod(input.c_str(), NULL);
+        else
+            d = static_cast<double>(static_cast<int>(l));
     }
     else
-    {
-        tempInt = atol(input.c_str());
-        
-        if (tempInt < INT_MIN || tempInt > INT_MAX)
-        {
-            std::cerr << "Int overflow" << std::endl;
-            return;
-        }
-        
-        i = atoi(input.c_str());
-        c = static_cast<char>(i);
-        f = static_cast<float>(i);
-        d = static_cast<double>(i);
-    }
-    
-    printResult(cStr(c, i), iStr(i, d), fStr(f, d), dStr(d));
+        d = strtod(input.c_str(), NULL);
+    printResult(cStr(d), iStr(d), fStr(d), dStr(d));
 }

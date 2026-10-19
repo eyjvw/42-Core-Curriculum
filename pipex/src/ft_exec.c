@@ -12,16 +12,29 @@
 
 #include "pipex.h"
 
-static char	*ft_direct_path(char *cmd)
+static void	ft_exec_direct(t_pipex *px, char **args)
 {
-	if (!cmd)
+	int	code;
+
+	execve(args[0], args, px->env);
+	perror(args[0]);
+	code = 126;
+	if (access(args[0], F_OK) == -1)
+		code = 127;
+	ft_free_split(args, -1);
+	exit(code);
+}
+
+static char	**ft_get_paths(char **env)
+{
+	int	i;
+
+	i = 0;
+	while (env && env[i] && ft_strncmp(env[i], "PATH=", 5) != 0)
+		i++;
+	if (!env || !env[i])
 		return (NULL);
-	if (cmd[0] == '/' || (cmd[0] == '.' && cmd[1] == '/'))
-	{
-		if (access(cmd, X_OK) == 0)
-			return (cmd);
-	}
-	return (NULL);
+	return (ft_split(env[i] + 5, ':'));
 }
 
 static char	*ft_search_path(char *cmd, char **env)
@@ -31,35 +44,36 @@ static char	*ft_search_path(char *cmd, char **env)
 	char	*temp;
 	char	*full;
 
-	if (!cmd || !env)
+	if (!cmd || !*cmd)
 		return (NULL);
-	i = 0;
-	while (env[i] && ft_strncmp(env[i], "PATH=", 5) != 0)
-		i++;
-	if (!env[i])
+	paths = ft_get_paths(env);
+	if (!paths)
 		return (NULL);
-	paths = ft_split(env[i] + 5, ':');
 	i = 0;
 	while (paths[i])
 	{
 		temp = ft_strjoin(paths[i], "/");
 		full = ft_strjoin(temp, cmd);
 		free(temp);
-		if (access(full, X_OK) == 0)
+		if (full && access(full, X_OK) == 0)
 			return (ft_free_split(paths, -1), full);
 		(free(full), i++);
 	}
 	return (ft_free_split(paths, -1), NULL);
 }
 
-static char	*ft_get_path(char *cmd, char **env)
+static void	ft_not_found(char **args, char *cmd)
 {
-	char	*p;
+	char	*msg;
 
-	p = ft_direct_path(cmd);
-	if (p)
-		return (p);
-	return (ft_search_path(cmd, env));
+	if (args[0])
+		cmd = args[0];
+	msg = ft_strjoin(cmd, ": command not found\n");
+	if (msg)
+		ft_putstr_fd(2, msg);
+	free(msg);
+	ft_free_split(args, -1);
+	exit(127);
 }
 
 void	ft_exec(t_pipex *px, char *cmd)
@@ -67,20 +81,17 @@ void	ft_exec(t_pipex *px, char *cmd)
 	char	**args;
 	char	*path;
 
-	args = ft_split(cmd, ' ');
-	path = ft_get_path(args[0], px->env);
+	args = ft_split_cmd(cmd);
+	if (!args)
+		exit(1);
+	if (args[0] && ft_strchr(args[0], '/'))
+		ft_exec_direct(px, args);
+	path = ft_search_path(args[0], px->env);
 	if (!path)
-	{
-		ft_free_split(args, -1);
-		ft_close(px);
-		ft_putstr_fd(2, args[0]);
-		ft_putstr_fd(2, ": command not found\n");
-		exit(127);
-	}
+		ft_not_found(args, cmd);
 	execve(path, args, px->env);
-	ft_putstr_fd(2, "execve failed\n");
-	if (path != args[0])
-		free(path);
+	perror(args[0]);
+	free(path);
 	ft_free_split(args, -1);
-	exit(1);
+	exit(126);
 }

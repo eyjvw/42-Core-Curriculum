@@ -11,10 +11,12 @@ AMateria::AMateria(AMateria const &src)
 	this->type = src.getType();
 }
 
-void	AMateria::operator=(AMateria const &src)
+AMateria	&AMateria::operator=(AMateria const &src)
 {
 	std::cout << "Operator assignement called for AMateria" << std::endl;
-	this->type = src.getType();
+	// the type of a materia never changes: copying it would turn an Ice into a Cure
+	(void)src;
+	return (*this);
 }
 
 AMateria::~AMateria()
@@ -30,11 +32,11 @@ AMateria::AMateria(std::string const & type)
 void AMateria::use(ICharacter& target)
 {
 	if (this->getType() == "ice")
-		std::cout << "* shoots an ice bolt at " << target.getName() << std::endl;
+		std::cout << "* shoots an ice bolt at " << target.getName() << " *" << std::endl;
 	else if (this->getType() == "cure")
 		std::cout << "* heals " << target.getName() << "'s wounds *"<< std::endl;
 	else
-		std::cout << "* Unknow materia used agaisnt " << target.getName() << " *" << std::endl;
+		std::cout << "* Unknown materia used against " << target.getName() << " *" << std::endl;
 }
 
 std::string const &AMateria::getType() const

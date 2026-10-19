@@ -3,7 +3,7 @@ FROM oven/bun:1.1
 WORKDIR /app
 
 COPY backend/auth/config/package.json backend/auth/config/bun.lock ./
-RUN bun install
+RUN bun install --frozen-lockfile
 
 COPY backend/auth/src ./src
 COPY backend/db ./db

@@ -28,6 +28,7 @@ int		ft_strcmp(const char *s1, const char *s2);
 int		ft_strncmp(const char *s1, const char *s2, size_t n);
 
 char	**ft_split(char *s, char c);
+char	**ft_split_cmd(char *s);
 
 // get_next_line
 

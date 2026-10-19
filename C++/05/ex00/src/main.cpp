@@ -31,5 +31,47 @@ int main(void)
         std::cerr << e.what() << std::endl;
     }
 
+    try
+    {
+        Bureaucrat tooHigh("TooHigh", 0);
+    }
+    catch(const std::exception &e)
+    {
+        std::cerr << e.what() << std::endl;
+    }
+
+    try
+    {
+        Bureaucrat tooLow("TooLow", 151);
+    }
+    catch(const std::exception &e)
+    {
+        std::cerr << e.what() << std::endl;
+    }
+
+    try
+    {
+        Bureaucrat top("Top", 1);
+
+        top.incrementGrade();
+    }
+    catch(const Bureaucrat::GradeTooHighException &e)
+    {
+        std::cerr << e.what() << std::endl;
+    }
+
+    try
+    {
+        Bureaucrat bottom("Bottom", 150);
+        Bureaucrat copy(bottom);
+
+        std::cout << copy << std::endl;
+        bottom.decrementGrade();
+    }
+    catch(const Bureaucrat::GradeTooLowException &e)
+    {
+        std::cerr << e.what() << std::endl;
+    }
+
     return (0);
 }

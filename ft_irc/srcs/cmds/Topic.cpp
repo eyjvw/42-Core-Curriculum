@@ -28,7 +28,7 @@ bool Topic::Check(Server &server)
 
 	if (!channel->isClient(package.client->getFd()))
 		return (package.setError(ERR_NOTONCHANNEL), false);
-	if (channel->getOpTopic()
+	if (package.cmdData.size() > TOPIC_NEW && channel->getOpTopic()
 	&& !channel->isOperator(package.client->getFd()))
 		return (package.setError(ERR_CHANOPRIVSNEEDED), false);
 

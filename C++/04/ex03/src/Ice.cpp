@@ -10,10 +10,11 @@ Ice::Ice(Ice const &src) : AMateria(src.getType())
 	std::cout << "Copy Constructor called for Ice" << std::endl;
 }
 
-void	Ice::operator=(Ice const &src)
+Ice	&Ice::operator=(Ice const &src)
 {
 	std::cout << "Operator assignement called for Ice" << std::endl;
-	this->type = src.getType();
+	AMateria::operator=(src);
+	return (*this);
 }
 
 Ice::~Ice()

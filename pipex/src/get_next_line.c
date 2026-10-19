@@ -30,6 +30,8 @@ static char	*ft_read(char *buffer, int fd)
 	char		*temp;
 	ssize_t		bytes;
 
+	if (buffer && ft_strchr(buffer, '\n'))
+		return (buffer);
 	temp = malloc(BUFFER_SIZE + 1);
 	if (!temp)
 		return (free(buffer), NULL);

@@ -38,9 +38,10 @@ BONUS_OBJ_DIR = obj_bonus
 
 OBJECTS = $(addprefix $(OBJ_DIR)/,$(SOURCES:.c=.o))
 BONUS_OBJECTS = $(addprefix $(BONUS_OBJ_DIR)/,$(BONUS_SOURCES:.c=.o))
+DEPS = $(OBJECTS:.o=.d) $(BONUS_OBJECTS:.o=.d)
 
+CC = cc
 CFLAGS = -Wall -Wextra -Werror -pthread -O3
 PHILO_INC = -I philosophers/includes/
 BONUS_INC = -I philosophers_bonus/includes/
 RM = rm -f
-CC = cc

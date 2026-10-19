@@ -47,16 +47,13 @@ void	PhoneBook::search(void)
 			return ;
 	} while (index.empty());
 
-	for (int i = 0;index[i];i++)
+	if (index.length() != 1 || index[0] < '1' || index[0] > '8')
 	{
-		if (!isdigit(index[i]) || index[i] == '0')
-		{
-			std::cout << "[PhoneBook] Index is out of range or invalid" << std::endl;
-			return ;
-		}
+		std::cout << "[PhoneBook] Index is out of range or invalid" << std::endl;
+		return ;
 	}
 
-	newIndex = atoi(index.c_str());
+	newIndex = index[0] - '0';
 	if (newIndex <= this->contacts_number)
 	{
 		this->contacts[newIndex - 1].showAll();

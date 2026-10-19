@@ -34,19 +34,13 @@ class Form
         class GradeTooHighException : public std::exception
         {
             public:
-                const char *what() const throw()
-                {
-                    return ("Grade too high for the form");
-                }
+                const char *what() const throw();
         };
 
-        class GradeTooLowExecption : public std::exception
+        class GradeTooLowException : public std::exception
         {
             public:
-                const char *what() const throw()
-                {
-                    return ("Grade to low for the form");
-                }
+                const char *what() const throw();
         };
 
         const std::string &getName(void) const;

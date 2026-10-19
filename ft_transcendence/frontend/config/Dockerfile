@@ -1,4 +1,4 @@
-FROM oven/bun:1.1
+FROM oven/bun:1.1 AS build
 
 WORKDIR /app
 
@@ -10,6 +10,11 @@ COPY frontend/index.html ./
 COPY frontend/src ./src
 COPY frontend/public ./public
 
-EXPOSE 3000
+RUN bun run build
 
-CMD ["bun", "run", "dev"]
+FROM nginx:alpine
+
+COPY frontend/config/nginx.conf /etc/nginx/conf.d/default.conf
+COPY --from=build /app/dist /usr/share/nginx/html
+
+EXPOSE 3000

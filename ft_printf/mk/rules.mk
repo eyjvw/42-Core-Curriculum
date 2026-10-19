@@ -1,17 +1,15 @@
 all: $(NAME)
 	@echo "$(GREEN)✅ Compilation completed: $(NAME)$(RESET)"
 
-$(NAME): $(OBJ_DIR) $(OBJECTS)
+$(NAME): $(OBJECTS)
 	@echo "$(BLUE)📦 Creating library...$(RESET)"
 	@$(AR) $(NAME) $(OBJECTS)
 	@echo "$(CYAN)📚 $(NAME) created successfully.$(RESET)"
 
-$(OBJ_DIR):
-	@mkdir -p $(OBJ_DIR)
-
-$(OBJ_DIR)/%.o: src/%.c includes/ft_printf.h
+$(OBJ_DIR)/%.o: %.c
 	@echo "$(YELLOW)🔧 Compiling $<...$(RESET)"
-	@$(CC) -c $(CFLAGS) $< -o $@
+	@mkdir -p $(dir $@)
+	@$(CC) $(CFLAGS) -MMD -MP -c $< -o $@
 
 clean:
 	@echo "$(RED)🧹 Removing object files...$(RESET)"
@@ -23,6 +21,11 @@ fclean: clean
 	@$(RM) $(NAME)
 	@echo "$(RED)✔️ Fclean done.$(RESET)"
 
-re: fclean all
+bonus: all
 
-.PHONY: all clean fclean re
+re: fclean
+	@$(MAKE) --no-print-directory all
+
+-include $(DEPS)
+
+.PHONY: all bonus clean fclean re

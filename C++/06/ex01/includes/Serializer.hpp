@@ -10,6 +10,8 @@
 /*                                                                            */
 /* ************************************************************************** */
 
+#pragma once
+
 #include <iostream>
 #include <stdint.h>
 
@@ -20,12 +22,13 @@ typedef struct sData
 
 class Serializer
 {
-    public:
+    private:
         Serializer(void);
         Serializer(const Serializer &other);
         Serializer &operator=(const Serializer &other);
         ~Serializer(void);
 
+    public:
         static uintptr_t serialize(Data *ptr);
         static Data *deserialize(uintptr_t raw);
 };

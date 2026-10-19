@@ -17,12 +17,15 @@ int	ft_env(t_shell *shell)
 	t_env	*env;
 
 	env = shell->env;
-	if (!env)
-		return (1);
 	while (env)
 	{
 		if (env->value)
-			printf("%s=%s\n", env->key, env->value);
+		{
+			ft_putstr_fd(STDOUT_FILENO, env->key);
+			ft_putstr_fd(STDOUT_FILENO, "=");
+			ft_putstr_fd(STDOUT_FILENO, env->value);
+			ft_putstr_fd(STDOUT_FILENO, "\n");
+		}
 		env = env->next;
 	}
 	return (0);

@@ -7,21 +7,23 @@ MateriaSource::MateriaSource()
 		this->source[i] = NULL;
 }
 
-MateriaSource::MateriaSource(MateriaSource const &src)
+MateriaSource::MateriaSource(MateriaSource const &src) : IMateriaSource(src)
 {
 	std::cout << "Copy Constructor called for MateriaSource" << std::endl;
 	for (size_t i = 0; i < 4; i++)
 	{
 		if (src.source[i])
-			this->source[i]= src.source[i];
+			this->source[i] = src.source[i]->clone();
 		else
 			this->source[i] = NULL;
 	}
 }
 
-void	MateriaSource::operator=(MateriaSource const &src)
+MateriaSource	&MateriaSource::operator=(MateriaSource const &src)
 {
 	std::cout << "Operator assignement called for MateriaSource" << std::endl;
+	if (this == &src)
+		return (*this);
 	for (size_t i = 0; i < 4; i++)
 	{
 		if (this->source[i])
@@ -33,10 +35,11 @@ void	MateriaSource::operator=(MateriaSource const &src)
 	for (size_t i = 0; i < 4; i++)
 	{
 		if (src.source[i])
-			this->source[i]= src.source[i];
+			this->source[i] = src.source[i]->clone();
 		else
 			this->source[i] = NULL;
 	}
+	return (*this);
 }
 
 MateriaSource::~MateriaSource()
@@ -54,6 +57,16 @@ MateriaSource::~MateriaSource()
 
 void	MateriaSource::learnMateria(AMateria *src)
 {
+	if (!src)
+		return ;
+	for (size_t i = 0; i < 4; i++)
+	{
+		if (this->source[i] == src)
+		{
+			std::cout << "Materia " << src->getType() << " is already learned" << std::endl;
+			return ;
+		}
+	}
 	for (size_t i = 0; i < 4; i++)
 	{
 		if (!this->source[i])

@@ -3,10 +3,11 @@ import { roomManager }			from '../services/roomManager.ts';
 import { wsManager }			from '../services/websocketManager.ts';
 import { BotPlayer }			from '../services/botPlayer.ts';
 import * as responses			from '../utils/responses.ts';
-import * as queries				from '../../../db/schemas/getters.ts';
+import * as queries				from '../../db/schemas/getters.ts';
 import { createGame, getGameState, calculateWinnings, hit, stand, doubleDown, createMultiplayerGame, multiplayerHit, multiplayerStand, multiplayerDouble, getMultiplayerGameState } from '../blackjack/engine.ts';
 import type { GameRoom }		from '../types/multiplayer.ts';
 import { hasActiveSoloGame }	from './blackjack.ts';
+import { recordBlackjackResult }	from '../../db/schemas/stats.ts';
 
 type BaseContext = { userId: any };
 
@@ -30,7 +31,7 @@ async function validateRequest(req: Request, opts: { withUser?: boolean; withRoo
 
 	if (opts.withRoomFromBody)
 	{
-		const body	= await req.json();
+		const body: any	= await req.json();
 		if (!body.roomId)	{ return (responses.badRequest('Missing roomId'));	}
 		const room	= roomManager.getRoom(body.roomId);
 		if (!room)			{ return (responses.notFound('Room not found'));	}
@@ -72,6 +73,12 @@ function initAndBroadcastGame(room: GameRoom, roomId: string): any
 	room.currentGame	= game;
 	room.status			= 'playing';
 	room.updatedAt		= new Date();
+
+	if (game.status === 'finished')
+	{
+		room.status = 'finished';
+		updatePlayerBalances(room);
+	}
 
 	wsManager.broadcastRoomState(roomId, serializeRoom(room));
 	wsManager.broadcastGameState(roomId, getMultiplayerGameState(game));
@@ -145,7 +152,7 @@ async function autoBotPlay(room: GameRoom, roomId: string): Promise<void>
 		room.updatedAt = new Date();
 		wsManager.broadcastGameState(roomId, getMultiplayerGameState(room.currentGame));
 
-		if (room.currentGame.status === 'finished')
+		if ((room.currentGame.status as string) === 'finished')
 		{
 			room.status = 'finished';
 			await updatePlayerBalances(room);
@@ -214,7 +221,7 @@ export async function createRoomController(req: Request): Promise<Response>
 		if (existingRoom)
 			return responses.badRequest('You already have an active room. Leave it first.');
 
-		const room = roomManager.createRoom(String(userId), user.username || `Player${userId}`, 5);
+		const room = roomManager.createRoom(String(userId), user.username || `Player${userId}`, user.coins || 0, 5);
 
 		return (responses.created({
 			roomId: room.id,
@@ -387,6 +394,7 @@ export async function placeBetController(req: Request): Promise<Response>
 		const { userId, room, body } = ctx;
 
 		if (body.bet === undefined)					{ return (responses.badRequest('Missing bet'));							}
+		if (!Number.isInteger(body.bet))			{ return (responses.badRequest('Bet must be an integer'));				}
 		if (room.status !== 'betting')				{ return (responses.badRequest('Not in betting phase'));				}
 
 		const player = room.players.get(String(userId));
@@ -500,6 +508,8 @@ async function updatePlayerBalances(room: any): Promise<void>
 		{
 			try			{ await queries.updateUserCoins(parseInt(playerState.id), playerState.balance); }
 			catch (e)	{ console.error('Failed to update user coins:', e); }
+			try			{ recordBlackjackResult(parseInt(playerState.id), playerState.result === 'lose' ? 'loss' : playerState.result === 'push' ? 'push' : 'win'); }
+			catch (e)	{ console.error('Failed to update stats:', e); }
 		}
 	}
 }

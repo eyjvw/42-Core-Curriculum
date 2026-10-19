@@ -12,85 +12,88 @@
 
 #include "../../includes/minishell.h"
 
-static char	*ft_expand_exit_code(t_shell *shell, char *res)
+static char	*ft_append(char *res, char c)
 {
-	char	*temp;
+	char	buf[2];
 
-	temp = ft_itoa(shell->exit_code);
-	res = ft_strjoin_and_free(res, temp);
-	free(temp);
-	return (res);
+	buf[0] = c;
+	buf[1] = '\0';
+	return (ft_strjoin_and_free(res, buf));
 }
 
-static char	*ft_expand_pid(char *res)
+static bool	ft_is_quote(char *state, char c)
 {
-	char	*temp;
-
-	temp = ft_itoa((int)getpid());
-	res = ft_strjoin_and_free(res, temp);
-	free(temp);
-	return (res);
+	if (c != '\'' && c != '"')
+		return (false);
+	if (!*state)
+		*state = c;
+	else if (*state == c)
+		*state = 0;
+	else
+		return (false);
+	return (true);
 }
 
 static char	*ft_expand_var_name(t_shell *shell, char *value, int *i, char *res)
 {
 	int		start;
-	int		len;
 	char	*var;
-	char	*temp;
 
 	start = *i;
 	while (value[*i] && (ft_isalnum(value[*i]) || value[*i] == '_'))
 		(*i)++;
-	len = *i - start;
-	if (len > 0)
-	{
-		var = ft_substr(value, start, len);
-		temp = ft_get_env(shell->env, var);
-		if (temp)
-			res = ft_strjoin_and_free(res, temp);
-		free(var);
-	}
-	else
-		res = ft_strjoin_and_free(res, "$");
+	var = ft_substr(value, start, *i - start);
+	if (var)
+		res = ft_strjoin_and_free(res, ft_get_env(shell->env, var));
+	free(var);
 	return (res);
 }
 
 static char	*ft_handle_dollar(t_shell *shell, char *value, int *i, char *res)
 {
+	char	*temp;
+
+	temp = NULL;
 	(*i)++;
 	if (value[*i] == '?')
+		temp = ft_itoa(shell->exit_code);
+	else if (value[*i] == '0')
+		temp = ft_strdup("minishell");
+	if (value[*i] == '?' || (value[*i] >= '0' && value[*i] <= '9'))
 	{
-		res = ft_expand_exit_code(shell, res);
+		res = ft_strjoin_and_free(res, temp);
+		free(temp);
 		(*i)++;
 	}
-	else if (value[*i] == '$')
-	{
-		res = ft_expand_pid(res);
-		(*i)++;
-	}
-	else
+	else if (ft_isalnum(value[*i]) || value[*i] == '_')
 		res = ft_expand_var_name(shell, value, i, res);
+	else
+		res = ft_append(res, '$');
 	return (res);
 }
 
-char	*ft_expand_variables(t_shell *shell, char *value)
+char	*ft_expand_variables(t_shell *shell, char *value, bool quotes)
 {
 	int		i;
 	char	*res;
-	char	buf[2];
+	char	state;
 
 	i = 0;
+	state = 0;
 	res = ft_strdup("");
-	while (value[i])
+	while (res && value[i])
 	{
-		if (value[i] == '$')
+		if (value[i] == '$' && quotes && !state
+			&& (value[i + 1] == '\'' || value[i + 1] == '"'))
+			i++;
+		else if (value[i] == '$' && state != '\'')
 			res = ft_handle_dollar(shell, value, &i, res);
 		else
 		{
-			buf[0] = value[i];
-			buf[1] = '\0';
-			res = ft_strjoin_and_free(res, buf);
+			if (quotes && ft_is_quote(&state, value[i]))
+				res = ft_append(res, QUOTE_MARK);
+			else
+				res = ft_append(res, value[i]);
 			i++;
 		}
 	}

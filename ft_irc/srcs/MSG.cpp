@@ -14,11 +14,16 @@
 
 std::string MSG::getCmd(std::string const &line)
 { 
-	char	sep = ' ';
+	char		sep = ' ';
+	std::string	cmd;
 	
 	if (line.find(sep) == std::string::npos)
-		return (line.substr(0, line.length() - 2));
-	return (line.substr(0, line.find(sep)));
+		cmd = line.substr(0, line.length() - 2);
+	else
+		cmd = line.substr(0, line.find(sep));
+	for (size_t i = 0; i < cmd.length(); i++)
+		cmd[i] = std::toupper(static_cast<unsigned char>(cmd[i]));
+	return (cmd);
 }
 
 static std::vector<std::string>	getCmdData(std::string const &line)

@@ -22,7 +22,7 @@ export async function loginController(req: Request): Promise<Response>
 		const identifier: string				= email;
 		const user								= await findUser(identifier);
 
-		if (user.length < 1) return (errors.invalidCred());
+		if (user.length < 1 || !user[0]!.password_hash) return (errors.invalidCred());
 
 		const correctPass: boolean = await compare(password, user[0]!.password_hash);
 		if (!correctPass) return (errors.invalidCred());

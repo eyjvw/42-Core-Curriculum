@@ -24,10 +24,15 @@
 # include <signal.h>
 # include <stdbool.h>
 # include <dirent.h>
-# include <signal.h>
+# include <errno.h>
+# include <limits.h>
+# include <string.h>
+# include <sys/stat.h>
 
 # include "defines.h"
 # include "structs.h"
 # include "functions.h"
+
+extern volatile sig_atomic_t	g_signal;
 
 #endif

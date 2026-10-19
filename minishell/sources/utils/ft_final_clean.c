@@ -12,17 +12,6 @@
 
 #include "../../includes/minishell.h"
 
-void	ft_x(void)
-{
-	char	*envp[1];
-	char	*argv[2];
-
-	envp[0] = NULL;
-	argv[0] = "true";
-	argv[1] = NULL;
-	execve("/usr/bin/true", argv, envp);
-}
-
 void	ft_final_clean(t_shell *shell)
 {
 	t_env	*temp;
@@ -39,5 +28,11 @@ void	ft_final_clean(t_shell *shell)
 		free(temp);
 	}
 	shell->env = NULL;
-	ft_x();
+	rl_clear_history();
+}
+
+void	ft_exit_child(t_shell *shell, int code)
+{
+	ft_final_clean(shell);
+	exit(code);
 }

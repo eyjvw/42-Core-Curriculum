@@ -52,17 +52,17 @@ make re
 
 ### WordPress Admin Panel
 - URL: `https://sbonneau.42.fr/wp-admin`
-- Username: From `.env` file (`WP_ADMIN_USER`)
-- Password: From `.env` file (`WP_ADMIN_PASSWORD`)
+- Username: From `srcs/.env` file (`DB_ROOT_USER`)
+- Password: From `secrets/db_root_pass.txt`
 
 ## Managing Credentials
 
 ### Location
-All credentials are in `srcs/.env`
+Logins are in `srcs/.env`; passwords are in the git-ignored `secrets/` folder (see DEV_DOC.md)
 
 
 1. Stop services: `make down`
-2. Edit `srcs/.env`
+2. Edit `srcs/.env` and/or the files in `secrets/`
 3. Clean data: `make fclean`
 4. Rebuild: `make re`
 
@@ -73,7 +73,7 @@ All credentials are in `srcs/.env`
 sudo docker ps
 ```
 
-Should show three healthy containers: nginx, wordpress, mariadb
+Should show the containers `Up` (nginx, wp-php, mariadb and the bonus services), with `mariadb` `(healthy)`
 
 ### Health Status Indicators
 - ✅ `Up X minutes (healthy)` - Service running correctly

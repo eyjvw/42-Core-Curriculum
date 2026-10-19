@@ -14,8 +14,10 @@ BONUS_SOURCES = ft_lstnew_bonus.c ft_lstadd_front_bonus.c ft_lstlast_bonus.c \
 OBJ_DIR = obj
 OBJECTS = $(addprefix $(OBJ_DIR)/,$(SOURCES:.c=.o))
 BONUS_OBJECTS = $(addprefix $(OBJ_DIR)/,$(BONUS_SOURCES:.c=.o))
+BONUS_FLAG = $(OBJ_DIR)/.bonus
+DEPS = $(OBJECTS:.o=.d) $(BONUS_OBJECTS:.o=.d)
 
-CFLAGS = -Wall -Wextra -Werror
-AR = ar -rcs
-RM = rm -f
 CC = cc
+CFLAGS = -Wall -Wextra -Werror
+AR = ar rcs
+RM = rm -f

@@ -1,11 +1,14 @@
+all: up
+
 up:
-	sudo docker-compose -f ./srcs/docker-compose.yml up --build -d
+	mkdir -p /home/sbonneau/data/web /home/sbonneau/data/db
+	sudo docker compose -f ./srcs/docker-compose.yml up --build -d
 
 stop:
-	sudo docker-compose -f ./srcs/docker-compose.yml stop
+	sudo docker compose -f ./srcs/docker-compose.yml stop
 
 down:
-	sudo docker-compose -f ./srcs/docker-compose.yml down -v
+	sudo docker compose -f ./srcs/docker-compose.yml down -v
 	sudo rm -rf /home/sbonneau/data/web/*
 	sudo rm -rf /home/sbonneau/data/db/*
 
@@ -14,4 +17,4 @@ fclean: down
 
 re: fclean up
 
-.PHONY: up stop down fclean re
+.PHONY: all up stop down fclean re

@@ -30,6 +30,21 @@ int main(void)
         
         std::cout << hoel << std::endl;
         std::cout << testForm << std::endl;
+
+        Bureaucrat boss("Boss", 1);
+        Form copy(testForm);
+
+        boss.signForm(copy);
+        std::cout << copy << std::endl;
+    }
+    catch(const std::exception &e)
+    {
+        std::cerr << e.what() << std::endl;
+    }
+
+    try
+    {
+        Form invalid("invalid", 0, 151);
     }
     catch(const std::exception &e)
     {

@@ -22,52 +22,57 @@ BitcoinExchange &BitcoinExchange::operator=(const BitcoinExchange &other)
 }
 BitcoinExchange::~BitcoinExchange() {}
 
-BitcoinExchange::BitcoinExchange(std::ifstream &dataBase, const char &limiter)
+static void removeCarriageReturn(std::string &line)
+{
+    if (!line.empty() && line[line.length() - 1] == '\r')
+        line.erase(line.length() - 1);
+}
+
+BitcoinExchange::BitcoinExchange(std::ifstream &dataBase)
 {
     if (!dataBase.is_open())
         throw(CantOpenFile());
 
-    std::string	line;
+    std::string line;
     bool firstLine = true;
+    double value;
 
     while (std::getline(dataBase, line))
     {
+        removeCarriageReturn(line);
         if (firstLine)
         {
             firstLine = false;
+            if (line == "date,exchange_rate")
+                continue;
+        }
+        if (line.empty())
             continue;
-        }
-        
-        size_t pos = line.find(limiter);
-        
-        if (pos == std::string::npos)
-        {
-            this->container.insert(std::make_pair(line, 0.0f));
-            continue ;
-        }
-        
-        std::string date = line.substr(0, pos);
-        float value = atof(line.substr(pos + 1).c_str());
-        this->container.insert(std::make_pair(date, value));
+
+        if (line.find(',') != 10 || !isValidDate(line.substr(0, 10))
+            || !isValidNumber(line.substr(11), value) || value < 0)
+            throw(InvalidDataBase());
+        this->container[line.substr(0, 10)] = value;
     }
+    if (this->container.empty())
+        throw(InvalidDataBase());
 }
 
-bool BitcoinExchange::isValidDate(std::string line) const
+bool BitcoinExchange::isValidDate(const std::string &date)
 {
-    for (size_t i = 0; i < line.size(); i++)
+    if (date.length() != 10 || date[4] != '-' || date[7] != '-')
+        return (false);
+    for (size_t i = 0; i < date.length(); i++)
     {
-        if (!isdigit(line[i]) && line[i] != '-' && line[i] != ' ')
+        if (i != 4 && i != 7 && !isdigit(static_cast<unsigned char>(date[i])))
             return (false);
     }
     
-    if (line.find('-') != 4 || line.length() != 11)
-        return (false);
+    int year = atoi(date.substr(0, 4).c_str());
+    int month = atoi(date.substr(5, 2).c_str());
+    int day = atoi(date.substr(8, 2).c_str());
     
-    int year = atoi(line.substr(0, 4).c_str());
-    int month = atoi(line.substr(5, 2).c_str());
-    int day = atoi(line.substr(8, 2).c_str());
-    
-    if (year < 1 || year > 9999 || month < 1 || month > 12 || day < 1)
+    if (year < 1 || month < 1 || month > 12 || day < 1)
         return (false);
     
     int daysInMonth[] = {31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
@@ -79,91 +84,83 @@ bool BitcoinExchange::isValidDate(std::string line) const
     return (day <= daysInMonth[month - 1]);
 }
 
-bool BitcoinExchange::isValidFormat(std::string date, float value) const
+// Accepts an optional sign, digits and at most one '.', nothing else
+bool BitcoinExchange::isValidNumber(const std::string &str, double &value)
 {
-    if (!isValidDate(date))
-    {
-        std::cout << WRONGDATE << date << std::endl;
-        return (false);
-    }
+    size_t i = 0;
+    size_t digits = 0;
+    bool dot = false;
 
-    if (value < 0)
+    if (i < str.length() && (str[i] == '-' || str[i] == '+'))
+        i++;
+    for (; i < str.length(); i++)
     {
-        std::cout << TOOLOW << " => " << value << std::endl;
-        return (false);
+        if (isdigit(static_cast<unsigned char>(str[i])))
+            digits++;
+        else if (str[i] == '.' && !dot)
+            dot = true;
+        else
+            return (false);
     }
-    
-    else if (value > 1000)
-    {
-        std::cout << TOOLARGE << " => " << value << std::endl;
+    if (digits == 0)
         return (false);
-    }
-    
+    value = strtod(str.c_str(), NULL);
     return (true);
 }
 
-time_t BitcoinExchange::dateToTimestamp(const std::string &date)
+void BitcoinExchange::isValidFormat(const std::string &line) const
 {
-    tm timeinfo = {};
-    
-    timeinfo.tm_year = atoi(date.substr(0, 4).c_str()) - 1900;
-    timeinfo.tm_mon = atoi(date.substr(5, 2).c_str()) - 1;
-    timeinfo.tm_mday = atoi(date.substr(8, 2).c_str());
-    
-    return (timegm(&timeinfo));
-}
+    double value;
 
-void	BitcoinExchange::findClosest(t_close &closest, const std::string &itDate, const float &itValue, const std::string &date) const
-{
-    time_t newDate = dateToTimestamp(itDate);
-    time_t actualDate = dateToTimestamp(date);
-
-    if (newDate > actualDate)
-        return;
-    
-    time_t oldDate = dateToTimestamp(closest.date);
-    
-    if (std::abs(actualDate - oldDate) > std::abs(actualDate - newDate))
-    {
-        closest.date = itDate;
-        closest.value = itValue;
-    }
-}
-
-void	BitcoinExchange::findExchangeRate(std::string date, float value) const
-{
-    t_close	closest;
-    closest.date = this->container.begin()->first;
-    closest.value = this->container.begin()->second;
-
-    for (std::map<std::string, float>::const_iterator itDb = this->container.begin(); itDb != this->container.end(); ++itDb)
-    {
-        if (itDb->first + ' ' == date)
-        {
-            std::cout << date << "=> " << value << " = " << value * itDb->second << std::endl;
-            return ;
-        }
-        
-        this->findClosest(closest, itDb->first, itDb->second, date);
-    }
-    
-    if (dateToTimestamp(date) < dateToTimestamp(closest.date))
-        std::cout << "Error : Bitcoin didn't exist at this date => " << date << std::endl;
+    if (line.find(" | ") != 10 || !isValidDate(line.substr(0, 10))
+        || !isValidNumber(line.substr(13), value))
+        std::cout << BADINPUT << line << std::endl;
+    else if (value < 0)
+        std::cout << TOOLOW << std::endl;
+    else if (value > 1000)
+        std::cout << TOOLARGE << std::endl;
     else
-        std::cout << date << "=> " << value << " = " << value * closest.value << std::endl;
+        this->findExchangeRate(line.substr(0, 10), value);
 }
 
-void BitcoinExchange::ExchangeRate(const BitcoinExchange &input) const
+void    BitcoinExchange::findExchangeRate(const std::string &date, double value) const
 {
-    for (std::map<std::string, float>::const_iterator itInput = input.container.begin(); itInput != input.container.end(); ++itInput)
+    // First date strictly after the requested one: the previous entry is the closest lower (or equal) date
+    std::map<std::string, double>::const_iterator it = this->container.upper_bound(date);
+
+    if (it == this->container.begin())
     {
-        if (this->isValidFormat(itInput->first, itInput->second))
-            this->findExchangeRate(itInput->first, itInput->second);
+        std::cout << TOOEARLY << date << std::endl;
+        return ;
+    }
+    --it;
+    std::cout << date << " => " << std::setprecision(10) << value << " = " << value * it->second << std::endl;
+}
+
+void BitcoinExchange::ExchangeRate(std::ifstream &input) const
+{
+    std::string line;
+    bool firstLine = true;
+
+    while (std::getline(input, line))
+    {
+        removeCarriageReturn(line);
+        if (firstLine)
+        {
+            firstLine = false;
+            if (line == "date | value")
+                continue;
+        }
+        this->isValidFormat(line);
     }
 }
 
-void BitcoinExchange::printContent() const {
-    for (std::map<std::string, float>::const_iterator it = this->container.begin(); it != this->container.end(); ++it)
-        std::cout << it->first << " => " << std::fixed << std::setprecision(2) << it->second << std::endl;
+const char *BitcoinExchange::CantOpenFile::what() const throw()
+{
+    return (CANTOPEN);
 }
 
+const char *BitcoinExchange::InvalidDataBase::what() const throw()
+{
+    return (BADDATABASE);
+}

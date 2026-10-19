@@ -81,6 +81,11 @@ static void	ft_check_values(t_data *data)
 		ft_print_error(NULL, NEGATIVE_ARGS);
 		exit(EXIT_FAILURE);
 	}
+	if (data->must_eat == 0)
+	{
+		ft_print_error(NULL, NEGATIVE_ARGS);
+		exit(EXIT_FAILURE);
+	}
 }
 
 void	ft_parsing(t_data *data, int ac, char **av)

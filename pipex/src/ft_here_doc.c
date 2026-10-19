@@ -17,7 +17,6 @@ static void	ft_read_heredoc(t_pipex *px)
 	char	*line;
 	size_t	len_line;
 
-	close(px->pipe_fd[0]);
 	while (1)
 	{
 		ft_putstr_fd(1, "heredoc> ");
@@ -29,8 +28,8 @@ static void	ft_read_heredoc(t_pipex *px)
 			line[len_line - 1] = '\0';
 		if (ft_strcmp(line, px->limiter) == 0)
 			(free(line), exit(0));
-		write(px->pipe_fd[1], line, ft_strlen(line));
-		write(px->pipe_fd[1], "\n", 1);
+		write(px->infile, line, ft_strlen(line));
+		write(px->infile, "\n", 1);
 		free(line);
 	}
 }
@@ -39,16 +38,20 @@ void	ft_here_doc(t_pipex *px)
 {
 	pid_t	reader;
 
-	if (pipe(px->pipe_fd) == -1)
-		return (ft_close(px), ft_putstr_fd(2, "Pipe error\n"));
+	unlink(HEREDOC_TMP);
+	px->infile = open(HEREDOC_TMP, O_WRONLY | O_CREAT | O_EXCL, 0600);
+	if (px->infile == -1)
+		(perror(HEREDOC_TMP), ft_close(px), exit(1));
 	reader = fork();
 	if (reader == -1)
-		return (ft_close(px), ft_putstr_fd(2, "Fork error\n"));
+		(unlink(HEREDOC_TMP), ft_close(px), ft_putstr_fd(2, "Fork error\n"),
+			exit(1));
 	if (reader == 0)
 		ft_read_heredoc(px);
-	else
-	{
-		close(px->pipe_fd[1]);
-		wait(NULL);
-	}
+	waitpid(reader, NULL, 0);
+	close(px->infile);
+	px->infile = open(HEREDOC_TMP, O_RDONLY);
+	unlink(HEREDOC_TMP);
+	if (px->infile == -1)
+		(perror(HEREDOC_TMP), ft_close(px), exit(1));
 }

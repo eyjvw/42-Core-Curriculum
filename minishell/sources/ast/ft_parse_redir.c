@@ -16,18 +16,17 @@ t_ast	*ft_parse_redir(t_tokens **tokens, t_ast *cmd)
 {
 	t_ast	*node;
 
-	if (!*tokens || !ft_is_red((*tokens)->type))
+	while (*tokens && (*tokens)->type == WORD)
+		*tokens = (*tokens)->next;
+	if (!*tokens || !ft_is_red((*tokens)->type) || !(*tokens)->next)
 		return (cmd);
 	node = ft_create_ast(AST_REDIR);
 	if (!node)
 		return (cmd);
 	node->redir_type = (*tokens)->type;
 	*tokens = (*tokens)->next;
-	if (*tokens && (*tokens)->type == WORD)
-	{
-		node->file = ft_strdup((*tokens)->value);
-		*tokens = (*tokens)->next;
-	}
-	node->left = cmd;
-	return (ft_parse_redir(tokens, node));
+	node->file = ft_strdup((*tokens)->value);
+	*tokens = (*tokens)->next;
+	node->left = ft_parse_redir(tokens, cmd);
+	return (node);
 }

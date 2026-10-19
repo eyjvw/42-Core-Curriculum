@@ -29,6 +29,7 @@ static std::map<std::string, void (*)(Server &)> initCmds()
 	m[CMD_TOPIC] = &CMD::Topic;
 	m[CMD_INVITE] = &CMD::Invite;
 	m[CMD_MODE] = &CMD::Mode;
+	m[CMD_PART] = &CMD::Part;
 
     return (m);
 }
@@ -93,11 +94,56 @@ void	CMD::User(Server &server)
 
 void	CMD::Join(Server &server)
 {
-	if (!Join::Check())
-		return ;
-	(server.isChannel(package.cmdData[JOIN_CHANNEL]))
-		? Join::Joining(server)
-		: Join::Create(server);
+	std::vector<std::string>	channels;
+	std::vector<std::string>	keys;
+
+	if (package.cmdData.size() < 1)
+		return (package.setError(ERR_NEEDMOREPARAMS));
+	channels = Ft::split(package.cmdData[JOIN_CHANNEL], ',');
+	if (package.cmdData.size() > JOIN_KEY)
+		keys = Ft::split(package.cmdData[JOIN_KEY], ',');
+	for (size_t i = 0; i < channels.size(); i++)
+	{
+		package.cmdData.clear();
+		package.cmdData.push_back(channels[i]);
+		if (i < keys.size())
+			package.cmdData.push_back(keys[i]);
+		package.channel = NULL;
+		package.errClear();
+		package.setError(0);
+		if (Join::Check())
+			(server.isChannel(channels[i]))
+				? Join::Joining(server)
+				: Join::Create(server);
+		RPL::reply(server);
+	}
+	package.setError(-1);
+}
+
+void	CMD::Part(Server &server)
+{
+	std::vector<std::string>	channels;
+	std::string					reason;
+
+	if (package.cmdData.size() < 1)
+		return (package.setError(ERR_NEEDMOREPARAMS));
+	channels = Ft::split(package.cmdData[PART_CHANNEL], ',');
+	if (package.cmdData.size() > PART_REASON)
+		reason = package.cmdData[PART_REASON];
+	for (size_t i = 0; i < channels.size(); i++)
+	{
+		package.cmdData.clear();
+		package.cmdData.push_back(channels[i]);
+		if (!reason.empty())
+			package.cmdData.push_back(reason);
+		package.channel = NULL;
+		package.errClear();
+		package.setError(0);
+		if (Part::Check(server))
+			Part::Leave();
+		RPL::reply(server);
+	}
+	package.setError(-1);
 }
 
 void	CMD::Priv(Server &server)
@@ -131,26 +177,44 @@ void	CMD::Invite(Server &server)
 void	CMD::Mode(Server &server)
 {
 	int			argCount	= 2;
+	int			before;
 	bool		add			= false;
+	char		sign		= 0;
+	std::string	applied;
+	std::string	params;
 
 	if (!Mode::Check(server))
 		return ;
-	std::string	&modes		= package.cmdData[MODE_MODES]; 
+	std::string	modes		= package.cmdData[MODE_MODES]; 
 	for (int i = 0; i < (int)modes.length(); i++)
 	{
 		char m = modes[i];
-		if (!Mode::singleCheck(modes, m, argCount))
+		if (m == '+' || m == '-')
+		{
+			add = (m == '+');
+			continue ;
+		}
+		before = argCount;
+		if (Mode::singleCheck(m))
+			Mode::mode[m](server, add, argCount);
+		if (package.error)
 		{
 			RPL::reply(server);
 			package.errClear();
+			package.setError(0);
 			continue ;
 		}
-		if (modes[i] == '+')
-			add = true;
-		else if (modes[i] == '-')
-			add = false;
-		else
-			Mode::mode[modes[i]](server, add, argCount);
+		if (sign != ((add) ? '+' : '-'))
+		{
+			sign = (add) ? '+' : '-';
+			applied += sign;
+		}
+		applied += m;
+		if (argCount > before)
+			params += " " + package.cmdData[before];
 	}
-	Mode::join();
+	if (applied.empty())
+		return (package.setError(-1));
+	package.cmdData.resize(MODE_MODES);
+	package.cmdData.push_back(applied + params);
 }

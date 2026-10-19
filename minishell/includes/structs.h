@@ -64,6 +64,7 @@ typedef struct s_ast
 	char			**argv;
 	char			*file;
 	t_token_type	redir_type;
+	int				fd;
 	struct s_ast	*left;
 	struct s_ast	*right;
 }	t_ast;
@@ -75,6 +76,7 @@ typedef struct s_shell
 	t_ast			*ast;
 	char			*input;
 	int				exit_code;
+	bool			interactive;
 }	t_shell;
 
 typedef struct s_node

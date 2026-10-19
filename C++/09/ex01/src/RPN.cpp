@@ -32,7 +32,7 @@ static bool isOperator(char c)
     return (c == '+' || c == '-' || c == '/' || c == '*');
 }
 
-static int calculate(int a, int b, char op)
+static long calculate(long a, long b, char op)
 {
     switch (op)
     {
@@ -51,31 +51,39 @@ static int calculate(int a, int b, char op)
 
 void RPN::reversePolish(const char *av)
 {
-    std::stack<int> st;
+    std::stack<long, std::list<long> > st;
     std::string input(av);
     
     for (size_t i = 0; i < input.length(); ++i)
     {
         char c = input[i];
         
-        if (c == ' ')
+        if (std::isspace(static_cast<unsigned char>(c)))
             continue;
         
-        if (std::isdigit(c))
+        // Every token is a single character separated by spaces
+        if (i + 1 < input.length() && !std::isspace(static_cast<unsigned char>(input[i + 1])))
+            throw Error();
+        if (std::isdigit(static_cast<unsigned char>(c)))
             st.push(c - '0');
         else if (isOperator(c))
         {
             if (st.size() < 2)
                 throw Error();
             
-            int b = st.top(); 
+            long b = st.top(); 
             st.pop();
-            int a = st.top();
+            long a = st.top();
             st.pop();
             
             if (c == '/' && b == 0)
                 throw Error();
-            st.push(calculate(a, b, c));
+
+            long result = calculate(a, b, c);
+
+            if (result < INT_MIN || result > INT_MAX)
+                throw Error();
+            st.push(result);
         }
         else
             throw Error();
@@ -85,4 +93,9 @@ void RPN::reversePolish(const char *av)
         throw Error();
     
     std::cout << st.top() << std::endl;
+}
+
+const char *RPN::Error::what() const throw()
+{
+    return ("Error");
 }

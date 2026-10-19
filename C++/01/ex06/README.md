@@ -22,7 +22,7 @@ handling levels with controlled fall-through (e.g., DEBUG triggers subsequent le
 
 ```bash
 make
-./Harl
+./harlFilter WARNING
 ```
 
 ## Notes

@@ -33,6 +33,7 @@
 #define PIDS_MALLOC_FAILED "Allocation of the pids failed\n"
 #define PHILOS_MALLOC_FAILED "Allocation of the philosophers failed\n"
 #define GETTIMEOFDAY_ERROR "gettimeofday failed\n"
+#define THREAD_FAILED "Creation of the monitor thread failed\n"
 #define NEGATIVE_ARGS "The arguments must be positive\n"
 
 #define THINKING "is thinking"
@@ -43,7 +44,6 @@
 
 #define SEM_FOR_FORKS "/philosopher_forks"
 #define SEM_FOR_PRINT "/philosopher_print"
-#define SEM_FOR_DEAD "/philosopher_dead"
 #define SEM_FOR_MEAL "/philosopher_meal"
 
 #define PHILO_DIED 42

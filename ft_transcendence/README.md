@@ -313,19 +313,19 @@ EXTERNAL_PORT=8443
 **`backend/auth/.env`**
 ```env
 PORT=4000
-JWT_SECRET=your_jwt_secret_here
+JWT_SECRET=CHANGE_ME_generate_with_openssl_rand_hex_32
 ```
 
 **`backend/social/.env`**
 ```env
 PORT=4001
-JWT_SECRET=your_jwt_secret_here
+JWT_SECRET=CHANGE_ME_generate_with_openssl_rand_hex_32
 ```
 
 **`backend/game/.env`**
 ```env
 PORT=4002
-JWT_SECRET=your_jwt_secret_here
+JWT_SECRET=CHANGE_ME_generate_with_openssl_rand_hex_32
 ```
 
 **`frontend/.env`**
@@ -333,7 +333,9 @@ JWT_SECRET=your_jwt_secret_here
 VITE_API_URL=
 ```
 
-> ⚠️ The `JWT_SECRET` must be the **same** across all backend services.
+> ⚠️ The `JWT_SECRET` must be the **same** across all backend services. Generate it once with
+> `openssl rand -hex 32` and paste it into the three backend `.env` files. The services refuse to start
+> if `JWT_SECRET` is missing or still set to the `CHANGE_ME…` placeholder.
 
 ### Step-by-step
 

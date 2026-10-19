@@ -18,7 +18,8 @@ static void	ft_flood_fill(t_game *game, int x, int y, char **visited)
 		return ;
 	if (x < 0 || x >= game->map->width || y < 0 || y >= game->map->height)
 		return ;
-	if (game->map->map[y][x] == '1' || visited[y][x] == '1')
+	if (game->map->map[y][x] == '1' || game->map->map[y][x] == 'M'
+		|| visited[y][x] == '1')
 		return ;
 	visited[y][x] = '1';
 	ft_flood_fill(game, x + 1, y, visited);
@@ -35,10 +36,7 @@ static void	ft_clean(char **visited, int len)
 	{
 		i = 0;
 		while (i < len)
-		{
-			if (visited[i])
-				free(visited[i++]);
-		}
+			free(visited[i++]);
 		free(visited);
 	}
 }

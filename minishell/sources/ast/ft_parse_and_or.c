@@ -19,17 +19,20 @@ t_ast	*ft_parse_and_or(t_tokens **tokens)
 	t_ast_type	type;
 
 	left = ft_parse_pipe(tokens);
-	if (!*tokens || ((*tokens)->type != AND_IF && (*tokens)->type != OR_IF))
-		return (left);
-	if ((*tokens)->type == AND_IF)
-		type = AST_AND;
-	else
-		type = AST_OR;
-	ast = ft_create_ast(type);
-	if (!ast)
-		return (left);
-	*tokens = (*tokens)->next;
-	ast->left = left;
-	ast->right = ft_parse_and_or(tokens);
-	return (ast);
+	while (*tokens && ((*tokens)->type == AND_IF
+			|| (*tokens)->type == OR_IF))
+	{
+		if ((*tokens)->type == AND_IF)
+			type = AST_AND;
+		else
+			type = AST_OR;
+		ast = ft_create_ast(type);
+		if (!ast)
+			return (left);
+		*tokens = (*tokens)->next;
+		ast->left = left;
+		ast->right = ft_parse_pipe(tokens);
+		left = ast;
+	}
+	return (left);
 }

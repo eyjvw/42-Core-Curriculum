@@ -19,11 +19,10 @@ int main(int ac, char **av)
 
     if (!mergeMe.checkArgs(ac, av))
         return (1);
-    if (!mergeMe.hasNoDup(ac, av))
-        return (1);
     
     mergeMe.initVector(ac, av);
-    mergeMe.start();
+    if (!mergeMe.start())
+        return (1);
 
     return (0);
 }

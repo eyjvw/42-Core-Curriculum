@@ -1,5 +1,7 @@
 import type { GameRoom, Player, PlayerRole } from '../types/multiplayer.ts';
 import { BotPlayer } from './botPlayer.ts';
+import * as queries from '../../db/schemas/getters.ts';
+import { recordBlackjackResult } from '../../db/schemas/stats.ts';
 
 const DISCONNECT_TIMEOUT = 30000;
 const AFK_TIMEOUT = 60000;
@@ -55,7 +57,7 @@ export class RoomManager
 		return code;
 	}
 
-	createRoom(hostId: string, hostUsername: string, maxPlayers: number = 5): GameRoom
+	createRoom(hostId: string, hostUsername: string, balance: number, maxPlayers: number = 5): GameRoom
 	{
 		const roomId = crypto.randomUUID();
 		const code = this.generateRoomCode();
@@ -77,7 +79,7 @@ export class RoomManager
 			id:				hostId,
 			username:		hostUsername,
 			role:			'player',
-			balance:		1000,
+			balance,
 			bet:			0,
 			isConnected:	true,
 			lastPing:		Date.now(),
@@ -149,6 +151,19 @@ export class RoomManager
 	{
 		const room = this.rooms.get(roomId);
 		if (!room) { return false; }
+
+		const forfeit = room.currentGame && room.currentGame.status !== 'finished'
+			? room.currentGame.players.find((player) => player.id === userId)
+			: undefined;
+		if (forfeit && !BotPlayer.isBot(userId))
+		{
+			try
+			{
+				queries.updateUserCoins(parseInt(userId), forfeit.balance).run();
+				recordBlackjackResult(parseInt(userId), 'loss');
+			}
+			catch (e) { console.error('Failed to record forfeited hand:', e); }
+		}
 
 		this.removePlayerFromActiveGame(room, userId);
 
@@ -336,24 +351,19 @@ export class RoomManager
 		for (const [roomId, room] of this.rooms.entries())
 		{
 			if (room.players.size === 0 && room.spectators.size === 0 && now - room.updatedAt.getTime() > maxAge)
+			{
+				this.codeToRoom.delete(room.code);
 				this.rooms.delete(roomId);
+			}
 		}
 	}
 
 	handleDisconnectedPlayers(): void
 	{
-		for (const [roomId, room] of this.rooms.entries())
+		for (const [roomId] of this.rooms.entries())
 		{
 			const disconnected = this.getDisconnectedPlayers(roomId);
-			disconnected.forEach((player) => {
-				this.removePlayerFromActiveGame(room, player.id);
-				room.players.delete(player.id);
-				room.spectators.delete(player.id);
-				this.userToRoom.delete(player.id);
-			});
-
-			if (room.players.size === 0 && room.spectators.size === 0)
-				this.rooms.delete(roomId);
+			disconnected.forEach((player) => { this.leaveRoom(roomId, player.id); });
 		}
 	}
 }

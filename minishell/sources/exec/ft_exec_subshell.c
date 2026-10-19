@@ -15,11 +15,15 @@
 int	ft_exec_subshell(t_shell *shell, t_ast *node)
 {
 	pid_t	pid;
-	int		status;
 
 	pid = fork();
+	if (pid < 0)
+		return (perror("minishell: fork"), 1);
 	if (pid == 0)
-		exit(ft_exec_node(shell, node->left));
-	waitpid(pid, &status, 0);
-	return (WEXITSTATUS(status));
+	{
+		ft_reset();
+		shell->interactive = false;
+		ft_exit_child(shell, ft_exec_node(shell, node->left));
+	}
+	return (ft_wait(shell, pid));
 }

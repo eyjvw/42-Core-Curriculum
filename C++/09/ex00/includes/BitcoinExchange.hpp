@@ -13,51 +13,45 @@
 #pragma once
 
 #include <iostream>
-#include <algorithm>
 #include <map>
 #include <fstream>
 #include <iomanip>
-#include <ctime>
+#include <cstdlib>
+#include <cctype>
 
 #define DBSOURCE "data/data.csv"
 
-#define NEGATIVEVALUE "Error not a positive number."
-#define BADINPUT "Error: bad input."
+#define BADINPUT "Error: bad input => "
 #define TOOLARGE "Error: too large a number."
-#define VALUENOTFOUND "Error: missing value"
 #define CANTOPEN "Error: could not open file."
-#define WRONGFORMAT "Error: invalid format (<date> | <value>)."
-#define WRONGDATE "Error: bad input => "
 #define TOOLOW "Error: not a positive number."
-
-
-typedef struct t_close {
-    std::string	date;
-    float		value;
-}				t_close;
+#define TOOEARLY "Error: no exchange rate before this date => "
+#define BADDATABASE "Error: invalid database."
 
 class BitcoinExchange {
 private:
     BitcoinExchange();
     BitcoinExchange(const BitcoinExchange &other);
     BitcoinExchange &operator=(const BitcoinExchange &other);
-    std::multimap<std::string, float> container;
+    std::map<std::string, double> container;
 public:
-    BitcoinExchange(std::ifstream &dataBase, const char &limiter);
+    BitcoinExchange(std::ifstream &dataBase);
     ~BitcoinExchange();
 
-    void	ExchangeRate(const BitcoinExchange &input) const;
-    bool	isValidFormat(std::string date, float value) const;
-    bool	isValidDate(std::string line) const;
-    void	printContent() const;
-    void	findExchangeRate(std::string date, float value) const;
-    void	findClosest(t_close &closest, const std::string &itDate, const float &itValue, const std::string &date) const;
+    void    ExchangeRate(std::ifstream &input) const;
+    void    isValidFormat(const std::string &line) const;
+    void    findExchangeRate(const std::string &date, double value) const;
 
-    static time_t dateToTimestamp(const std::string& date);
+    static bool isValidDate(const std::string &date);
+    static bool isValidNumber(const std::string &str, double &value);
+
     class CantOpenFile : public std::exception {
         public:
-            const char* what() const throw() {
-                return (CANTOPEN);
-            }
+            const char* what() const throw();
+    };
+
+    class InvalidDataBase : public std::exception {
+        public:
+            const char* what() const throw();
     };
 };

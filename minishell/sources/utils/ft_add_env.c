@@ -21,7 +21,9 @@ static int	ft_update_env(t_env *start, t_env *stop, char *key, char *value)
 		if (start->key && !ft_strcmp(start->key, key))
 		{
 			free(start->value);
-			start->value = ft_strdup(value);
+			start->value = NULL;
+			if (value)
+				start->value = ft_strdup(value);
 			return (1);
 		}
 		start = start->next;
@@ -60,13 +62,7 @@ static void	ft_insert_env(t_shell *shell, char *key, char *value)
 
 void	ft_add_env(t_shell *shell, char *key, char *value)
 {
-	t_env	*curr;
-
-	curr = shell->env;
-	while (curr && curr->next && curr->next->key
-		&& ft_strcmp(curr->next->key, "_"))
-		curr = curr->next;
-	if (ft_update_env(shell->env, curr->next, key, value))
+	if (ft_update_env(shell->env, NULL, key, value))
 		return ;
 	ft_insert_env(shell, key, value);
 }

@@ -1,6 +1,7 @@
 services:
   nginx:
     build: ./requirements/nginx/.
+    image: nginx:inception
     container_name: nginx
     depends_on:
       - wp-php
@@ -12,37 +13,47 @@ services:
     volumes:
       - web:/var/www/html
       - nginx_logs:/var/log/nginx
-    restart: on-failure:3
+    restart: unless-stopped
   wp-php:
     build: ./requirements/wordpress/.
+    image: wp-php:inception
     container_name: wp-php
     depends_on:
-      - mariadb
-      - redis
+      mariadb:
+        condition: service_healthy
+      redis:
+        condition: service_started
     volumes:
       - web:/var/www/html
     networks:
       - inception
     env_file: ".env"
-    restart: on-failure:3
+    restart: unless-stopped
     secrets:
       - db_pass
       - db_root_pass
       - db_redis_pass
   mariadb:
     build: requirements/mariadb/.
+    image: mariadb:inception
     container_name: mariadb
     networks:
       - inception
     volumes:
       - db:/var/lib/mysql
     env_file: ".env"
-    restart: on-failure:3
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "--silent"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    restart: unless-stopped
     secrets:
       - db_pass
       - db_root_pass
   ftp:
     build: requirements/ftp/.
+    image: ftp:inception
     container_name: ftp
     networks:
       - inception
@@ -52,19 +63,21 @@ services:
       - "21:21"
       - "21100-21110:21100-21110"
     env_file: ".env"
-    restart: on-failure:3
+    restart: unless-stopped
     secrets:
       - ftp_password
   redis:
     build: requirements/redis/.
+    image: redis:inception
     container_name: redis
     networks:
       - inception
-    restart: on-failure:3
+    restart: unless-stopped
     secrets:
       - db_redis_pass
   adminer:
     build: ./requirements/adminer/.
+    image: adminer:inception
     container_name: adminer
     depends_on:
       - mariadb
@@ -72,26 +85,29 @@ services:
       - inception
     ports:
       - "8080:8080"
-    restart: on-failure:3
+    restart: unless-stopped
   static:
     build: ./requirements/static/.
+    image: static:inception
     container_name: static
     networks:
       - inception
     ports:
       - "8081:80"
-    restart: on-failure:3
+    restart: unless-stopped
   fail2ban:
     build: ./requirements/fail2ban/.
+    image: fail2ban:inception
     container_name: fail2ban
-    networks:
-      - inception
+    depends_on:
+      - nginx
+    network_mode: "service:nginx"
     volumes:
       - nginx_logs:/var/log/nginx:ro
     cap_add:
       - NET_ADMIN
       - NET_RAW
-    restart: on-failure:3
+    restart: unless-stopped
 
 volumes:
   db:

@@ -54,6 +54,8 @@ void	Join::Joining(Server &server)
 	channel		= server.getChannel(joinChannel);
 	package.channel = channel;
 
+	if (channel->isClient(package.client->getFd()))
+		return (package.setError(-1));
 	if (channel->isFull())
 		return (package.setError(ERR_CHANNELISFULL));
 	if (!checkInvite(channel) || !checkKey(channel))

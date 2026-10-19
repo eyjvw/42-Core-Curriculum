@@ -31,10 +31,10 @@ char	**ft_env_to_arr(t_env *env)
 	while (env)
 	{
 		tmp = ft_strjoin(env->key, "=");
-		arr[i] = ft_strjoin(tmp, env->value);
+		if (env->value)
+			arr[i++] = ft_strjoin(tmp, env->value);
 		free(tmp);
 		env = env->next;
-		i++;
 	}
 	arr[i] = NULL;
 	return (arr);

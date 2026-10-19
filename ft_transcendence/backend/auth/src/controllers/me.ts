@@ -10,7 +10,7 @@ export async function meController(req: Request): Promise<Response>
 		const cookie: string | null = req.headers.get("cookie");
 		if (!cookie) return new Response(JSON.stringify({ user: null }), { status: StatusCode.OK });
 
-		const token: string | undefined = cookie.match(/token=([^;]+)/)?.[1];
+		const token: string | undefined = cookie.match(/(?:^|;\s*)token=([^;]+)/)?.[1];
 		if (!token) return new Response(JSON.stringify({ user: null }), { status: StatusCode.OK });
 
 		const { uid }: Record<string, string> = await verifyJWT(token);

@@ -12,30 +12,46 @@
 
 #include "philosophers_bonus.h"
 
+/*
+** Forgets a child that has already been reaped, so that ft_kill_all() never
+** signals or waits for a pid that the system may since have reused.
+*/
+static void	ft_forget(t_data *data, pid_t pid)
+{
+	int	i;
+
+	i = 0;
+	while (i < data->num_philos)
+	{
+		if (data->pids[i] == pid)
+			data->pids[i] = -1;
+		i++;
+	}
+}
+
+/*
+** A philosopher only exits on its own with PHILO_DONE, once it has eaten
+** enough. Any other end (a death, an error, a crash) stops the whole
+** simulation, whether or not a must-eat count was given.
+*/
 void	ft_wait(t_data *data)
 {
-	int	finished;
-	int	status;
+	int		finished;
+	int		status;
+	pid_t	pid;
 
-	if (data->must_eat == -1)
+	finished = 0;
+	while (finished < data->num_philos)
 	{
-		sem_wait(data->dead);
-		ft_kill_all(data);
-	}
-	else
-	{
-		finished = 0;
-		while (finished < data->num_philos)
+		pid = waitpid(-1, &status, 0);
+		if (pid == -1)
+			break ;
+		ft_forget(data, pid);
+		if (!WIFEXITED(status) || WEXITSTATUS(status) != PHILO_DONE)
 		{
-			if (waitpid(-1, &status, 0) == -1)
-				break ;
-			if (WIFEXITED(status) && WEXITSTATUS(status) == 0)
-				finished++;
-			else
-			{
-				ft_kill_all(data);
-				break ;
-			}
+			ft_kill_all(data);
+			break ;
 		}
+		finished++;
 	}
 }

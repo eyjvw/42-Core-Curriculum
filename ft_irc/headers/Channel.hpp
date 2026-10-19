@@ -70,6 +70,7 @@ class Channel
 		bool				isClient(const int &fd);
 		Client				*getClient(const int &fd);
 		int					getClientAmount(void) const;
+		const std::map<const int, Client *> &getClients(void) const;
 
 		void				addInvited(Client *client);
 		bool				removeInvited(const int &fd);
@@ -79,7 +80,7 @@ class Channel
 		bool				removeOperator(const int &fd);
 		bool				isOperator(const int &fd) const;
 
-		std::string			getModes(void);
+		std::string			getModes(bool showKey);
 
 		void				broadcastMessage(Client *sender, std::string const &msg);
 };

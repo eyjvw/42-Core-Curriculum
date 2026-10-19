@@ -6,7 +6,7 @@ COPY backend/game/config/package.json ./
 RUN bun install
 
 COPY backend/game/src ./src
-COPY backend/db /db
+COPY backend/db ./db
 
 RUN mkdir -p /app/data
 

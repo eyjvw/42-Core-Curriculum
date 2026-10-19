@@ -23,7 +23,7 @@ Weapon::Weapon(const char *type) {
 		this->type = type;
 }
 
-std::string Weapon::getType()
+const std::string &Weapon::getType() const
 {
 	return (this->type);
 }

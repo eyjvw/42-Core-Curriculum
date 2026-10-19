@@ -18,18 +18,18 @@ The server uses `poll()` for I/O multiplexing and processes commands and replies
 make
 ```
 
-The Makefile compiles in C++98 with the flags `-Werror -Wall -Wextra -std=c++98 -g3`.
+The Makefile compiles in C++98 with the flags `-Wall -Wextra -Werror -std=c++98`.
 
 ## Usage
 
 ```bash
-./ircserv <PASSWORD> <PORT>
+./ircserv <PORT> <PASSWORD>
 # Example:
-./ircserv mySecretPass 6667
+./ircserv 6667 mySecretPass
 ```
 
-- `<PASSWORD>`: password required for `PASS` authentication
 - `<PORT>`: TCP port (1-65535)
+- `<PASSWORD>`: password required for `PASS` authentication
 
 The server handles `SIGINT` to trigger a clean shutdown.
 
@@ -63,6 +63,7 @@ ft_irc/
 │       ├── Join.cpp
 │       ├── Invite.cpp
 │       ├── Kick.cpp
+│       ├── Part.cpp
 │       ├── Topic.cpp
 │       ├── Priv.cpp
 │       ├── Nick.cpp
@@ -72,18 +73,23 @@ ft_irc/
 ## Supported Commands
 
 - `PASS`, `NICK`, `USER`: authentication and identification
-- `JOIN`, `PART` (via `Join`), `MODE`: channel creation and management
+- `JOIN` (`#a,#b key1,key2`), `PART`, `MODE` (`i`, `t`, `k`, `o`, `l`): channel creation and management
 - `INVITE`: invite a user to a channel
 - `KICK`: eject a user from a channel
 - `TOPIC`: read/write a channel topic
-- `PRIVMSG` / `NOTICE` (via `Priv`): private or channel messages
+- `PRIVMSG` (via `Priv`): private or channel messages
+- `PING`, `QUIT`
 
 > Note: the list above matches the implementations present in `srcs/cmds/`.
 
 ## Key Behavior
 
 - The server expects `PASS` first, then `NICK`/`USER` to authenticate a client.
-- Incoming data is buffered per client and processed line by line, using CRLF as separator.
+- Incoming data is buffered per client and processed line by line, using CRLF (or a bare LF) as
+  separator; lines longer than 512 bytes are rejected with `417`.
+- Outgoing data is buffered per client and only written when `poll()` reports the socket writable;
+  a client whose pending output exceeds 4 MB is disconnected.
+- Nicknames and channel names are compared case-insensitively (RFC 1459 casemapping).
 - Idle or disconnected clients are cleaned up properly and their descriptors closed.
 
 ## Requirements

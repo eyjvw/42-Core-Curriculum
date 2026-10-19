@@ -24,7 +24,7 @@ RobotomyRequestForm::RobotomyRequestForm(const std::string target): AForm(Roboto
     this->target = target;
 }
 
-RobotomyRequestForm::RobotomyRequestForm(const RobotomyRequestForm &other): AForm(RobotomyName, RobotomySignGrade, RobotomyExecGrade)
+RobotomyRequestForm::RobotomyRequestForm(const RobotomyRequestForm &other): AForm(other)
 {
     std::cout << "[RobotomyRequestForm] Copy constructor called" << std::endl;
     this->target = other.target;
@@ -35,6 +35,7 @@ RobotomyRequestForm &RobotomyRequestForm::operator=(const RobotomyRequestForm &o
     if (this != &other)
     {
         std::cout << "[RobotomyRequestForm] Copy assignement operator called" << std::endl;
+        AForm::operator=(other);
         this->target = other.target;
     }
 
@@ -48,11 +49,15 @@ RobotomyRequestForm::~RobotomyRequestForm(void)
 
 void RobotomyRequestForm::executeForm(void) const
 {
+    static bool seeded = false;
+
+    if (!seeded)
+    {
+        std::srand(std::time(NULL));
+        seeded = true;
+    }
     std::cout << "Drilling noises....." << std::endl;
-    std::time_t now = std::time(NULL);
-    std::tm *localTime = std::localtime(&now);
-    
-    if (localTime->tm_sec % 2 == 0)
+    if (std::rand() % 2 == 0)
         std::cout << "[RobotomyRequestForm] " << this->target << " robotomy failed." << std::endl;
 	else
         std::cout << "[RobotomyRequestForm] " << this->target << " has been robotomized." << std::endl;

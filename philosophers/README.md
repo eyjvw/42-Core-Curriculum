@@ -36,7 +36,7 @@ make bonus
 - `make clean` : remove object files
 - `make fclean` : remove binaries and objects
 - `make re` : rebuild mandatory
-- `make re_bonus` : rebuild bonus
+- `make rebonus` : rebuild bonus
 
 ## Algorithm & Design
 
@@ -79,6 +79,15 @@ was already queued on the lock when the simulation ended cannot print after the
 interleave, and nothing is lost in a stdio buffer when the bonus philosophers —
 separate processes — are killed at the end of the simulation.
 
+### Bonus: ending the simulation
+
+The parent `waitpid()`s for its children. A philosopher only exits on its own
+once it has eaten enough; any other exit status (a death, an error such as a
+failed `pthread_create()`, a crash) makes the parent kill and reap all the
+others. The semaphore names are unlinked as soon as the semaphores are open:
+the children inherit them through `fork()`, so nothing is left in `/dev/shm`,
+even when the program is stopped by a signal it is not allowed to catch.
+
 ### Single philosopher
 
 With one philosopher there is only one fork. They take it, wait, and die: the
@@ -90,11 +99,10 @@ that does not exist.
 | Shared state | Guarded by | Notes |
 |---|---|---|
 | `last_meal_time`, `meals_eaten`, `done` | `meal` mutex (bonus: `meal` semaphore) | Written by the philosopher, read by the monitor |
-| `someone_died` | `dead` mutex | Bonus signals the parent through the `dead` semaphore |
+| `someone_died` | `dead` mutex | Bonus: the parent learns of a death from the child's exit status |
 | stdout | `print` mutex / semaphore | Death check happens inside the critical section |
 
-Both parts are verified clean under ThreadSanitizer, and the mandatory part
-under AddressSanitizer/UBSan as well.
+Both parts are verified clean under ThreadSanitizer and AddressSanitizer/UBSan.
 
 ## Project Structure
 

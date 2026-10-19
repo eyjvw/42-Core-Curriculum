@@ -8,6 +8,7 @@ SOURCES = main.c \
 		  src/ft_open.c \
 		  src/ft_putstr_fd.c \
 		  src/ft_split.c \
+		  src/ft_split_cmd.c \
 		  src/ft_strcmp.c \
 		  src/ft_strncmp.c \
 		  src/get_next_line.c \
@@ -15,7 +16,8 @@ SOURCES = main.c \
 
 OBJ_DIR = obj
 OBJECTS = $(addprefix $(OBJ_DIR)/,$(SOURCES:.c=.o))
+DEPS = $(OBJECTS:.o=.d)
 
+CC = cc
 CFLAGS = -Wall -Wextra -Werror -I includes/
 RM = rm -f
-CC = cc

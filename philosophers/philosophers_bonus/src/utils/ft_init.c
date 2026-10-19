@@ -55,18 +55,28 @@ static void	ft_init_pids(t_data *data)
 	}
 }
 
-void	ft_init(t_data *data)
+static void	ft_unlink_sems(void)
 {
 	sem_unlink(SEM_FOR_FORKS);
 	sem_unlink(SEM_FOR_PRINT);
-	sem_unlink(SEM_FOR_DEAD);
 	sem_unlink(SEM_FOR_MEAL);
+}
+
+/*
+** The names are unlinked again as soon as the semaphores are open: the
+** children inherit the semaphores themselves through fork(), so nothing needs
+** the names any more, and none is left behind in /dev/shm even when the
+** program is killed by a signal it is not allowed to catch.
+*/
+void	ft_init(t_data *data)
+{
+	ft_unlink_sems();
 	data->forks = sem_open(SEM_FOR_FORKS, O_CREAT, 0664, data->num_philos);
 	data->print = sem_open(SEM_FOR_PRINT, O_CREAT, 0664, 1);
-	data->dead = sem_open(SEM_FOR_DEAD, O_CREAT, 0664, 0);
 	data->meal = sem_open(SEM_FOR_MEAL, O_CREAT, 0664, 1);
+	ft_unlink_sems();
 	if (data->forks == SEM_FAILED || data->print == SEM_FAILED
-		|| data->dead == SEM_FAILED || data->meal == SEM_FAILED)
+		|| data->meal == SEM_FAILED)
 	{
 		ft_print_error(NULL, "sem_open failed\n");
 		ft_clean(data, true);

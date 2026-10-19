@@ -28,10 +28,12 @@ static std::map<char, void (*)(Server &, bool, int &)> initMode()
 
 std::map<char, void (*)(Server &, bool, int &)> Mode::mode = initMode();
 
+static int	spareArgs = 0;
+
 static bool checkModes(std::string const &modes)
 {
 	int			args	= 0;
-	std::string	set		= CMODES;
+	bool		add		= true;
 
 	package.errMode = modes;
 	if (modes[0] != '+' && modes[0] != '-')
@@ -39,14 +41,14 @@ static bool checkModes(std::string const &modes)
 	for (int i = 0;	i < (int)modes.length(); i++)
 	{
 		char m = modes[i];
-		if (m == '+' || m == '-'
-		|| set.find(m) == std::string::npos)
-			continue ;
-		if (m == 'o' || m == 'l' || m == 'k')
+		if (m == '+' || m == '-')
+			add = (m == '+');
+		else if (m == 'o' || ((m == 'k' || m == 'l') && add))
 			args++;
 	}
 	if (((int)package.cmdData.size() - 2) < args)
 		return (package.setError(ERR_NEEDMOREPARAMS), false);
+	spareArgs = ((int)package.cmdData.size() - 2) - args;
 	return (true);
 }
 
@@ -76,42 +78,29 @@ bool	Mode::Check(Server &server)
 	return (checkModes(package.cmdData[MODE_MODES]));
 }
 
-bool	Mode::singleCheck(std::string &modes, char m, int &argCount)
+bool	Mode::singleCheck(char m)
 {
 	std::string	set = CMODES;
 
-	if (m == '+' || m == '-' || set.find(m) != std::string::npos)
+	if (set.find(m) != std::string::npos)
 		return (true);
 	package.errMode = m;
-	if (set.find(m) == std::string::npos)
-	{
-		modes.erase(modes.find(m));
-		if (m == 'l' || m == 'o' || m == 'k')
-		{
-			package.cmdData.erase(package.cmdData.begin() + argCount);
-			argCount++;
-		}
-		return (package.setError(ERR_UNKNOWNMODE), false);
-	}
-	return (true);
+	return (package.setError(ERR_UNKNOWNMODE), false);
 }
 
 void	Mode::o(Server &server, bool add, int &argCount)
 {
-	std::string nick = package.cmdData[argCount];
+	std::string nick = package.cmdData[argCount++];
 	package.errNick = nick;
+	package.errChanName = package.channel->getName();
 
 	if (!server.isClient(nick))
 		return (package.setError(ERR_NOSUCHNICK));
-	if (!package.channel->isClient(package.client->getFd()))
-		return (package.setError(ERR_NOTONCHANNEL));
 	Client		*client = server.getClient(nick);
 
-	if (add && package.channel->isOperator(client->getFd()))
-		return ;
-
+	if (!package.channel->isClient(client->getFd()))
+		return (package.setError(ERR_USERNOTINCHANNEL));
 	(add) ? package.channel->addOperator(client) : (void)package.channel->removeOperator(client->getFd());
-	argCount++;
 }
 
 void	Mode::l(Server &server, bool add, int &argCount)
@@ -121,17 +110,17 @@ void	Mode::l(Server &server, bool add, int &argCount)
 	std::stringstream	sNum;
 
 	if (!add)
-		package.channel->setOpLimit(0);
-	if (!Ft::isInt(package.cmdData[argCount]))
+		return (package.channel->setOpLimit(0));
+	std::string arg = package.cmdData[argCount++];
+	if (!Ft::isInt(arg))
 		return (package.setError(ERR_NEEDMOREPARAMS));
-	sNum << package.cmdData[argCount];
+	sNum << arg;
 	sNum >> limit;
 
-	if (!sNum.eof() || sNum.fail())
+	if (!sNum.eof() || sNum.fail() || limit <= 0)
 		return (package.setError(ERR_NEEDMOREPARAMS));
 
 	package.channel->setOpLimit(limit);
-	argCount++;
 }
 
 void	Mode::i(Server &server, bool add, int &argCount)
@@ -155,14 +144,14 @@ void	Mode::k(Server &server, bool add, int &argCount)
 	(void) server;
 	(void) argCount;
 
-	(add) ? package.channel->setOpKey(true, package.cmdData[argCount]) : package.channel->setOpKey(false, "");
-	argCount++;
-}
-
-void	Mode::join(void)
-{
-	std::string &modes = package.cmdData[1];
-
-	for (std::vector<std::string>::iterator it = package.cmdData.begin() + 2; it != package.cmdData.end(); it++)
-		modes = modes + " " + *it;
+	if (!add)
+	{
+		if (spareArgs > 0)
+		{
+			spareArgs--;
+			argCount++;
+		}
+		return (package.channel->setOpKey(false, ""));
+	}
+	package.channel->setOpKey(true, package.cmdData[argCount++]);
 }

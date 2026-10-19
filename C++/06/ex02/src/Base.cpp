@@ -42,7 +42,7 @@ Base::~Base(void)
     std::cout << "[Base] Destructor called" << std::endl;
 }
 
-Base *Base::generate(void)
+Base *generate(void)
 {
     int x = std::rand() % 3;
     Base *base;
@@ -56,7 +56,7 @@ Base *Base::generate(void)
     return (base);
 }
 
-void Base::identify(Base *base)
+void identify(Base *base)
 {
     if (dynamic_cast<A*>(base))
     {
@@ -77,7 +77,7 @@ void Base::identify(Base *base)
     std::cout << "Unknown Type" << std::endl;
 }
 
-void Base::identify(Base &base)
+void identify(Base &base)
 {
     try
     {

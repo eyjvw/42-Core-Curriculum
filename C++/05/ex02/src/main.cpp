@@ -13,22 +13,31 @@
 #include "../includes/Bureaucrat.hpp"
 #include "../includes/AForm.hpp"
 #include "../includes/ShrubberyCreationForm.hpp"
+#include "../includes/RobotomyRequestForm.hpp"
+#include "../includes/PresidentialPardonForm.hpp"
 
 int main(void)
 {
     Bureaucrat hoel("hoel", 1);
-    AForm* form = new ShrubberyCreationForm("test");
+    Bureaucrat intern("intern", 150);
+    AForm* forms[3];
 
-    try
-    {
-        hoel.signForm(*form);
-        hoel.executeForm(*form);
-    }
-    catch(const std::exception& e)
-    {
-        std::cerr << e.what() << std::endl;
-    }
+    forms[0] = new ShrubberyCreationForm("test");
+    forms[1] = new RobotomyRequestForm("Bender");
+    forms[2] = new PresidentialPardonForm("Arthur Dent");
 
-    delete form;
+    for (int i = 0; i < 3; i++)
+    {
+        hoel.executeForm(*forms[i]);
+        intern.signForm(*forms[i]);
+        hoel.signForm(*forms[i]);
+        intern.executeForm(*forms[i]);
+        hoel.executeForm(*forms[i]);
+    }
+    for (int i = 0; i < 3; i++)
+        hoel.executeForm(*forms[1]);
+
+    for (int i = 0; i < 3; i++)
+        delete forms[i];
     return (0);
 }

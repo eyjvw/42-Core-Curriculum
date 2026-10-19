@@ -15,6 +15,7 @@
 # include <map>
 # include <iostream>
 # define MAX_BUFFER_SIZE 8192
+# define MAX_SENDQ 4194304
 
 class Server;
 class Channel;
@@ -25,6 +26,7 @@ class Client
 		bool							auth;
 		int								fd;
 		bool							canPass;
+		bool							sendQExceeded;
         std::string						nick;
 		std::string						username;
         std::string						realname;
@@ -43,6 +45,7 @@ class Client
         const int			&getFd(void)		const;
 		const bool			&getCanPass(void)	const;
 		const bool			&getAuth(void)		const;
+		const bool			&getSendQExceeded(void) const;
         const std::string	&getNick(void)		const;
         const std::string	&getName(void)		const;
 		const std::string	&getUser(void)		const;

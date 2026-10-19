@@ -13,12 +13,15 @@
 #pragma once
 
 #include <iostream>
+#include <iomanip>
 #include <vector>
 #include <deque>
 #include <algorithm>
-#include <ctime>
+#include <cstdlib>
+#include <cerrno>
+#include <climits>
+#include <cctype>
 #include <sys/time.h>
-#include <string.h>
 
 class PmergeMe
 {
@@ -32,15 +35,16 @@ class PmergeMe
         double getTime(void);
         bool isDigital(const char *av);
         size_t jacobSthal(size_t n);
-        template <typename T> void binaryInsert(T &container, int value, size_t maxPosition);
+        template <typename T> void binaryInsert(const T &values, T &chain, int index, size_t maxPosition);
         template <typename T> void printStep(int step, T &container);
+        template <typename T> void mergeInsert(const T &values, T &order);
         template <typename T> void sort(T &container);
     public:
         PmergeMe(void);
         ~PmergeMe(void);
 
         bool checkArgs(int ac, char **av);
-        bool hasNoDup(int ac, char **av);
+        bool hasNoDup(void);
         void initVector(int ac, char **av); 
-        void start(void);
+        bool start(void);
 };

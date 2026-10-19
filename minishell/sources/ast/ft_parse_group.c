@@ -24,11 +24,10 @@ t_ast	*ft_parse_group(t_tokens **tokens)
 		ast = ft_create_ast(AST_SUBSHELL);
 		if (!ast)
 			return (NULL);
-		ast->left = ft_parse_pipe(tokens);
+		ast->left = ft_parse_and_or(tokens);
 		if (*tokens && (*tokens)->type == RPAREN)
 			*tokens = (*tokens)->next;
 		return (ft_parse_redir(tokens, ast));
 	}
-	ast = ft_parse_command(tokens);
-	return (ft_parse_redir(tokens, ast));
+	return (ft_parse_command(tokens));
 }

@@ -20,7 +20,7 @@ export async function updateProfileController(req: Request): Promise<Response>
  		cookie = req.headers.get("cookie");
 		if (!cookie) return (errors.noCookie());
 
-		token = cookie.match(/token=([^;]+)/)?.[1];
+		token = cookie.match(/(?:^|;\s*)token=([^;]+)/)?.[1];
 		if (!token) return (errors.unauthorized());
 
 		parsed = updateSchema.safeParse(await req.json());

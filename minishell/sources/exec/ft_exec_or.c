@@ -15,7 +15,7 @@
 int	ft_exec_or(t_shell *shell, t_ast *node)
 {
 	shell->exit_code = ft_exec_node(shell, node->left);
-	if (shell->exit_code != 0)
+	if (shell->exit_code != 0 && g_signal != SIGINT)
 		return (ft_exec_node(shell, node->right));
 	return (shell->exit_code);
 }

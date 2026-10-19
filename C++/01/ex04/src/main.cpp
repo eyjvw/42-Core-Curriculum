@@ -28,46 +28,60 @@ int main(int ac, char **av)
 
     outfile_name += ".replace";
     
-    std::ifstream infile(av[1]);
-    std::ofstream outfile(outfile_name.c_str());
+    std::string content;
+    std::string result;
     std::string current_line;
+    size_t start;
     size_t pos;
     
     if (s1.empty())
     {
         std::cerr << "Error : s1 is empty" << std::endl;
-        return (0);
+        return (1);
     }
-    if (s2.empty())
-    {
-        std::cerr << "Error : s2 is empty" << std::endl;
-        return (0);
-    }
+
+    std::ifstream infile(av[1]);
     if (!infile.is_open())
     {
         std::cerr << "Error : infile is not open" << std::endl;
-        return (0);
+        return (1);
     }
+    while (std::getline(infile, current_line))
+    {
+        content += current_line;
+        if (!infile.eof())
+            content += '\n';
+    }
+    if (infile.bad())
+    {
+        std::cerr << "Error : infile can not be read" << std::endl;
+        return (1);
+    }
+    infile.close();
+
+    start = 0;
+    pos = content.find(s1);
+    while (pos != std::string::npos)
+    {
+        result += content.substr(start, pos - start) + s2;
+        start = pos + s1.length();
+        pos = content.find(s1, start);
+    }
+    result += content.substr(start);
+
+    std::ofstream outfile(outfile_name.c_str());
     if (!outfile.is_open())
     {
         std::cerr << "Error : outfile is not open " << std::endl;
-        return (0);
+        return (1);
     }
-
-    while (std::getline(infile, current_line))
-    {
-        while (1)
-        {
-            pos = current_line.find(s1);
-            if (pos == std::string::npos)
-                break ;
-            current_line = current_line.substr(0, pos) + s2 + current_line.substr(pos + s1.length(), current_line.length());
-        }
-        outfile << current_line << std::endl;
-    }
-
-    infile.close();
+    outfile << result;
     outfile.close();
+    if (outfile.fail())
+    {
+        std::cerr << "Error : outfile can not be written" << std::endl;
+        return (1);
+    }
 
     return (0);
 }

@@ -37,5 +37,9 @@ void Brain::fillIdeas(std::string idea)
 
 const std::string &Brain::getIdeas(size_t i) const
 {
+    static const std::string none;
+
+    if (i >= 100)
+        return (none);
     return (this->ideas[i]);
 }

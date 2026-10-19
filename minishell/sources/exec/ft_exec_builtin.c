@@ -27,6 +27,6 @@ int	ft_exec_builtin(t_shell *shell, char **argv)
 	if (!ft_strcmp(argv[0], "env"))
 		return (ft_env(shell));
 	if (!ft_strcmp(argv[0], "exit"))
-		return (ft_exit(shell));
+		return (ft_exit(shell, argv));
 	return (0);
 }

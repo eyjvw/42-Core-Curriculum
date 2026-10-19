@@ -21,11 +21,13 @@
 # define ERR_UNKNOWNMODE_STR(mode)					std::string(mode) + " :is unknown mode char to me"
 # define ERR_ALREADYREGISTRED_STR					":Unauthorized command (already registered)"
 # define ERR_UNKNOWNCOMMAND_STR(cmd)				std::string(cmd) + " :Unknown command"
+# define ERR_INPUTTOOLONG_STR						":Input line was too long"
 
 enum ERR_ID
 {
 	ERR_NOSUCHNICK =		401,
 	ERR_NOSUCHCHANNEL =		403,
+	ERR_INPUTTOOLONG =		417,
 	ERR_UNKNOWNCOMMAND =	421,
 	ERR_NONICKNAMEGIVEN =	431,
 	ERR_ONEUSNICKNAME =		432,

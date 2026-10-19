@@ -16,7 +16,7 @@
 Channel::Channel(void): opKey(false), opTopic(false), opLimit(0), opInvite(false) {};
 Channel::~Channel(void) {};
 Channel::Channel(Channel const &copy): opKey(false), opTopic(false), opLimit(0), opInvite(false) { (*this) = copy; };
-Channel::Channel(const std::string& name): name(name) {};
+Channel::Channel(const std::string& name): opKey(false), opTopic(false), opLimit(0), opInvite(false), name(name) {};
 Channel	&Channel::operator=(Channel const &copy)
 {
 	this->opKey = copy.opKey;
@@ -25,6 +25,7 @@ Channel	&Channel::operator=(Channel const &copy)
 	this->opInvite = copy.opInvite;
 	this->name = copy.name;
 	this->topic = copy.topic;
+	this->password = copy.password;
 	this->invited = copy.invited;
 	this->operators = copy.operators;
 	this->clients = copy.clients;
@@ -39,6 +40,7 @@ const std::string	&Channel::getPassword(void)	const			{ return (this->password);
 const std::string	&Channel::getName(void)		const			{ return (this->name); };
 const std::string	&Channel::getTopic(void)	const			{ return (this->topic); };
 int					Channel::getClientAmount(void) const		{ return (this->clients.size()); };
+const std::map<const int, Client *>	&Channel::getClients(void) const	{ return (this->clients); };
 void				Channel::setOpKey(bool const &key, std::string const &password) { this->opKey = key; this->password = password; };
 void				Channel::setOpTopic(bool const &topic)		{ this->opTopic = topic; };
 void				Channel::setOpInvite(bool const &invite)	{ this->opInvite = invite; };
@@ -62,7 +64,7 @@ bool				Channel::isClient(const int &fd)		{ return (this->clients.count(fd)); };
 bool				Channel::isFull(void) { return (this->opLimit && (int)this->clients.size() >= this->opLimit); }
 bool				Channel::Auth(std::string const &password) { return (this->password == password); };
 
-std::string			Channel::getModes(void)
+std::string			Channel::getModes(bool showKey)
 {
 	std::string		result("+");
 	std::string		params;
@@ -70,7 +72,7 @@ std::string			Channel::getModes(void)
 	if (this->opKey)
 	{
 		result = result + MODE_KEY;
-		params = params + this->password;
+		params = params + " " + ((showKey) ? this->password : "*");
 	}
 	if (this->opTopic)
 		result = result + MODE_TOPIC;
@@ -79,9 +81,9 @@ std::string			Channel::getModes(void)
 	if (this->opLimit)
 	{
 		result = result + MODE_LIMIT;
-		params = params + Ft::intToStr(this->opLimit);
+		params = params + " " + Ft::intToStr(this->opLimit);
 	}
-	return (result + " " + params);
+	return (result + params);
 }
 
 void				Channel::broadcastMessage(Client *sender, std::string const &msg)
@@ -112,7 +114,7 @@ std::string			Channel::getNameList(void) const
 		if (this->isOperator(client->getFd()))
 			user = "@";
 		user = user + client->getNick();
-		res = res + " " + user;
+		res = (res.empty()) ? user : res + " " + user;
 		user.clear();
 	}
 

@@ -13,23 +13,54 @@
 # include "Ft.hpp"
 
 
-bool Ft::endsWithCRLF(const std::string& s)
+bool Ft::endsWithLF(const std::string& s)
 {
-    if (s.size() < 2)
-		return false;
-    return (s.substr(s.size() - 2) == "\r\n");
+    return (!s.empty() && s[s.size() - 1] == '\n');
+}
+
+std::string Ft::toCRLF(std::string const &line)
+{
+	std::string	res(line);
+
+	if (!res.empty() && res[res.size() - 1] == '\n')
+		res.erase(res.size() - 1);
+	if (!res.empty() && res[res.size() - 1] == '\r')
+		res.erase(res.size() - 1);
+	return (res + "\r\n");
+}
+
+std::string Ft::toLower(std::string const &s)
+{
+	std::string	res(s);
+
+	for (size_t i = 0; i < res.length(); i++)
+	{
+		if (res[i] >= 'A' && res[i] <= '^')
+			res[i] = res[i] + ('a' - 'A');
+	}
+	return (res);
+}
+
+std::vector<std::string>	Ft::split(std::string const &s, char sep)
+{
+	std::vector<std::string>	res;
+	std::string					token;
+	std::stringstream			stream(s);
+
+	while (std::getline(stream, token, sep))
+		res.push_back(token);
+	return (res);
 }
 
 std::string Ft::extractLine(std::string &buffer)
 {
 	std::size_t	pos;
 	std::string line;
-	std::string	sep("\r\n");
 
 	if (buffer.empty())
 		return ("");
-	pos = buffer.find(sep);
-	pos = (pos == std::string::npos) ? buffer.length() : pos + 2;
+	pos = buffer.find('\n');
+	pos = (pos == std::string::npos) ? buffer.length() : pos + 1;
 	line = buffer.substr(0, pos);
 	buffer.erase(0, pos);
 

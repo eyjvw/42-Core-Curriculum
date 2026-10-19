@@ -10,6 +10,8 @@
 /*                                                                            */
 /* ************************************************************************** */
 
+#pragma once
+
 #include <iostream>
 #include "AForm.hpp"
 
@@ -24,10 +26,7 @@ class Intern
         class InvalidForm : public std::exception
         {
             public:
-                const char *what() const throw()
-                {
-                    return ("This form doesn't exist");
-                }
+                const char *what() const throw();
         };
         
         AForm* makeForm(const std::string formName, const std::string targetName) const;

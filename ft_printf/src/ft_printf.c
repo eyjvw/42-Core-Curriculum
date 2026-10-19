@@ -106,7 +106,8 @@ static int	ft_process_one_char(va_list args, const char *format, int *i)
 		if (ft_is_flag_or_digit(format[*i]))
 		{
 			count += ft_process_format(args, format, i);
-			(*i)++;
+			if (format[*i])
+				(*i)++;
 		}
 		else
 			count += ft_handle_conversion(args, format[*i], i);
@@ -124,14 +125,20 @@ int	ft_printf(const char *format, ...)
 	va_list	args;
 	int		i;
 	int		count;
+	int		ret;
 
-	if (!format)
-		return (0);
+	if (!format || write(1, "", 0) < 0)
+		return (-1);
 	va_start(args, format);
 	i = 0;
 	count = 0;
 	while (format[i])
-		count += ft_process_one_char(args, format, &i);
+	{
+		ret = ft_process_one_char(args, format, &i);
+		if (ret < 0)
+			return (va_end(args), -1);
+		count += ret;
+	}
 	va_end(args);
 	return (count);
 }

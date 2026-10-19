@@ -19,12 +19,7 @@ void	ft_open(t_pipex *px)
 	{
 		px->infile = open(px->av[1], O_RDONLY);
 		if (px->infile == -1)
-		{
-			ft_putstr_fd(2, px->av[1]);
-			ft_putstr_fd(2, ": ");
-			ft_putstr_fd(2, "No such file or directory or permission denied\n");
-			exit(1);
-		}
+			perror(px->av[1]);
 	}
 	if (px->here_doc)
 		px->outfile = open(px->av[px->ac - 1],
@@ -33,11 +28,5 @@ void	ft_open(t_pipex *px)
 		px->outfile = open(px->av[px->ac - 1],
 				O_WRONLY | O_CREAT | O_TRUNC, 0644);
 	if (px->outfile == -1)
-	{
-		if (px->infile != -1)
-			close(px->infile);
-		(ft_putstr_fd(2, px->av[px->ac - 1]), ft_putstr_fd(2, ": "));
-		ft_putstr_fd(2, "Permission denied or cannot create file\n");
-		exit(1);
-	}
+		perror(px->av[px->ac - 1]);
 }

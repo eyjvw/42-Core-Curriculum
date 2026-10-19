@@ -21,5 +21,6 @@ t_ast	*ft_create_ast(t_ast_type type)
 		return (NULL);
 	ft_bzero(ast, sizeof(t_ast));
 	ast->type = type;
+	ast->fd = -1;
 	return (ast);
 }

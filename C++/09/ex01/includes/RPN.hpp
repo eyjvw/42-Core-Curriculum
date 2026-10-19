@@ -14,7 +14,10 @@
 
 #include <iostream>
 #include <stack>
+#include <list>
 #include <exception>
+#include <cctype>
+#include <climits>
 
 class RPN
 {
@@ -29,6 +32,6 @@ class RPN
         class Error : public std::exception
         {
             public:
-                const char *what(void) const throw() { return "Error"; }
+                const char *what(void) const throw();
         };
 };

@@ -24,15 +24,24 @@ The infrastructure includes NGINX with TLSv1.2 or TLSv1.3, WordPress with php-fp
 ### Prerequisites
 
 - Docker Engine (version 20.10 or later recommended)
-- Docker Compose (version 1.29 or later recommended)
+- Docker Compose v2 (the `docker compose` plugin)
 - A domain name pointing to your server (or localhost configuration)
 - Sufficient disk space for Docker images and volumes
 
 ### Installation
 
 1. Clone the repository:
-2. Configure your environment variables:
-3. Add your domain to `/etc/hosts` (for local testing):
+2. Configure your environment variables: non-secret settings live in `srcs/.env` (versioned, no passwords).
+3. Create the git-ignored `secrets/` folder at the root of the project (next to the Makefile). Each file holds
+   one password; Docker mounts them read-only in `/run/secrets/` inside the containers:
+```bash
+mkdir -p secrets
+openssl rand -hex 16 > secrets/db_pass.txt        # MariaDB password of DB_USER (used by WordPress)
+openssl rand -hex 16 > secrets/db_root_pass.txt   # WordPress administrator (DB_ROOT_USER) password
+openssl rand -hex 16 > secrets/db_ftp_pass.txt    # FTP_USER password
+openssl rand -hex 16 > secrets/db_redis_pass.txt  # Redis requirepass
+```
+4. Add your domain to `/etc/hosts` (for local testing):
 
 ### Compilation/Build
 
@@ -83,7 +92,7 @@ inception/
 This project implements a microservices architecture using Docker containers. Each service is isolated in its own container, communicating through a dedicated Docker network. The infrastructure follows these principles:
 
 - **One service per container**: Each container runs a single process (NGINX, MariaDB, or WordPress)
-- **Custom images**: All containers are built from custom Dockerfiles using Alpine Linux or Debian Bullseye as base images
+- **Custom images**: All containers are built from custom Dockerfiles using Alpine Linux or Debian Bookworm (12) as base images
 - **Persistent storage**: Data persistence is achieved through Docker volumes
 - **Network isolation**: Services communicate through a custom Docker bridge network
 - **Security**: TLS encryption, no passwords in Dockerfiles, environment variable management
@@ -91,7 +100,7 @@ This project implements a microservices architecture using Docker containers. Ea
 ### Main Design Choices
 
 #### Base Images
-- **Debian Bullseye**: Alternative choice for better compatibility with certain packages
+- **Debian Bookworm (12)**: Alternative choice for better compatibility with certain packages
 
 #### Service Configuration
 1. **NGINX**: Configured as a reverse proxy with TLSv1.2/TLSv1.3 support, serving as the sole entry point
@@ -128,7 +137,7 @@ This project implements a microservices architecture using Docker containers. Ea
 | **Updates** | Requires service recreation | Can be changed without rebuild |
 | **Best For** | Production credentials, API keys | Non-sensitive configuration |
 
-**Project choice**: Environment variables are used (via `.env` file) as the project uses docker-compose without Swarm. For production, Docker Secrets would be preferred. Sensitive data is kept out of Dockerfiles and version control.
+**Project choice**: Non-sensitive settings are environment variables (via `srcs/.env`). Passwords are Docker secrets: Compose mounts the files of the git-ignored `secrets/` folder in `/run/secrets/`, where the entry scripts read them. Sensitive data is kept out of Dockerfiles and version control.
 
 #### Docker Network vs Host Network
 
@@ -141,7 +150,7 @@ This project implements a microservices architecture using Docker containers. Ea
 | **DNS** | Docker provides internal DNS | Uses host's DNS |
 | **Use Case** | Microservices, multi-container apps | High-performance networking needs |
 
-**Project choice**: Custom bridge network (`inception-network`) is used to:
+**Project choice**: Custom bridge network (`inception`) is used to:
 - Isolate services from the host and other Docker networks
 - Enable service discovery by container name
 - Control inter-container communication
@@ -167,7 +176,7 @@ This project implements a microservices architecture using Docker containers. Ea
 
 ### Sources and Containers
 
-- **Base**: Debian Bullseye
+- **Base**: Debian Bookworm (12)
 
 #### NGINX Container
 - **Purpose**: HTTPS-only web server and reverse proxy

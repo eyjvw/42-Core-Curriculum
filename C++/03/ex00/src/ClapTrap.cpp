@@ -46,14 +46,14 @@ void ClapTrap::attack(const std::string &target)
 
     if (this->energy_points <= 0)
     {
-        std::cout << "ClapTrap doesn't have enough energy poins to attack" << std::endl;
+        std::cout << "ClapTrap doesn't have enough energy points to attack" << std::endl;
         return;
     }
 
     std::cout << "ClapTrap " << this->name << " attacks " << target
         << ", causing " << this->attack_damage << " points of damage !" << std::endl;
     this->energy_points -= 1;
-    std::cout << "ClaptTrap " << this->name << " new amount of energy points : " << this->energy_points << std::endl;
+    std::cout << "ClapTrap " << this->name << " new amount of energy points : " << this->energy_points << std::endl;
 }
 
 void ClapTrap::takeDamage(unsigned int amount)
@@ -65,9 +65,10 @@ void ClapTrap::takeDamage(unsigned int amount)
     }
 
     std::cout << "ClapTrap " << this->name << " take " << amount << " points of damage" << std::endl;
-    this->hit_points -= amount;
-    if (this->hit_points < 0)
+    if (amount >= static_cast<unsigned int>(this->hit_points))
         this->hit_points = 0;
+    else
+        this->hit_points -= amount;
     std::cout << "ClapTrap " << this->name << " now has " << this->hit_points << " hit points" << std::endl;
 }
 
@@ -86,7 +87,10 @@ void ClapTrap::beRepaired(unsigned int amount)
     }
 
     std::cout << "ClapTrap " << this->name << " repaired " << amount << " points of damage" << std::endl;
-    this->hit_points += amount;
+    if (amount > static_cast<unsigned int>(INT_MAX - this->hit_points))
+        this->hit_points = INT_MAX;
+    else
+        this->hit_points += amount;
     this->energy_points -= 1;
     std::cout << "ClapTrap " << this->name << " new amount of hits points : " << this->hit_points << std::endl;
     std::cout << "ClapTrap " << this->name << " amount of energy points : " << this->energy_points << std::endl;   

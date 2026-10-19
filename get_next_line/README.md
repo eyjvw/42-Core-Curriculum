@@ -46,11 +46,17 @@ already read is never re-read, and never re-parsed from the start of the file.
 ### Reading as little as possible
 
 `ft_fill()` tests the stash for a newline **before every `read()`**, so a call
-that can already be answered from the stash performs no syscall at all. This is
+that can already be answered from the stash reads no data at all. This is
 what the subject asks for ("if you encounter a new line, you have to return the
 current line"), and it is also what makes the function usable on pipes,
 sockets and terminals: reading ahead on a stream that has no more data yet
 would simply block.
+
+The only syscall such a call makes is the zero-byte `read()` that
+`get_next_line()` uses to validate the descriptor. It never blocks, but it
+fails once the descriptor has been closed, so the stash left over from a file
+closed mid-way is discarded instead of being returned, or glued onto the first
+line of the next file that reuses the same descriptor number.
 
 ### Cost
 

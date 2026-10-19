@@ -14,12 +14,14 @@
 
 int main(void)
 {
-    Data test = { .x = 10 };
+    Data test;
+    test.x = 10;
     uintptr_t raw = Serializer::serialize(&test);
     Data *deserialized = Serializer::deserialize(raw);
     
     std::cout << "[UINTPTR_T] " << raw << std::endl;
     std::cout << "[DATA] " << deserialized->x << std::endl;
+    std::cout << "[SAME POINTER] " << (deserialized == &test ? "yes" : "no") << std::endl;
     
     return (0);
 }

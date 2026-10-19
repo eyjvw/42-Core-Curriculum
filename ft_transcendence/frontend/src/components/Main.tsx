@@ -7,7 +7,6 @@ import Blackjack							from './Blackjack';
 import MultiplayerBlackjack					from './MultiplayerBlackjack';
 import type { Room }						from './MultiplayerBlackjack';
 import { useSocialSocket }					from '../hooks/useSocialSocket';
-import type { SocialEvent }					from '../hooks/useSocialSocket';
 import type { Friend }						from '../services/types';
 import blackjackImg							from '../assets/blackjack.jpg';
 

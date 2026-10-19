@@ -1,10 +1,11 @@
-# ex02 — Consolidation exercises
+# ex02 — The Job Of Your Dreams (Account)
 
 *This project has been created as part of the 42 curriculum by sbonneau.*
 
 ## Description
 
-Set of consolidation exercises to reinforce the fundamentals introduced in `ex00` and `ex01`.
+Recreate the lost `Account.cpp` from the provided `Account.hpp`, `tests.cpp` and log file:
+the program output must match `19920104_091532.log` (timestamps aside).
 
 ## What you practice
 
@@ -14,16 +15,17 @@ Set of consolidation exercises to reinforce the fundamentals introduced in `ex00
 
 ## Files
 
-- Exercise sources in `src/` (may vary depending on the specific task).
+- `includes/Account.hpp`, `src/tests.cpp`: provided by the subject.
+- `src/Account.cpp`: the recreated implementation.
 - `Makefile` (includes `mk/`) to build the exercise binary.
 
 ## Build & Run
 
 ```bash
 make
-./<ex02_binary>
+./JobOfYourDream
 ```
 
 ## Notes
 
-- Check the exercise-specific source files for exact behavior and entry points.
+- Compare with the reference log: `diff <(./JobOfYourDream | cut -c19-) <(cut -c19- 19920104_091532.log)`.

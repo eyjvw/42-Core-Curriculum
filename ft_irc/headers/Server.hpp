@@ -30,6 +30,7 @@
 # define PORT_ID 1
 # define PASS_ID 2
 # define FD_MAX 1024 - 3
+# define MSG_MAX 512
 # ifndef BUFFER_SIZE
 #  define BUFFER_SIZE 4096
 # endif
@@ -38,7 +39,7 @@
 # define PORT				htons(this->port)
 # define ANY_ADDRESS		htonl(INADDR_ANY)
 
-extern sig_atomic_t	sigShutdown;
+extern volatile sig_atomic_t	sigShutdown;
 
 class Server
 {
@@ -60,9 +61,10 @@ class Server
 		bool	init(void);
 
 		void	addPollFd(const int &fd);
-		void	authenticate(Client &client);
+		bool	authenticate(Client &client, std::string const &line);
 
 		void	acceptClient(void);
+		void	dropOverflowed(void);
 		void	disconnectClient(const int &id);
 		Client	*getClient(int const &id);
 		Client	*getClient(std::string const &nick);

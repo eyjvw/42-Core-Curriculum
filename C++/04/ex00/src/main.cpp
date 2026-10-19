@@ -15,6 +15,7 @@ int main(void)
     std::cout << i->getType() << " " << std::endl;
     j->makeSound();
     i->makeSound();
+    meta->makeSound();
 
     std::cout << "\n=== Wrong Test ===" << std::endl;
 

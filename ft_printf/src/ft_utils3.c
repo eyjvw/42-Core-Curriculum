@@ -43,7 +43,9 @@ int	ft_print_str_with_flags(char *s, t_flags flags)
 	int	len;
 
 	count = 0;
-	if (!s)
+	if (!s && flags.precision >= 0 && flags.precision < 6)
+		s = "";
+	else if (!s)
 		s = "(null)";
 	len = ft_get_str_len(s, flags);
 	if (flags.width > len && !flags.minus)

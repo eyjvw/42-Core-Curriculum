@@ -56,7 +56,7 @@ void FragTrap::attack(const std::string &target)
 
     if (this->energy_points <= 0)
     {
-        std::cout << "FragTrap doesn't have enough energy poins to attack" << std::endl;
+        std::cout << "FragTrap doesn't have enough energy points to attack" << std::endl;
         return;
     }
 

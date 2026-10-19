@@ -19,7 +19,6 @@ long long	ft_timestamp(t_data *data)
 	if (gettimeofday(&tv, NULL) == -1)
 	{
 		ft_print_error(data->print, GETTIMEOFDAY_ERROR);
-		sem_post(data->dead);
 		exit(EXIT_FAILURE);
 	}
 	return (tv.tv_sec * 1000LL + tv.tv_usec / 1000);

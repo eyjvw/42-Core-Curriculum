@@ -17,46 +17,39 @@ static int	ft_count_cmd_args(t_tokens *tokens)
 	int	count;
 
 	count = 0;
-	while (tokens && tokens->type == WORD && !ft_is_red(tokens->type))
+	while (tokens && (tokens->type == WORD || ft_is_red(tokens->type)))
 	{
-		count++;
+		if (ft_is_red(tokens->type))
+			tokens = tokens->next;
+		else
+			count++;
 		tokens = tokens->next;
-		if (tokens && ft_is_red(tokens->type))
-			break ;
 	}
 	return (count);
 }
 
-static bool	ft_is_end_of_cmd(t_tokens *tokens)
-{
-	if (!tokens)
-		return (true);
-	if (tokens->type != WORD)
-		return (true);
-	return (false);
-}
-
 t_ast	*ft_parse_command(t_tokens **tokens)
 {
-	t_ast	*node;
-	int		argc;
-	int		i;
+	t_ast		*node;
+	t_tokens	*tmp;
+	int			i;
 
-	if (!*tokens || (*tokens)->type != WORD)
-		return (NULL);
 	node = ft_create_ast(AST_CMD);
 	if (!node)
 		return (NULL);
-	argc = ft_count_cmd_args(*tokens);
-	node->argv = malloc(sizeof(char *) * (argc + 1));
+	node->argv = malloc(sizeof(char *) * (ft_count_cmd_args(*tokens) + 1));
 	if (!node->argv)
 		return (free(node), NULL);
 	i = 0;
-	while (!ft_is_end_of_cmd(*tokens))
+	tmp = *tokens;
+	while (tmp && (tmp->type == WORD || ft_is_red(tmp->type)))
 	{
-		node->argv[i++] = ft_strdup((*tokens)->value);
-		*tokens = (*tokens)->next;
+		if (ft_is_red(tmp->type))
+			tmp = tmp->next;
+		else
+			node->argv[i++] = ft_strdup(tmp->value);
+		tmp = tmp->next;
 	}
 	node->argv[i] = NULL;
-	return (node);
+	return (ft_parse_redir(tokens, node));
 }

@@ -34,6 +34,6 @@ export async function getConversation(userA: number, userB: number, limit = 50)
 				and(eq(messages.senderId, userB), eq(messages.receiverId, userA)),
 			)
 		)
-		.orderBy(desc(messages.createdAt))
+		.orderBy(desc(messages.id))
 		.limit(limit);
 }

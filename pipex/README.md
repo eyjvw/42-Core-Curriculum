@@ -11,7 +11,7 @@
 < infile cmd1 | cmd2 | ... > outfile
 
 # here_doc mode:
-cmd1 | cmd2 << LIMITER >> outfile
+cmd1 << LIMITER | cmd2 >> outfile
 ```
 
 ## Usage
@@ -55,13 +55,14 @@ pipex/
 │   ├── structs.h               - t_pipex structure definition
 │   ├── defines.h               - Constants (BUFFER_SIZE, error messages)
 │   └── functions.h             - All function prototypes
-├── sources/
+├── src/
 │   ├── ft_init.c               - Initialize t_pipex struct
 │   ├── ft_open.c               - Open infile / outfile with error handling
 │   ├── ft_exec.c               - Command resolution (PATH + absolute) and execve
 │   ├── ft_close.c              - Safe fd closing
-│   ├── ft_here_doc.c           - here_doc mode via pipe + fork
+│   ├── ft_here_doc.c           - here_doc mode via temp file + fork
 │   ├── ft_split.c              - Split string by delimiter
+│   ├── ft_split_cmd.c          - Split a command into args, honouring '…', "…" and \ like the shell
 │   ├── ft_strcmp.c / ft_strncmp.c - String comparison utilities
 │   ├── ft_putstr_fd.c          - Write string to file descriptor
 │   ├── get_next_line.c         - Read one line from fd
@@ -102,13 +103,13 @@ The last command's stdout is redirected to `outfile` instead of a pipe.
 
 ### Command resolution (`ft_exec`)
 
-1. If the command is an absolute or relative path (`/usr/bin/ls`, `./script.sh`), it's used directly after an `access()` check
+1. If the command contains a `/` (`/usr/bin/ls`, `./script.sh`), it's executed directly (exit code `127` if it does not exist, `126` if it cannot be executed)
 2. Otherwise, `PATH` is searched: each directory in `PATH` is tried as `dir/cmd` until one passes `access(X_OK)`
 3. Returns exit code `127` if command is not found (matches shell behavior)
 
 ### here_doc mode
 
-A dedicated `fork()` reads stdin line by line using `get_next_line`, writing each line into a pipe until the `LIMITER` word is encountered. The read end of this pipe becomes `infile` for the main pipeline. Output is appended (`>>`) instead of truncated.
+A dedicated `fork()` reads stdin line by line using `get_next_line`, writing each line into a temporary file until the `LIMITER` word is encountered (no size limit, unlike a pipe). The file is then reopened read-only, unlinked, and becomes `infile` for the main pipeline. Output is appended (`>>`) instead of truncated.
 
 ## Resources
 

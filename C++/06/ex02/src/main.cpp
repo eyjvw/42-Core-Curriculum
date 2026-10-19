@@ -14,21 +14,21 @@
 
 int main(void)
 {
-    Base base;
+    std::srand(std::time(NULL));
 
     for (int i = 0; i < 5; i++)
     {
-        Base *random = base.generate();
+        Base *random = generate();
         std::cout << "Object " << i + 1 << ": ";
-        base.identify(random);
+        identify(random);
         delete random;
     }
     
     for (int i = 0; i < 5; i++)
     {
-        Base *random = base.generate();
+        Base *random = generate();
         std::cout << "Object " << i + 1 << ": ";
-        base.identify(*random);
+        identify(*random);
         delete random;
     }
 

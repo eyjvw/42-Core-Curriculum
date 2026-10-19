@@ -19,19 +19,24 @@ int main(void)
 {
     Bureaucrat hoel("hoel", 1);
     Intern randomIntern;
-    AForm* form;
-  
-    try
+    const std::string names[4] = {"robotomy request", "shrubbery creation", "presidential pardon", "coffee request"};
+
+    for (int i = 0; i < 4; i++)
     {
-        form = randomIntern.makeForm("RobotomyRequestForm", "test");
-        hoel.signForm(*form);
-        hoel.executeForm(*form);
+        AForm* form = NULL;
+
+        try
+        {
+            form = randomIntern.makeForm(names[i], "Bender");
+            hoel.signForm(*form);
+            hoel.executeForm(*form);
+        }
+        catch(const std::exception& e)
+        {
+            std::cerr << e.what() << std::endl;
+        }
         delete form;
     }
-    catch(const std::exception& e)
-    {
-        std::cerr << e.what() << std::endl;
-    }
-    
+
     return (0);
 }

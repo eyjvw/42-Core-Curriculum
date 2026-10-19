@@ -42,7 +42,6 @@ typedef struct s_data
 
 	sem_t			*forks;
 	sem_t			*print;
-	sem_t			*dead;
 	sem_t			*meal;
 
 	struct s_philo	*philos;

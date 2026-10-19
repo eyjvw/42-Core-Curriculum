@@ -15,8 +15,8 @@ with its own stats and specialized action.
 
 ## Files
 
-- `includes/ClapTrap.hpp`, `includes/FragTrap.hpp`
-- `src/ClapTrap.cpp`, `src/FragTrap.cpp`, `src/main.cpp`
+- `includes/ClapTrap.hpp`, `includes/ScavTrap.hpp`, `includes/FragTrap.hpp`
+- `src/ClapTrap.cpp`, `src/ScavTrap.cpp`, `src/FragTrap.cpp`, `src/main.cpp`
 - `Makefile` + `mk/` fragments
 
 ## Build & Run

@@ -1,6 +1,6 @@
 FROM debian:12
 
-RUN apt update && apt upgrade && apt install -y nginx && apt install openssl
+RUN apt update && apt upgrade -y && apt install -y nginx && apt install -y openssl
 RUN mkdir /etc/nginx/ssl && mkdir /etc/nginx/ssl/certs && mkdir /etc/nginx/ssl/private
 
 RUN openssl req -x509 -nodes -days 365 \

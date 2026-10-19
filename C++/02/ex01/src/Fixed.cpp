@@ -9,7 +9,7 @@ Fixed::Fixed(void)
 Fixed::Fixed(const int raw)
 {
     std::cout << "Int constructor called" << std::endl;
-    this->setRawBits(raw << this->bits);
+    this->setRawBits(raw * (1 << this->bits));
 }
 
 Fixed::Fixed(const float raw)

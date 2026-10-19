@@ -29,7 +29,7 @@ int	main(int argc, char **argv)
 		(ft_perror(ERR_MEMORY_MAP), ft_clean_exit(&game, 1));
 	game.map->map = ft_get_map(argv[1]);
 	if (!game.map->map)
-		(ft_perror(ERR_READ_MAP), ft_clean_exit(&game, 1));
+		ft_clean_exit(&game, 1);
 	ft_check_map(&game);
 	ft_init_window(&game);
 	ft_clean_exit(&game, 0);

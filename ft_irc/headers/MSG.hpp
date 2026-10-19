@@ -13,6 +13,7 @@
 # pragma once
 # include <string>
 # include <vector>
+# include <cctype>
 # include <sstream>
 # include "Ft.hpp"
 # include "Client.hpp"

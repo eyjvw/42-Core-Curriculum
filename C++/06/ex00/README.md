@@ -10,5 +10,5 @@ Convert scalar literals across `char`, `int`, `float`, and `double`.
 
 ```bash
 make
-./ScalarConverter
+./ScalarConverter 42.0f
 ```

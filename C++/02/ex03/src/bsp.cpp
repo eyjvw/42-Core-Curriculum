@@ -1,19 +1,25 @@
 #include "../includes/Point.hpp"
 
-float get_area(Fixed const a_x, Fixed const b_x, Fixed const c_x, Fixed const a_y, Fixed const b_y, Fixed const c_y)
+// twice the area of the triangle, computed on the raw fixed-point bits
+// (exact in a double while the triangle spans less than 2^18 units)
+static double get_area(Fixed const a_x, Fixed const b_x, Fixed const c_x, Fixed const a_y, Fixed const b_y, Fixed const c_y)
 {
-	return (0.5f * std::abs(a_x.toFloat() * (b_y.toFloat() - c_y.toFloat()) + b_x.toFloat() * (c_y.toFloat() - a_y.toFloat()) + c_x.toFloat() * (a_y.toFloat() - b_y.toFloat())));
+	double ab_x = static_cast<double>(b_x.getRawBits()) - a_x.getRawBits();
+	double ab_y = static_cast<double>(b_y.getRawBits()) - a_y.getRawBits();
+	double ac_x = static_cast<double>(c_x.getRawBits()) - a_x.getRawBits();
+	double ac_y = static_cast<double>(c_y.getRawBits()) - a_y.getRawBits();
+	double area = ab_x * ac_y - ac_x * ab_y;
+
+	return (area < 0 ? -area : area);
 }
 
 bool bsp(const Point a, const Point b, const Point c, const Point point)
 {
-	float area = get_area(a.get_x(), b.get_x(), c.get_x(), a.get_y(), b.get_y(), c.get_y());
-	float abpoint = get_area(a.get_x(), b.get_x(), point.get_x(), a.get_y(), b.get_y(), point.get_y());
-	float acpoint = get_area(a.get_x(), c.get_x(), point.get_x(), a.get_y(), c.get_y(), point.get_y());
-	float cbpoint = get_area(c.get_x(), b.get_x(), point.get_x(), c.get_y(), b.get_y(), point.get_y());
+	double area = get_area(a.get_x(), b.get_x(), c.get_x(), a.get_y(), b.get_y(), c.get_y());
+	double abpoint = get_area(a.get_x(), b.get_x(), point.get_x(), a.get_y(), b.get_y(), point.get_y());
+	double acpoint = get_area(a.get_x(), c.get_x(), point.get_x(), a.get_y(), c.get_y(), point.get_y());
+	double cbpoint = get_area(c.get_x(), b.get_x(), point.get_x(), c.get_y(), b.get_y(), point.get_y());
 
-	float total = abpoint + acpoint + cbpoint;
-	const float epsilon = 1e-6f;
-	
-	return (std::abs(total - area) < epsilon && abpoint > epsilon && acpoint > epsilon && cbpoint > epsilon);
+	// on an edge or a vertex one of the sub-triangles is flat: not inside
+	return (abpoint + acpoint + cbpoint == area && abpoint > 0 && acpoint > 0 && cbpoint > 0);
 }

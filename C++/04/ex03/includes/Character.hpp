@@ -3,17 +3,21 @@
 #include "ICharacter.hpp"
 #include "AMateria.hpp"
 
+#define GROUND_SIZE 1024
+
 class Character : public ICharacter
 {
     protected:
         std::string	name;
         AMateria	*inv[4];
-        AMateria	*ground[1024];
+        AMateria	*ground[GROUND_SIZE];
         size_t		idx;
+
+        AMateria	**find_on_ground(AMateria *m);
     public:
         Character(void);
         Character(const Character &src);
-        void	operator=(const Character &src);
+        Character	&operator=(const Character &src);
         ~Character(void);
 
         Character(std::string name);

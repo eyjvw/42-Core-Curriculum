@@ -1,18 +1,15 @@
 all: $(NAME)
 	@echo "$(GREEN)✅ Compilation completed: $(NAME)$(RESET)"
 
-$(NAME): $(OBJ_DIR) $(OBJECTS)
-	@echo "$(BLUE)📦 Linking $(NAME)...$(RESET)"
+$(NAME): $(OBJECTS)
+	@echo "$(BLUE)🔗 Linking $(NAME)...$(RESET)"
 	@$(CXX) $(CXXFLAGS) -o $(NAME) $(OBJECTS)
 	@echo "$(CYAN)🚀 $(NAME) ready.$(RESET)"
-
-$(OBJ_DIR):
-	@mkdir -p $(OBJ_DIR)
 
 $(OBJ_DIR)/%.o: %.cpp
 	@echo "$(YELLOW)🔧 Compiling $<...$(RESET)"
 	@mkdir -p $(dir $@)
-	@$(CXX) $(CXXFLAGS) -c $< -o $@
+	@$(CXX) $(CXXFLAGS) -MMD -MP -c $< -o $@
 
 clean:
 	@echo "$(RED)🧹 Removing object files...$(RESET)"
@@ -24,6 +21,9 @@ fclean: clean
 	@$(RM) $(NAME)
 	@echo "$(RED)✔️ Fclean done.$(RESET)"
 
-re: fclean all
+re: fclean
+	@$(MAKE) --no-print-directory all
+
+-include $(DEPS)
 
 .PHONY: all clean fclean re

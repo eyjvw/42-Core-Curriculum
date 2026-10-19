@@ -56,7 +56,7 @@ void ScavTrap::attack(const std::string &target)
 
     if (this->energy_points <= 0)
     {
-        std::cout << "ScavTrap doesn't have enough energy poins to attack" << std::endl;
+        std::cout << "ScavTrap doesn't have enough energy points to attack" << std::endl;
         return;
     }
 

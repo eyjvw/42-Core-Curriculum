@@ -14,29 +14,25 @@
 #include <unistd.h>
 #include <stdio.h>
 
-static int	ft_cd_home(t_shell *shell, char **target, char *oldpwd)
+static char	*ft_cd_target(t_shell *shell, char **argv)
 {
-	*target = ft_get_env(shell->env, "HOME");
-	if (!*target)
-	{
-		ft_putstr_fd(2, "cd: HOME not set\n");
-		free(oldpwd);
-		return (1);
-	}
-	return (0);
-}
+	char	*target;
 
-static int	ft_cd_oldpwd(t_shell *shell, char **target, char *oldpwd)
-{
-	*target = ft_get_env(shell->env, "OLDPWD");
-	if (!*target)
+	if (!argv[1])
 	{
-		ft_putstr_fd(2, "cd: OLDPWD not set\n");
-		free(oldpwd);
-		return (1);
+		target = ft_get_env(shell->env, "HOME");
+		if (!target)
+			ft_error("cd", NULL, "HOME not set");
+		return (target);
 	}
-	printf("%s\n", *target);
-	return (0);
+	if (!ft_strcmp(argv[1], "-"))
+	{
+		target = ft_get_env(shell->env, "OLDPWD");
+		if (!target)
+			ft_error("cd", NULL, "OLDPWD not set");
+		return (target);
+	}
+	return (argv[1]);
 }
 
 static void	ft_update_pwd(t_shell *shell, char *oldpwd)
@@ -56,25 +52,25 @@ int	ft_cd(t_shell *shell, char **argv)
 {
 	char	*target;
 	char	*oldpwd;
-	int		ret;
 
+	if (argv[1] && argv[2])
+		return (ft_error("cd", NULL, "too many arguments"), 1);
+	target = ft_cd_target(shell, argv);
+	if (!target)
+		return (1);
+	if (!*target)
+		return (0);
 	oldpwd = getcwd(NULL, 0);
-	target = NULL;
-	if (!argv[1] || !argv[1][0])
+	if (chdir(target) != 0)
 	{
-		if (ft_cd_home(shell, &target, oldpwd))
-			return (1);
+		ft_error("cd", target, strerror(errno));
+		return (free(oldpwd), 1);
 	}
-	else if (argv[1][0] == '-' && !argv[1][1])
+	if (argv[1] && !ft_strcmp(argv[1], "-"))
 	{
-		if (ft_cd_oldpwd(shell, &target, oldpwd))
-			return (1);
+		ft_putstr_fd(STDOUT_FILENO, target);
+		ft_putstr_fd(STDOUT_FILENO, "\n");
 	}
-	else
-		target = argv[1];
-	ret = chdir(target);
-	if (ret != 0)
-		return (perror("cd"), free(oldpwd), 1);
 	ft_update_pwd(shell, oldpwd);
 	free(oldpwd);
 	return (0);

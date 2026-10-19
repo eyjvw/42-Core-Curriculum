@@ -12,67 +12,60 @@
 
 #include "../../includes/minishell.h"
 
-static void	ft_syntax_error(char *token)
+static bool	ft_syntax_error(char *token)
 {
-	ft_putstr_fd(2, UNEXCEPTED_TOKEN);
+	ft_putstr_fd(2, "minishell: " UNEXCEPTED_TOKEN);
 	ft_putstr_fd(2, token);
 	ft_putstr_fd(2, "'\n");
+	return (false);
 }
 
-static bool	ft_check_parentheses(t_tokens *tokens)
+static bool	ft_eof_error(void)
 {
-	int	count;
-
-	count = 0;
-	while (tokens)
-	{
-		if (tokens->type == LPAREN)
-			count++;
-		else if (tokens->type == RPAREN)
-		{
-			count--;
-			if (count < 0)
-				return (ft_syntax_error(")"), false);
-		}
-		tokens = tokens->next;
-	}
-	if (count > 0)
-		return (ft_syntax_error("("), false);
-	return (true);
+	ft_putstr_fd(2, "minishell: syntax error: unexpected end of file\n");
+	return (false);
 }
 
-static bool	ft_check_operators(t_tokens *tokens)
+static bool	ft_valid_next(t_tokens *prev, t_tokens *curr, bool subshell)
 {
-	if (ft_is_op(tokens->type))
-		return (ft_syntax_error(tokens->value), false);
-	while (tokens)
-	{
-		if (ft_is_op(tokens->type))
-		{
-			if (!tokens->next)
-				return (ft_syntax_error(tokens->value), false);
-			if (ft_is_op(tokens->next->type))
-				return (ft_syntax_error(tokens->next->value), false);
-		}
-		if (ft_is_red(tokens->type))
-		{
-			if (!tokens->next)
-				return (ft_syntax_error("newline"), false);
-			if (tokens->next->type != WORD)
-				return (ft_syntax_error(tokens->next->value), false);
-		}
-		tokens = tokens->next;
-	}
-	return (true);
+	if (prev && ft_is_red(prev->type))
+		return (curr->type == WORD);
+	if (subshell && curr->type == WORD)
+		return (false);
+	if (!prev || ft_is_op(prev->type) || prev->type == LPAREN)
+		return (curr->type == WORD || ft_is_red(curr->type)
+			|| curr->type == LPAREN);
+	if (prev->type == RPAREN)
+		return (ft_is_op(curr->type) || ft_is_red(curr->type)
+			|| curr->type == RPAREN);
+	return (curr->type != LPAREN);
 }
 
 bool	ft_check_args(t_tokens *tokens)
 {
-	if (!tokens)
-		return (false);
-	if (!ft_check_parentheses(tokens))
-		return (false);
-	if (!ft_check_operators(tokens))
-		return (false);
+	t_tokens	*prev;
+	int			depth;
+	bool		subshell;
+
+	prev = NULL;
+	depth = 0;
+	subshell = false;
+	while (tokens)
+	{
+		if (!ft_valid_next(prev, tokens, subshell))
+			return (ft_syntax_error(tokens->value));
+		if (tokens->type == LPAREN)
+			depth++;
+		else if (tokens->type == RPAREN && --depth < 0)
+			return (ft_syntax_error(tokens->value));
+		subshell = (tokens->type == RPAREN
+				|| (subshell && !ft_is_op(tokens->type)));
+		prev = tokens;
+		tokens = tokens->next;
+	}
+	if (prev && ft_is_red(prev->type))
+		return (ft_syntax_error("newline"));
+	if (prev && (ft_is_op(prev->type) || depth > 0))
+		return (ft_eof_error());
 	return (true);
 }

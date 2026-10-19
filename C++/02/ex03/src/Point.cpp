@@ -14,9 +14,11 @@ Fixed Point::get_x(void) const
 	return(this->x);
 }
 
-Point Point::operator=(const Point &src)
+Point &Point::operator=(const Point &src)
 {
-	return (src);
+	// x and y are const: a Point can not be modified once built
+	(void)src;
+	return (*this);
 }
 
 Point::~Point(void) {}

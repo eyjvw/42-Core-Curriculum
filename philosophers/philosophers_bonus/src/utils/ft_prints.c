@@ -50,11 +50,14 @@ void	ft_print(t_philo *philo, char *s)
 /*
 ** The print semaphore is taken and never released: once the death line is out,
 ** no other philosopher can append a message after it.
+** Nothing is freed here: when the monitor thread calls this, the routine thread
+** of the same process is still running on that memory, so the process exits
+** and leaves the memory and semaphores to the kernel. The parent learns about
+** the death from the exit status.
 */
 void	ft_die(t_philo *philo)
 {
 	sem_wait(philo->data->print);
 	ft_log(philo, DIED);
-	sem_post(philo->data->dead);
-	ft_child_exit(philo, PHILO_DIED);
+	exit(PHILO_DIED);
 }

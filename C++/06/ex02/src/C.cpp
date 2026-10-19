@@ -17,7 +17,7 @@ C::C(void)
     std::cout << "[C] Default constructor called" << std::endl;
 }
 
-C::C(const C &other)
+C::C(const C &other): Base(other)
 {
     std::cout << "[C] Copy constructor called" << std::endl;
     (void)other;   
@@ -28,7 +28,7 @@ C &C::operator=(const C &other)
     if (this != &other)
     {
         std::cout << "[C] Copy assignement operator called" << std::endl;
-        (void)other;
+        Base::operator=(other);
     }   
 
     return (*this);

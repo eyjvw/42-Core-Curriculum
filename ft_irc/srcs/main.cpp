@@ -52,6 +52,10 @@ int	main(int ac, char **av)
 
 	std::signal(SIGINT, handleSignal);
 	Server server(std::string(av[PASS_ID]), Ft::strToInt(std::string(av[PORT_ID])));
-	if (server.init())
-		server.launch();
+	if (!server.init())
+	{
+		std::cerr << "Cannot listen on port " << av[PORT_ID] << std::endl;
+		return (EXIT_FAILURE);
+	}
+	server.launch();
 }

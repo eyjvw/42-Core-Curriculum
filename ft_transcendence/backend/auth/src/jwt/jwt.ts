@@ -1,9 +1,9 @@
 import { SignJWT, jwtVerify, type JWTPayload, type JWTVerifyResult } from "jose";
 
-const secret = new TextEncoder().encode(Bun.env.JWT_SECRET || "dev_only");
+if (!Bun.env.JWT_SECRET || /change_?me/i.test(Bun.env.JWT_SECRET))
+	throw new Error("JWT_SECRET environment variable not set (or still the .env.example placeholder)");
 
-if (!Bun.env.JWT_SECRET)
-	console.warn("JWT_SECRET environment variable not set. Using default insecure key.");
+const secret = new TextEncoder().encode(Bun.env.JWT_SECRET);
 
 export async function createJWT(uid: string): Promise<string>
 {

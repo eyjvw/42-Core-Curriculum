@@ -7,7 +7,10 @@ import * as queries					from "../db/schemas/getters.ts";
 import { stats }					from "../db/schemas/stats.ts";
 import { db }						from "../db/init.ts";
 
-const secret = new TextEncoder().encode(Bun.env.JWT_SECRET || "dev_only");
+if (!Bun.env.JWT_SECRET || /change_?me/i.test(Bun.env.JWT_SECRET))
+	throw new Error("JWT_SECRET environment variable not set (or still the .env.example placeholder)");
+
+const secret = new TextEncoder().encode(Bun.env.JWT_SECRET);
 
 async function getUidFromRequest(req: Request): Promise<number | null>
 {
@@ -16,7 +19,7 @@ async function getUidFromRequest(req: Request): Promise<number | null>
 		const cookie = req.headers.get("cookie");
 		if (!cookie) return null;
 
-		const token = cookie.match(/token=([^;]+)/)?.[1];
+		const token = cookie.match(/(?:^|;\s*)token=([^;]+)/)?.[1];
 		if (!token) return null;
 
 		const { payload } = await jwtVerify(token, secret);
@@ -131,6 +134,10 @@ async function acceptRequestHandler(req: Request): Promise<Response>
 
 	const body = await req.json() as { senderId?: number };
 	if (!body.senderId) return json({ error: "senderId required" }, StatusCode.BAD_REQUEST);
+
+	const received = await friendsDB.getReceivedRequests(uid);
+	if (!received.some(r => r.id === body.senderId))
+		return json({ error: "No pending request from this user" }, StatusCode.NOT_FOUND);
 
 	await friendsDB.acceptRequest(uid, body.senderId);
 
@@ -327,6 +334,7 @@ const server = Bun.serve<{ uid: number }>({
 						if (!areFriends) return;
 
 						const row = await messagesDB.addMessage(uid, data.to, content);
+						if (!row) return;
 						const [sender] = await queries.getUserByID(uid);
 						const payload = {
 							type:       "chat_message",

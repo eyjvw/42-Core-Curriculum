@@ -14,6 +14,7 @@
 
 #include "AForm.hpp"
 #include <ctime>
+#include <cstdlib>
 
 #define RobotomyName "RobotomyRequestForm"
 #define RobotomySignGrade 72

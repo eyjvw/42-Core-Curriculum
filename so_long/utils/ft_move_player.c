@@ -56,19 +56,19 @@ static void	ft_check(t_game *game, int *tab)
 		game->collectibles_collected++;
 		game->map->map[tab[3]][tab[2]] = '0';
 	}
+	game->moves++;
+	ft_print_infos(game);
 	if (game->map->map[tab[3]][tab[2]] == 'M')
-		(ft_perror("Le joueur est mort"), ft_clean_exit(game, 0));
+		(ft_pinfo("Le joueur est mort\n"), ft_clean_exit(game, 0));
 	game->player_on_exit = (game->map->map[tab[3]][tab[2]] == 'E');
 	if (game->collectibles_collected == game->map->collectibles
-		&& game->map->map[tab[3]][tab[2]] == 'E')
+		&& game->player_on_exit)
 		(ft_psuccess(SUCCESS_GAME), ft_clean_exit(game, 0));
 	if (tab[0] == game->map->exit_x && tab[1] == game->map->exit_y)
 		game->map->map[tab[1]][tab[0]] = 'E';
 	else
 		game->map->map[tab[1]][tab[0]] = '0';
 	game->map->map[tab[3]][tab[2]] = 'P';
-	game->moves++;
-	ft_print_infos(game);
 }
 
 void	ft_move_player(t_game *game, int dx, int dy)

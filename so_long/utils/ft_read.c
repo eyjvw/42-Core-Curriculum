@@ -23,7 +23,7 @@ char	*ft_read(const int fd)
 	if (!data)
 		return (NULL);
 	data[0] = '\0';
-	while (1)
+	while (ft_strlen(data) <= MAX_FILE_SIZE)
 	{
 		bytes = read(fd, buffer, BUFFER_SIZE);
 		if (bytes == 0)

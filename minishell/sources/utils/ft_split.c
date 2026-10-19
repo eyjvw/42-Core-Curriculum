@@ -93,3 +93,15 @@ char	**ft_split(char *s, char c)
 	result[i] = NULL;
 	return (result);
 }
+
+void	ft_free_arr(char **arr)
+{
+	int	i;
+
+	if (!arr)
+		return ;
+	i = 0;
+	while (arr[i])
+		free(arr[i++]);
+	free(arr);
+}

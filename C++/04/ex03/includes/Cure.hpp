@@ -9,7 +9,7 @@ class Cure : public AMateria
     public:
         Cure(void);
         Cure(const Cure &src);
-        void	operator=(const Cure &src);
+        Cure	&operator=(const Cure &src);
         ~Cure();
 
         AMateria	*clone(void) const;

@@ -11,21 +11,20 @@
 /* ************************************************************************** */
 
 template <class T>
-Array<T>::Array(void): _size(0)
+Array<T>::Array(void): array(NULL), _size(0)
 {
-    this->array = new T[0];
 }
 
 template <class T>
-Array<T>::Array(const unsigned int n): _size(n)
+Array<T>::Array(const unsigned int n): array(NULL), _size(n)
 {
-    this->array = new T[n];
+    this->array = new T[n]();
 }
 
 template <class T>
-Array<T>::Array(const Array &other): _size(other._size)
+Array<T>::Array(const Array &other): array(NULL), _size(other._size)
 {
-    this->array = new T[this->_size];
+    this->array = new T[this->_size]();
 
     for (unsigned int i = 0; i < this->_size; i++)
         this->array[i] = other.array[i];
@@ -36,12 +35,13 @@ Array<T> &Array<T>::operator=(const Array<T> &other)
 {
     if (this != &other)
     {
-        delete[] this->array;
-        this->_size = other._size;
-        this->array = new T[this->_size];
+        T *copy = new T[other._size]();
 
-        for (unsigned int i = 0; i < this->_size; i++)
-            this->array[i] = other.array[i];
+        for (unsigned int i = 0; i < other._size; i++)
+            copy[i] = other.array[i];
+        delete[] this->array;
+        this->array = copy;
+        this->_size = other._size;
     }
     
     return (*this);

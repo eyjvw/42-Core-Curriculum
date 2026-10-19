@@ -37,14 +37,20 @@ double PmergeMe::getTime(void)
     return (tv.tv_sec * 1000000.0 + tv.tv_usec);
 }
 
+// Only digits, at least one, and the value must fit in an int
 bool PmergeMe::isDigital(const char *av)
 {
-    for (size_t i = 0; i < strlen(av); i++) {
-        if (!isdigit(av[i]))
-		    return (false);
-	}
+    if (av[0] == '\0')
+        return (false);
+    for (size_t i = 0; av[i]; i++) {
+        if (!isdigit(static_cast<unsigned char>(av[i])))
+            return (false);
+    }
 
-    return (true);
+    errno = 0;
+    long value = strtol(av, NULL, 10);
+
+    return (errno != ERANGE && value <= INT_MAX);
 }
 
 size_t PmergeMe::jacobSthal(size_t n)
@@ -68,7 +74,8 @@ size_t PmergeMe::jacobSthal(size_t n)
     return (b);
 }
 
-template <typename T> void PmergeMe::binaryInsert(T &container, int value, size_t maxPosition)
+// Inserts values[index] into chain (indices of values sorted by value), searching only chain[0, maxPosition)
+template <typename T> void PmergeMe::binaryInsert(const T &values, T &chain, int index, size_t maxPosition)
 {
     size_t left = 0;
     size_t right = maxPosition;
@@ -77,13 +84,13 @@ template <typename T> void PmergeMe::binaryInsert(T &container, int value, size_
     {
         size_t mid = (left + right) / 2;
         
-        if (value < container[mid])
+        if (values[index] < values[chain[mid]])
             right = mid;
         else
             left = mid + 1;
     }
     
-    container.insert(container.begin() + left, value);
+    chain.insert(chain.begin() + left, index);
 }
 
 template <typename T> void PmergeMe::printStep(int step, T &container)
@@ -92,9 +99,9 @@ template <typename T> void PmergeMe::printStep(int step, T &container)
     typename T::const_iterator end = container.end();
     
     if (step == 1)
-        std::cout << "Before : ";
+        std::cout << "Before: ";
     else
-        std::cout << "After : ";
+        std::cout << "After: ";
 
     while (start != end)
     {
@@ -108,103 +115,126 @@ template <typename T> void PmergeMe::printStep(int step, T &container)
     std::cout << std::endl;
 }
 
+// Ford-Johnson merge-insertion: fills order with the indices of values in sorted order
+template <typename T> void PmergeMe::mergeInsert(const T &values, T &order)
+{
+    size_t half = values.size() / 2;
+
+    order.clear();
+    if (values.size() < 2)
+    {
+        if (values.size() == 1)
+            order.push_back(0);
+        return;
+    }
+
+    // 1. Compare each pair, the larger elements (winners) go to the next recursion level
+    T winners;
+    T winnerIdx;
+    T loserIdx;
+
+    for (size_t i = 0; i < half; i++)
+    {
+        int small = 2 * i;
+        int large = 2 * i + 1;
+
+        if (values[large] < values[small])
+            std::swap(small, large);
+        winners.push_back(values[large]);
+        winnerIdx.push_back(large);
+        loserIdx.push_back(small);
+    }
+
+    // 2. Recursively sort the winners
+    T winnerOrder;
+
+    this->mergeInsert(winners, winnerOrder);
+
+    // 3. Main chain = sorted winners, pend = their losers in the same order (+ the odd element)
+    T mainChain;
+    T pend;
+
+    for (size_t i = 0; i < half; i++)
+    {
+        mainChain.push_back(winnerIdx[winnerOrder[i]]);
+        pend.push_back(loserIdx[winnerOrder[i]]);
+    }
+    if (values.size() % 2 != 0)
+        pend.push_back(values.size() - 1);
+
+    // 4. The first loser is smaller than the first winner: no comparison needed
+    T chain(mainChain);
+
+    chain.insert(chain.begin(), pend[0]);
+
+    // 5. Insert the other losers by groups bounded by the Jacobsthal numbers, each group from its end,
+    //    searching only the part of the chain before the loser's winner
+    size_t prev = 1;
+
+    for (size_t k = 3; prev < pend.size(); ++k)
+    {
+        size_t last = std::min(this->jacobSthal(k), pend.size());
+
+        for (size_t j = last; j > prev; --j)
+        {
+            size_t maxPosition = chain.size();
+
+            // Bound = position of the loser's winner: at least the j - 1 previous winners
+            // and the prev losers of the previous groups are before it
+            if (j - 1 < half)
+                maxPosition = std::find(chain.begin() + (j - 1 + prev), chain.end(), mainChain[j - 1]) - chain.begin();
+            this->binaryInsert(values, chain, pend[j - 1], maxPosition);
+        }
+        prev = last;
+    }
+
+    order = chain;
+}
+
 template <typename T> void PmergeMe::sort(T &container)
 {
-    if (container.size() <= 1)
-        return;
+    T order;
+    T sorted;
 
-    T small;
-    T large;
-
-    for (size_t i = 0; i + 1 < container.size(); i += 2)
-    {
-        if (container[i] < container[i + 1])
-        {
-            small.push_back(container[i]);
-            large.push_back(container[i + 1]);
-        }
-        else
-        {
-            small.push_back(container[i + 1]);
-            large.push_back(container[i]);
-        }
-    }
-
-    bool hasOdd = (container.size() % 2 != 0);
-    int odd;
-    if (hasOdd)
-        odd = container.back();
-
-    PmergeMe::sort(large);
-    
-    T result = large;
-    
-    std::vector<size_t> order;
-    size_t k = 1;
-
-    while (this->jacobSthal(k) < small.size())
-    {
-        order.push_back(this->jacobSthal(k));
-        ++k;
-    }
-    
-    if (small.size() > 0)
-        order.push_back(small.size());
-    
-    size_t prev = 0;
-    size_t inserted = 0;
-    
-    for (size_t i = 0; i < order.size(); ++i)
-    {
-        for (size_t j = order[i]; j-- > prev;)
-        {
-            binaryInsert(result, small[j], large.size() + inserted);
-            ++inserted;
-        }
-        prev = order[i];
-    }
-
-    if (hasOdd)
-        binaryInsert(result, odd, result.size());
-
-    container = result;
+    this->mergeInsert(container, order);
+    for (size_t i = 0; i < order.size(); i++)
+        sorted.push_back(container[order[i]]);
+    container = sorted;
 }
 
 bool PmergeMe::checkArgs(int ac, char **av)
 {
     if (ac < 2)
     {
-        std::cerr << "Wrong number of args" << std::endl;
+        std::cerr << "Error" << std::endl;
         return (false);
     }
 
     for (size_t i = 1; i < static_cast<size_t>(ac); i++)
     {
-		if (!this->isDigital(av[i]))
+        if (!this->isDigital(av[i]))
         {
-			std::cerr << "Only positive number" << std::endl;
-			return (false);
-		}
-	}
+            std::cerr << "Error" << std::endl;
+            return (false);
+        }
+    }
 
     return (true);
 }
 
-bool PmergeMe::hasNoDup(int ac, char **av)
+// Must be called once vec is sorted: duplicates are then next to each other
+bool PmergeMe::hasNoDup(void)
 {
-    for (size_t i = 1; i < static_cast<size_t>(ac); i++)\
+    for (size_t i = 1; i < this->vec.size(); i++)
     {
-		for (size_t j = i + 1; j < static_cast<size_t>(ac); j++)\
+        if (this->vec[i - 1] == this->vec[i])
         {
-			if (atoi(av[i]) == atoi(av[j]))
-            {
-				std::cerr << "Only different number" << std::endl;
-				return (false);
-			}
-		}
-	}
+            std::cerr << "Error" << std::endl;
+            return (false);
+        }
+    }
     
-	return (true);
+    return (true);
 }
 
 void PmergeMe::initVector(int ac, char **av)
@@ -213,11 +243,9 @@ void PmergeMe::initVector(int ac, char **av)
         this->vec.push_back(atoi(av[i]));
 }
 
-void PmergeMe::start(void)
+bool PmergeMe::start(void)
 {
-    this->printStep(1, this->vec);
-
-    std::deque<int> deq(vec.begin(), vec.end());
+    this->deq.assign(this->vec.begin(), this->vec.end());
     
     double vecStartTime;
     double vecEndTime;
@@ -225,15 +253,22 @@ void PmergeMe::start(void)
     double deqEndTime;
 
     vecStartTime = this->getTime();
-    this->sort(vec);
+    this->sort(this->vec);
     vecEndTime = this->getTime();
 
+    if (!this->hasNoDup())
+        return (false);
+    this->printStep(1, this->deq);
+
     deqStartTime = this->getTime();
-    PmergeMe::sort(deq);
+    this->sort(this->deq);
     deqEndTime = this->getTime();
 
-    this->printStep(2, vec);
+    this->printStep(2, this->vec);
 
-    std::cout << "Time to process a range of " << vec.size()  << " elements with std::vector : "  << (vecEndTime - vecStartTime) << " us" << std::endl;
-    std::cout << "Time to process a range of " << vec.size()  << " elements with std::deque : "  << (deqEndTime - deqStartTime) << " us" << std::endl;
+    std::cout << std::fixed << std::setprecision(0);
+    std::cout << "Time to process a range of " << this->vec.size()  << " elements with std::vector : "  << (vecEndTime - vecStartTime) << " us" << std::endl;
+    std::cout << "Time to process a range of " << this->deq.size()  << " elements with std::deque : "  << (deqEndTime - deqStartTime) << " us" << std::endl;
+
+    return (true);
 }

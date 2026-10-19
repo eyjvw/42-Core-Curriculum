@@ -39,8 +39,8 @@ function normalizeClientId(value: string | null): string { return (value ?? "").
 export function getClientId(req: Request): string
 {
 	return (
-		normalizeClientId(req.headers.get("x-forwarded-for")) ||
 		normalizeClientId(req.headers.get("x-real-ip")) ||
+		normalizeClientId(req.headers.get("x-forwarded-for")) ||
 		normalizeClientId(req.headers.get("cf-connecting-ip")) ||
 		normalizeClientId(req.headers.get("true-client-ip")) ||
 		"unknown"
@@ -56,6 +56,8 @@ export function checkRateLimit(key: string, now: number = Date.now()): RateLimit
 
 	if (!bucket || now >= bucket.resetAt)
 	{
+		if (!bucket && buckets.size >= maxBuckets)
+			buckets.delete(buckets.keys().next().value!);
 		bucket = {
 			count:		1,
 			resetAt:	now + windowMs

@@ -13,4 +13,5 @@
 #pragma once
 
 #define BUFFER_SIZE 1024
+#define HEREDOC_TMP "/tmp/.pipex_here_doc"
 #define ARG_ERROR "./pipex [here_doc LIMITER] - infile cmd1 cmd2 ... outfile\n"

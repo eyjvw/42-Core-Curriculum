@@ -14,5 +14,8 @@
 
 void	ft_ast(t_shell *shell)
 {
-	shell->ast = ft_parse_and_or(&shell->tokens);
+	t_tokens	*tokens;
+
+	tokens = shell->tokens;
+	shell->ast = ft_parse_and_or(&tokens);
 }

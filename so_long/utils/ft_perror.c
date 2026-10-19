@@ -14,6 +14,7 @@
 
 void	ft_perror(const char *str)
 {
+	ft_putstr_fd(2, "Error\n");
 	ft_putstr_fd(2, "[\033[31mERREUR\033[0m] ");
 	ft_putstr_fd(2, str);
 }

@@ -2,11 +2,20 @@ import type	{ BlackjackGame }													from '../types/blackjack.ts';
 import { getUserIdFromRequest }													from '../jwt/jwt.ts';
 import { createGame, hit, stand, doubleDown, getGameState, calculateWinnings }	from '../blackjack/engine.ts';
 import * as responses															from '../utils/responses.ts';
-import * as queries																from '../../../db/schemas/getters.ts';
+import * as queries																from '../../db/schemas/getters.ts';
 import { roomManager }														from '../services/roomManager.ts';
+import { recordBlackjackResult }												from '../../db/schemas/stats.ts';
 
 const activeGames: Map<string, BlackjackGame>	= new Map();
 const userGames: Map<number, string>			= new Map();
+
+function recordSoloResult(userId: number, game: BlackjackGame): void
+{
+	if (game.status !== 'finished') { return; }
+
+	try			{ recordBlackjackResult(userId, game.result === 'dealer_win' ? 'loss' : game.result === 'push' ? 'push' : 'win'); }
+	catch (e)	{ console.error('Failed to update stats:', e); }
+}
 
 export function hasActiveSoloGame(userId: number): boolean
 {
@@ -38,7 +47,7 @@ export async function newGameController(req: Request): Promise<Response>
 		const body	= await req.json() as { bet?: number };
 		const bet	= body.bet ?? 10;
 
-		if (bet < 1 || bet > 10000)
+		if (!Number.isInteger(bet) || bet < 1 || bet > 10000)
 			return (responses.badRequest('Invalid bet amount (1-10000)'));
 
 		const [user] = await queries.getUserByID(userId);
@@ -48,8 +57,10 @@ export async function newGameController(req: Request): Promise<Response>
 		await queries.updateUserCoins(userId, user.coins! - bet);
 
 		const game = createGame(userId.toString(), bet);
+		if (existingGameId) activeGames.delete(existingGameId);
 		activeGames.set(game.id, game);
 		userGames.set(userId, game.id);
+		recordSoloResult(userId, game);
 
 		if (game.status === 'finished')
 		{
@@ -90,6 +101,7 @@ export async function hitController(req: Request): Promise<Response>
 			return (responses.badRequest('Cannot hit - game is not in playing state'));
 
 		hit(game);
+		recordSoloResult(userId, game);
 
 		return (responses.success({
 			game: getGameState(game, game.status === 'playing'),
@@ -120,6 +132,7 @@ export async function standController(req: Request): Promise<Response>
 			return responses.badRequest('Cannot stand - game is not in playing state');
 
 		stand(game);
+		recordSoloResult(userId, game);
 
 		const winnings = calculateWinnings(game);
 		if (winnings > 0)
@@ -165,6 +178,7 @@ export async function doubleController(req: Request): Promise<Response>
 		await queries.updateUserCoins(userId, user.coins! - game.bet);
 
 		doubleDown(game);
+		recordSoloResult(userId, game);
 
 		const winnings = calculateWinnings(game);
 		if (winnings > 0)

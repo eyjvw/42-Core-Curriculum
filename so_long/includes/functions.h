@@ -34,6 +34,7 @@ unsigned int	ft_arrlen(const char **str);
 void			ft_load_textures(t_game *game);
 void			ft_render(t_game *game);
 int				ft_handle_close(t_game *game);
+int				ft_handle_expose(t_game *game);
 int				ft_handle_key(int keycode, t_game *game);
 void			ft_move_player(t_game *game, int dx, int dy);
 void			ft_save_pos(t_game *game);

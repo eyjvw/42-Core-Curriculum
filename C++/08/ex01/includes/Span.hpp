@@ -15,7 +15,8 @@
 #include <iostream>
 #include <vector>
 #include <exception>
-#include <cstdlib>
+#include <algorithm>
+#include <iterator>
 
 class Span
 {
@@ -32,22 +33,25 @@ class Span
         class TooMuchValues : public std::exception
         {
             public:
-                const char *what(void) const throw()
-                {
-                    return ("This container has already reached his max capacity");
-                }
+                const char *what(void) const throw();
         };
 
         class CantFind : public std::exception
         {
             public:
-                const char *what(void) const throw()
-                {
-                    return ("Couldn't find value in this container");
-                }
+                const char *what(void) const throw();
         };
 
         void addNumber(const int nb);
-        int shortestSpan(void) const;
-        int longestSpan(void) const;      
+        template <typename It> void addRange(It begin, It end);
+        unsigned int shortestSpan(void) const;
+        unsigned int longestSpan(void) const;
 };
+
+template <typename It>
+void Span::addRange(It begin, It end)
+{
+    if (static_cast<size_t>(std::distance(begin, end)) > this->N - this->data.size())
+        throw(Span::TooMuchValues());
+    this->data.insert(this->data.end(), begin, end);
+}

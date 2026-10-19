@@ -14,6 +14,7 @@
 
 #include <iostream>
 #include <cstdlib>
+#include <ctime>
 
 class Base
 {
@@ -22,8 +23,8 @@ class Base
         Base(const Base &other);
         Base &operator=(const Base &other);
         virtual ~Base(void);
-
-        Base *generate(void);
-        void identify(Base *p);
-        void identify(Base &p);
 };
+
+Base *generate(void);
+void identify(Base *p);
+void identify(Base &p);

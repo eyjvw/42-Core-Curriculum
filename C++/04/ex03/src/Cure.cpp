@@ -10,10 +10,11 @@ Cure::Cure(Cure const &src) : AMateria(src.getType())
 	std::cout << "Copy Constructor called for Cure" << std::endl;
 }
 
-void	Cure::operator=(Cure const &src)
+Cure	&Cure::operator=(Cure const &src)
 {
 	std::cout << "Operator assignement called for Cure" << std::endl;
-	this->type = src.getType();
+	AMateria::operator=(src);
+	return (*this);
 }
 
 Cure::~Cure()

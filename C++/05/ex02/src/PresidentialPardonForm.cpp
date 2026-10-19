@@ -24,7 +24,7 @@ PresidentialPardonForm::PresidentialPardonForm(const std::string target): AForm(
     this->target = target;
 }
 
-PresidentialPardonForm::PresidentialPardonForm(const PresidentialPardonForm &other): AForm(PresidentialName, PresidentialSignGrade, PresidentialExecGrade)
+PresidentialPardonForm::PresidentialPardonForm(const PresidentialPardonForm &other): AForm(other)
 {
     std::cout << "[PresidentialPardonForm] Copy constructor called" << std::endl;
     this->target = other.target;
@@ -35,6 +35,7 @@ PresidentialPardonForm &PresidentialPardonForm::operator=(const PresidentialPard
     if (this != &other)
     {
         std::cout << "[PresidentialPardonForm] Copy assignement operator called" << std::endl;
+        AForm::operator=(other);
         this->target = other.target;
     }
 

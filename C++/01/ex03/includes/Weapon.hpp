@@ -34,6 +34,6 @@ class Weapon
 		Weapon(void);
 		Weapon(const char *type);
 		~Weapon(void);
-		std::string getType(void);
+		const std::string &getType(void) const;
 		void setType(const char *type);
 };

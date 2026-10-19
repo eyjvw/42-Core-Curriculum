@@ -87,13 +87,10 @@ export default function PrivacyPolicy({ onBack }: PrivacyPolicyProps) {
 
         <section className="legal-section">
           <h2>6. Third-Party Services</h2>
-          <p>The Platform integrates with the following third-party services:</p>
-          <ul>
-            <li>
-              <strong>QR Server API</strong> — Used to generate QR codes for 2FA setup. Only the 2FA URI
-              is sent; no personal data is transmitted.
-            </li>
-          </ul>
+          <p>
+            The Platform does not send your data to third-party services. QR codes for 2FA setup are
+            generated on our own servers, so your 2FA secret never leaves the Platform.
+          </p>
         </section>
 
         <section className="legal-section">

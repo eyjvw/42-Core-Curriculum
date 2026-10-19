@@ -17,36 +17,55 @@
 ### Project Setup
 
 1. **Clone the repository**
-2. **Configure environment**: Copy `srcs/.env.example` to `srcs/.env` and edit values
-3. **Configure domain**: Add domain to `/etc/hosts` for local testing
-4. **Setup SSL**: Self-signed certificates generated automatically by NGINX container
+2. **Configure environment**: Edit `srcs/.env` (versioned, contains no password)
+3. **Create the secrets**: see [Secrets](#secrets) below
+4. **Configure domain**: Add domain to `/etc/hosts` for local testing
+5. **Setup SSL**: Self-signed certificates generated automatically by NGINX container
 
 ### Environment Variables
 
 Edit `srcs/.env` with:
-- `DOMAIN_NAME`: Your domain (e.g., your_login.42.fr)
-- `MYSQL_ROOT_PASSWORD`, `MYSQL_DATABASE`, `MYSQL_USER`, `MYSQL_PASSWORD`: Database credentials
-- `WP_ADMIN_USER`, `WP_ADMIN_PASSWORD`, `WP_ADMIN_EMAIL`: WordPress admin
-- `WP_USER`, `WP_USER_PASSWORD`, `WP_USER_EMAIL`: WordPress regular user
+- `DOMAIN_NAME`: Your domain (e.g., your_login.42.fr), used as the WordPress site URL
+- `DB_HOST`, `DB_NAME`, `DB_USER`: MariaDB host (service name), database and WordPress database user
+- `DB_ROOT_USER`, `DB_ROOT_MAIL`: WordPress administrator login (must not contain "admin") and email
+- `WP_USER`, `WP_MAIL`: WordPress regular user
+- `FTP_USER`: FTP login (it reads and writes the WordPress volume)
+- `REDIS_HOST`, `REDIS_PORT`: Redis cache used by WordPress
 
-**Security**: Use strong passwords, never commit `.env` to version control.
+### Secrets
+
+Passwords are never stored in `srcs/.env`. They are Docker secrets read from the git-ignored
+`secrets/` folder at the root of the project and mounted in `/run/secrets/` inside the containers:
+
+```bash
+mkdir -p secrets
+openssl rand -hex 16 > secrets/db_pass.txt        # MariaDB password of DB_USER (used by WordPress)
+openssl rand -hex 16 > secrets/db_root_pass.txt   # WordPress administrator (DB_ROOT_USER) password
+openssl rand -hex 16 > secrets/db_ftp_pass.txt    # FTP_USER password
+openssl rand -hex 16 > secrets/db_redis_pass.txt  # Redis requirepass
+```
+
+Use hexadecimal passwords (as above): they are passed to shell commands and SQL without escaping.
+MariaDB `root` has no password and is only reachable from inside the `mariadb` container (unix socket).
+
+**Security**: Use strong passwords, never commit the `secrets/` folder to version control.
 
 ## Project Architecture
 
 ### Service Dependencies
 MariaDB → WordPress → NGINX
 
-Each service depends on the previous one being healthy.
+WordPress waits for the MariaDB healthcheck (`mysqladmin ping`); NGINX starts once WordPress is up.
 
 ### Network
-Custom bridge network `inception-network` enables:
+Custom bridge network `inception` enables:
 - Service discovery by container name
 - Network isolation
 - Controlled inter-container communication
 
 ### Volumes
-- `inception_wordpress`: WordPress files
-- `inception_mariadb`: Database files
+- `srcs_web`: WordPress files (bind to `/home/sbonneau/data/web`)
+- `srcs_db`: Database files (bind to `/home/sbonneau/data/db`)
 
 Volumes persist data even when containers are removed.
 
@@ -63,31 +82,26 @@ make re         # Full rebuild (fclean + build + up)
 
 ### Build Process
 
-**Step 1: Build images**
-```bash
-make build
-```
-Builds MariaDB, WordPress, and NGINX images from Dockerfiles.
-
-**Step 2: Start services**
+**Step 1: Build images and start services**
 ```bash
 make up
 ```
-Creates volumes, network, and starts containers in correct order.
+Creates the data folders, builds every image from its Dockerfile (each image is named after its service,
+e.g. `nginx:inception`), then creates volumes, network, and starts containers in correct order.
 
-**Step 3: Verify**
+**Step 2: Verify**
 ```bash
 docker ps
 ```
-All three containers should show "healthy" status.
+All containers should be `Up`; `mariadb` should show `(healthy)`.
 
 ### Service Startup Order
 
 1. MariaDB starts and initializes database
 2. WordPress waits for MariaDB health check, then installs WordPress
-3. NGINX waits for WordPress health check, then starts serving traffic
+3. NGINX starts once the WordPress container is up, then starts serving traffic
 
-Health checks ensure each service is ready before dependent services start.
+The MariaDB health check ensures the database is ready before WordPress installs itself.
 
 ## Container Management
 
@@ -105,18 +119,18 @@ docker top <container>       # Container processes
 
 ```bash
 docker exec -it nginx /bin/sh
-docker exec -it wordpress /bin/bash
+docker exec -it wp-php /bin/bash
 docker exec -it mariadb /bin/sh
 ```
 
 ### Managing Individual Services
 
 ```bash
-docker-compose start <service>      # Start
-docker-compose stop <service>       # Stop
-docker-compose restart <service>    # Restart
-docker-compose logs <service>       # View logs
-docker-compose logs -f <service>    # Follow logs
+docker compose -f srcs/docker-compose.yml start <service>      # Start
+docker compose -f srcs/docker-compose.yml stop <service>       # Stop
+docker compose -f srcs/docker-compose.yml restart <service>    # Restart
+docker compose -f srcs/docker-compose.yml logs <service>       # View logs
+docker compose -f srcs/docker-compose.yml logs -f <service>    # Follow logs
 ```
 
 ## Volume and Data Management
@@ -129,15 +143,15 @@ Docker volumes are stored in `/var/lib/docker/volumes/` (Linux) or inside Docker
 
 ```bash
 docker volume ls                          # List volumes
-docker volume inspect inception_wordpress # Inspect volume
-docker volume rm inception_wordpress      # Remove volume (⚠️ deletes data)
+docker volume inspect srcs_web # Inspect volume
+docker volume rm srcs_web      # Remove volume (⚠️ deletes data)
 ```
 
 ### Accessing Volume Data
 
 Use temporary container to access volume contents:
 ```bash
-docker run --rm -v inception_wordpress:/data alpine ls -la /data
+docker run --rm -v srcs_web:/data alpine ls -la /data
 ```
 
 ### Data Persistence
@@ -156,12 +170,12 @@ Data is only deleted when:
 ### Where Data is Stored
 
 **WordPress Files**
-- Volume: `inception_wordpress`
+- Volume: `srcs_web`
 - Container path: `/var/www/html`
 - Contents: WordPress installation, themes, plugins, uploads
 
 **Database Files**
-- Volume: `inception_mariadb`
+- Volume: `srcs_db`
 - Container path: `/var/lib/mysql`
 - Contents: Database files, system tables, WordPress data
 
@@ -184,8 +198,8 @@ Test data persistence:
 
 Check what's in volumes:
 ```bash
-docker volume inspect inception_wordpress
-docker volume inspect inception_mariadb
+docker volume inspect srcs_web
+docker volume inspect srcs_db
 ```
 
 View volume size:

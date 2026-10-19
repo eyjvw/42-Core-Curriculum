@@ -19,6 +19,12 @@ int	ft_handle_close(t_game *game)
 	return (0);
 }
 
+int	ft_handle_expose(t_game *game)
+{
+	ft_render(game);
+	return (0);
+}
+
 int	ft_handle_key(int keycode, t_game *game)
 {
 	if (keycode == KEY_ESC)

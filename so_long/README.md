@@ -10,10 +10,13 @@ The player moves on a tile map, must collect all collectibles, then reach the ex
 The project validates map format and playability before launching, including:
 - rectangular map
 - closed walls
-- valid characters (`0`, `1`, `C`, `E`, `P`)
+- valid characters (`0`, `1`, `C`, `E`, `P`, and `M` for enemies)
 - exactly one player start and one exit
 - at least one collectible
-- solvable path checks (flood fill)
+- solvable path checks (flood fill, enemies block the path)
+- map small enough to fit on the screen (80x45 tiles at most)
+
+Any invalid input prints `Error` followed by an explicit message, then exits cleanly.
 
 ## Controls
 
@@ -30,7 +33,7 @@ Each valid move is counted and printed.
 - Linux
 - `gcc`/`cc`
 - X11 development packages
-- `minilibx-linux` (already present or fetched with `make minilibx`)
+- `minilibx-linux` (cloned and built automatically by `make`)
 
 ### Build
 
@@ -44,7 +47,6 @@ make
 - `make clean` : remove object files + clean minilibx objects
 - `make fclean` : remove binary + clean artifacts
 - `make re` : full rebuild
-- `make minilibx` : clone minilibx-linux repository
 
 ## Usage
 

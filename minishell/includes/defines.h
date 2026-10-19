@@ -34,13 +34,18 @@
 # define B_WHITE "\001\033[1;37m\002"
 
 # define UNEXCEPTED_TOKEN "syntax error near unexpected token `"
-# define COMMAND_NOT_FOUND ": command not found\n"
-# define HEREDOC_LIMITED "warning: here-document delimited by EOF\n"
+# define COMMAND_NOT_FOUND "command not found"
+# define HEREDOC_LIMITED "here-document delimited by end-of-file (wanted `"
 
 # define EXIT_COMMAND_NOT_FOUND 127
 # define EXIT_FOUND_BUT_NOT_EXECUTABLE 126
 # define EXIT_COMMAND_FAILED 128
 
 # define SIGNAL_INTERUP 130
+
+# define READ_BUFFER 65536
+
+# define QUOTE_MARK 1
+# define STAR_MARK 3
 
 #endif

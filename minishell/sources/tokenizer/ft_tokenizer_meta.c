@@ -14,8 +14,7 @@
 
 static void	ft_create_and_add(t_tokens **tokens, char *value, t_token_type type)
 {
-	ft_lst_addback((void **)tokens,
-		ft_create_token(ft_strdup(value), type));
+	ft_lst_addback((void **)tokens, ft_create_token(value, type));
 }
 
 static bool	ft_tokenizer_meta_bonus(t_tokens **tokens, char *s, int *i)
@@ -46,9 +45,12 @@ static bool	ft_tokenizer_meta_mandatory(t_tokens **tokens, char *s, int *i)
 	return (false);
 }
 
-void	ft_tokenizer_meta(t_tokens **tokens, char *s, int *i)
+bool	ft_tokenizer_meta(t_tokens **tokens, char *s, int *i)
 {
 	if (ft_tokenizer_meta_bonus(tokens, s, i))
-		return ;
-	ft_tokenizer_meta_mandatory(tokens, s, i);
+		return (true);
+	if (ft_tokenizer_meta_mandatory(tokens, s, i))
+		return (true);
+	ft_error(NULL, NULL, UNEXCEPTED_TOKEN "&'");
+	return (false);
 }

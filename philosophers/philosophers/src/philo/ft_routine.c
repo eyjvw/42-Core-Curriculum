@@ -16,7 +16,7 @@ static void	ft_one_philo(t_philo *philo)
 {
 	pthread_mutex_lock(philo->left_fork);
 	ft_print(philo, TAKEN_FORK);
-	usleep(philo->data->time_to_die * 1000);
+	ft_sleep(philo->data, philo->data->time_to_die);
 	pthread_mutex_unlock(philo->left_fork);
 }
 

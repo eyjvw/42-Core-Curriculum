@@ -17,7 +17,7 @@ These exercises introduce basic C++ programming concepts and a small, repeatable
 
 - `ex00` — `megaphone`: work with `argc`/`argv`, transform and print strings.
 - `ex01` — `phonebook`: implement `Contact` and `PhoneBook` classes, CLI commands `ADD`/`SEARCH`/`EXIT` and formatted table output.
-- `ex02` — consolidation exercises: apply the basics and reinforce input handling and small class design.
+- `ex02` — `JobOfYourDream`: recreate `Account.cpp` so the output matches the provided log.
 
 ## Build
 

@@ -14,7 +14,8 @@
 
 int	ft_is_num(char *str)
 {
-	int	i;
+	int		i;
+	long	num;
 
 	if (!str || !str[0])
 		return (0);
@@ -23,9 +24,14 @@ int	ft_is_num(char *str)
 		i++;
 	if (!str[i])
 		return (0);
+	num = 0;
 	while (str[i])
 	{
 		if (!(str[i] >= '0' && str[i] <= '9'))
+			return (0);
+		num = num * 10 + (str[i] - '0');
+		if ((str[0] != '-' && num > 2147483647)
+			|| (str[0] == '-' && num > 2147483648))
 			return (0);
 		i++;
 	}

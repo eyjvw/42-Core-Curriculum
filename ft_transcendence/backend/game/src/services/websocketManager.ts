@@ -3,7 +3,7 @@ import { roomManager }		from './roomManager.ts';
 
 interface WSClient
 {
-	ws:			WebSocket;
+	ws:			Bun.ServerWebSocket<unknown>;
 	userId:		string;
 	username:	string;
 	roomId:		string;
@@ -11,17 +11,17 @@ interface WSClient
 
 interface RoomWSClient
 {
-	ws:		WebSocket;
+	ws:		Bun.ServerWebSocket<unknown>;
 	roomId:	string;
 }
 
 export class WebSocketManager
 {
 	private clients: Map<string, WSClient>				= new Map();
-	private roomWSClients: Map<string, Set<WebSocket>>	= new Map();
+	private roomWSClients: Map<string, Set<Bun.ServerWebSocket<unknown>>>	= new Map();
 	private roomSubscriptions: Map<string, Set<string>>	= new Map();
 
-	registerClient(ws: WebSocket, clientId: string, userId: string, username: string, roomId: string): void
+	registerClient(ws: Bun.ServerWebSocket<unknown>, clientId: string, userId: string, username: string, roomId: string): void
 	{
 		this.clients.set(clientId, { ws, userId, username, roomId });
 
@@ -42,18 +42,20 @@ export class WebSocketManager
 
 		const subscribers = this.roomSubscriptions.get(client.roomId);
 		if (subscribers) { subscribers.delete(clientId); }
+		if (subscribers && subscribers.size === 0) { this.roomSubscriptions.delete(client.roomId); }
 
 		this.clients.delete(clientId);
 	}
 
-	registerRoomClient(ws: WebSocket, clientId: string, roomId: string): void {
+	registerRoomClient(ws: Bun.ServerWebSocket<unknown>, clientId: string, roomId: string): void {
 		if (!this.roomWSClients.has(roomId)) { this.roomWSClients.set(roomId, new Set()); }
 		this.roomWSClients.get(roomId)!.add(ws);
 	}
 
-	unregisterRoomClient(ws: WebSocket, roomId: string): void {
+	unregisterRoomClient(ws: Bun.ServerWebSocket<unknown>, roomId: string): void {
 		const clients = this.roomWSClients.get(roomId);
 		if (clients) { clients.delete(ws); }
+		if (clients && clients.size === 0) { this.roomWSClients.delete(roomId); }
 	}
 
 	sendToClient(clientId: string, message: RoomMessage): void

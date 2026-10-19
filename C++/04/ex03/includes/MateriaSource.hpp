@@ -10,7 +10,7 @@ class MateriaSource : public IMateriaSource
     public:
         MateriaSource(void);
         MateriaSource(const MateriaSource &src);
-        void	operator=(const MateriaSource &src);
+        MateriaSource	&operator=(const MateriaSource &src);
         ~MateriaSource(void);
 
         void		learnMateria(AMateria* src);

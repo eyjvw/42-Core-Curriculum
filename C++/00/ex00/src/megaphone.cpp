@@ -11,6 +11,8 @@
 /* ************************************************************************** */
 
 #include <iostream>
+#include <string>
+#include <cctype>
 
 int    main(int ac, char **av)
 {
@@ -24,9 +26,9 @@ int    main(int ac, char **av)
 			std::size_t    length = str.length();
 
 			for (std::size_t j = 0;j < length;j++)
-				std::cout << (char)std::toupper(str[j]);
-			if (i + 1 != ac)
-				std::cout << " ";
+				std::cout << (char)std::toupper((unsigned char)str[j]);
 		}
+		std::cout << std::endl;
 	}
+	return (0);
 }

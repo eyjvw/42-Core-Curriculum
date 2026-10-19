@@ -12,25 +12,28 @@
 
 #include "../includes/BitcoinExchange.hpp"
 
-int	main(int ac, char **av) {
-	if (ac != 2)
+int main(int ac, char **av) {
+    if (ac != 2)
     {
-		std::cout << CANTOPEN << std::endl;
-		return (1);
-	}
+        std::cerr << CANTOPEN << std::endl;
+        return (1);
+    }
     
-	try {
-		std::ifstream data(DBSOURCE);
-		BitcoinExchange btc(data, ',');
+    try {
+        std::ifstream data(DBSOURCE);
+        BitcoinExchange btc(data);
         
-		std::ifstream src(av[1]);
-		BitcoinExchange input(src, '|');
+        std::ifstream src(av[1]);
+        src.peek();
+        if (!src.is_open() || src.bad())
+            throw(BitcoinExchange::CantOpenFile());
         
-		btc.ExchangeRate(input);
-	}
-	catch(const std::exception& e) {
-		std::cerr << e.what() << '\n';
-	}
+        btc.ExchangeRate(src);
+    }
+    catch(const std::exception& e) {
+        std::cerr << e.what() << '\n';
+        return (1);
+    }
     
-	return (0);
+    return (0);
 }

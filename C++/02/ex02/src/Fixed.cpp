@@ -1,4 +1,16 @@
 #include "../includes/Fixed.hpp"
+#include <climits>
+
+// products and quotients of raw values are computed in a double (exact below 2^53)
+// and saturated to the int range instead of overflowing
+static int clamp_raw(double raw)
+{
+	if (raw > INT_MAX)
+		return (INT_MAX);
+	if (raw < INT_MIN)
+		return (INT_MIN);
+	return (static_cast<int>(raw));
+}
 
 Fixed::Fixed(void)
 {
@@ -9,7 +21,7 @@ Fixed::Fixed(void)
 Fixed::Fixed(const int raw)
 {
     // std::cout << "Int constructor called" << std::endl;
-    this->setRawBits(raw << this->bits);
+    this->setRawBits(raw * (1 << this->bits));
 }
 
 Fixed::Fixed(const float raw)
@@ -97,8 +109,8 @@ Fixed Fixed::operator-(Fixed const &src) const
 Fixed Fixed::operator*(Fixed const &src) const
 {
 	Fixed res;
-	long long product = static_cast<long long>(this->raw) * static_cast<long long>(src.raw);
-	res.setRawBits(static_cast<int>(product >> bits));
+	double product = static_cast<double>(this->raw) * src.raw;
+	res.setRawBits(clamp_raw(std::floor(product / (1 << bits))));
 	return res;
 }
 
@@ -113,8 +125,8 @@ Fixed Fixed::operator/(Fixed const &src) const
 		return res;
 	}
 
-	long long numerator = static_cast<long long>(this->raw) << bits;
-	res.setRawBits(static_cast<int>(numerator / src.raw));
+	double numerator = static_cast<double>(this->raw) * (1 << bits);
+	res.setRawBits(clamp_raw(numerator / src.raw));
 	return res;
 }
 

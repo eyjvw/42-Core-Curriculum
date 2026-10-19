@@ -41,10 +41,10 @@
 //Numeric replies
 # define RPL_STR(nick, user, cmd)					":" + std::string(nick) + "!" + std::string(user) + "@" SERVER_NAME " " + std::string(cmd) + " "
 
-# define RPL_PING									"PONG " SERVER_NAME
+# define RPL_PING(token)								":" SERVER_NAME " PONG " SERVER_NAME " :" + std::string(token)
 # define RPL_NICK(nick)								nick
 # define RPL_JOIN(channel)							":" + std::string(channel)
-# define RPL_QUIT(message)							std::string(message)
+# define RPL_QUIT(message)							":" + std::string(message)
 # define RPL_TOP(channel, topic)					std::string(channel) + " :" + std::string(topic)
 # define RPL_PRIV(target, msg)						std::string(target) + " :" + std::string(msg)
 # define RPL_KICK(channel, user, data)				std::string(channel) + " " + std::string(user) + " :" + std::string(data)
@@ -69,4 +69,5 @@ class RPL
 		static void	Invite(Server &server);
 		static void Mode(Server &server);
 		static void Quit(Server &server);
+		static void Part(Server &server);
 };

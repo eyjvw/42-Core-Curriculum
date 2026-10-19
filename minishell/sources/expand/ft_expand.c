@@ -26,61 +26,94 @@ static void	ft_free_list(t_tokens *list)
 	}
 }
 
-static void	ft_add_wildcard(t_tokens **new, t_tokens *wild, char *expanded)
+static void	ft_add_word(t_tokens **list, char *marked)
 {
-	t_tokens	*tmp;
-
-	tmp = wild;
-	while (tmp)
-	{
-		ft_lst_addback((void **)new,
-			ft_create_token(ft_strdup(tmp->value), WORD));
-		tmp = tmp->next;
-	}
-	ft_free_list(wild);
-	free(expanded);
-}
-
-static void	ft_expand_word(t_shell *shell, t_tokens *token, t_tokens **new)
-{
-	char		*expanded;
-	char		*no_quotes;
 	t_tokens	*wild;
+	char		*word;
 
-	expanded = ft_expand_variables(shell, token->value);
-	no_quotes = ft_remove_quotes(expanded);
-	free(expanded);
-	if (ft_strchr(no_quotes, '*'))
+	wild = NULL;
+	if (ft_has_glob(marked))
 	{
-		wild = ft_expand_wildcards(no_quotes);
-		if (wild)
-		{
-			ft_add_wildcard(new, wild, no_quotes);
-			return ;
-		}
-		free(no_quotes);
+		word = ft_unmark(marked, true);
+		if (word)
+			wild = ft_expand_wildcards(word);
+		free(word);
+	}
+	if (wild)
+	{
+		ft_lst_addback((void **)list, wild);
 		return ;
 	}
-	ft_lst_addback((void **)new, ft_create_token(no_quotes, WORD));
-	free(no_quotes);
+	word = ft_unmark(marked, false);
+	if (word)
+		ft_lst_addback((void **)list, ft_create_token(word, WORD));
+	free(word);
 }
 
-void	ft_expand(t_shell *shell)
+static t_tokens	*ft_expand_word(t_shell *shell, char *raw)
 {
-	t_tokens	*tokens;
-	t_tokens	*new;
+	char		*expanded;
+	t_tokens	*words;
+	t_tokens	*tmp;
+	t_tokens	*list;
 
-	tokens = shell->tokens;
-	new = NULL;
-	while (tokens)
+	list = NULL;
+	expanded = ft_expand_variables(shell, raw, true);
+	if (!expanded)
+		return (NULL);
+	words = ft_split_words(expanded);
+	free(expanded);
+	tmp = words;
+	while (tmp)
 	{
-		if (tokens->type == WORD)
-			ft_expand_word(shell, tokens, &new);
-		else
-			ft_lst_addback((void **)&new,
-				ft_create_token(ft_strdup(tokens->value), tokens->type));
-		tokens = tokens->next;
+		ft_add_word(&list, tmp->value);
+		tmp = tmp->next;
 	}
-	ft_mini_clean(shell);
-	shell->tokens = new;
+	ft_free_list(words);
+	return (list);
+}
+
+char	**ft_expand_argv(t_shell *shell, char **argv)
+{
+	t_tokens	*list;
+	t_tokens	*tmp;
+	char		**res;
+	int			i;
+
+	list = NULL;
+	i = 0;
+	while (argv[i])
+		ft_lst_addback((void **)&list, ft_expand_word(shell, argv[i++]));
+	res = malloc(sizeof(char *) * (ft_count_args(list) + 1));
+	if (!res)
+		return (ft_free_list(list), NULL);
+	i = 0;
+	tmp = list;
+	while (tmp)
+	{
+		res[i++] = tmp->value;
+		tmp->value = NULL;
+		tmp = tmp->next;
+	}
+	res[i] = NULL;
+	ft_free_list(list);
+	return (res);
+}
+
+char	*ft_expand_file(t_shell *shell, char *raw)
+{
+	t_tokens	*list;
+	char		*file;
+
+	list = ft_expand_word(shell, raw);
+	if (!list || list->next)
+	{
+		ft_free_list(list);
+		ft_error(raw, NULL, "ambiguous redirect");
+		return (NULL);
+	}
+	file = list->value;
+	list->value = NULL;
+	ft_free_list(list);
+	return (file);
 }

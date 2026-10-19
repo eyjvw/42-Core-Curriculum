@@ -13,6 +13,7 @@
 # pragma once
 # include <ctime>
 # include <string>
+# include <vector>
 # include <sstream>
 # include <climits>
 # include <iostream>
@@ -25,7 +26,10 @@ namespace Ft
 {
 	std::string	getFdContent(int const fd);
 	std::string extractLine(std::string &buffer);
-	bool		endsWithCRLF(std::string const &s);
+	bool		endsWithLF(std::string const &s);
+	std::string toCRLF(std::string const &line);
+	std::string toLower(std::string const &s);
+	std::vector<std::string>	split(std::string const &s, char sep);
 	bool		isValidNickname(std::string const &nick);
 	bool		isValidChannelName(std::string const &name);
 	bool		isInt(const std::string &sNum);

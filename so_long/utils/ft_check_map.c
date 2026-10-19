@@ -85,39 +85,48 @@ static int	ft_increments(char **m, int *p, int *ee, int *c)
 	return (1);
 }
 
-static int	ft_check_elems(t_game *game)
+static const char	*ft_check_elems(t_game *game)
 {
 	int		player;
 	int		exit_e;
 	int		collectibles;
-	char	**map;
 
 	player = 0;
 	exit_e = 0;
 	collectibles = 0;
-	map = game->map->map;
-	if (!ft_increments(map, &player, &exit_e, &collectibles))
-		return (0);
-	if ((player == 1 && exit_e == 1 && collectibles >= 1))
-	{
-		game->map->collectibles = collectibles;
-		return (1);
-	}
-	return (0);
+	if (!ft_increments(game->map->map, &player, &exit_e, &collectibles))
+		return (ERR_ELEMS);
+	if (player == 0)
+		return (ERR_NO_PLAYER);
+	if (player > 1)
+		return (ERR_MANY_PLAYERS);
+	if (exit_e == 0)
+		return (ERR_NO_EXIT);
+	if (exit_e > 1)
+		return (ERR_MANY_EXITS);
+	if (collectibles == 0)
+		return (ERR_NO_COLLECTIBLE);
+	game->map->collectibles = collectibles;
+	return (NULL);
 }
 
 void	ft_check_map(t_game *game)
 {
-	ft_save_pos(game);
+	const char	*err;
+
+	if (ft_arrlen((const char **)game->map->map) > MAX_MAP_HEIGHT
+		|| ft_strlen(game->map->map[0]) > MAX_MAP_WIDTH)
+		return (ft_perror(ERR_TOO_LARGE), ft_clean_exit(game, 2));
 	if (!ft_check_rectangular(game->map->map))
 		return (ft_perror(ERR_NOT_RECTANGULAR), ft_clean_exit(game, 2));
+	ft_save_pos(game);
 	ft_pinfo(INFO_RECTANGULAR);
 	if (!ft_check_walls(game->map->map))
 		return (ft_perror(ERR_NOT_CLOSE), ft_clean_exit(game, 2));
 	ft_pinfo(INFO_CLOSE);
-	if (!ft_check_elems(game))
-		return (ft_perror(ERR_ELEMS),
-			ft_clean_exit(game, 2));
+	err = ft_check_elems(game);
+	if (err)
+		return (ft_perror(err), ft_clean_exit(game, 2));
 	ft_pinfo(INFO_ELEMS);
 	if (!ft_is_possible(game))
 		return (ft_perror(ERR_NOT_POSSIBLE),

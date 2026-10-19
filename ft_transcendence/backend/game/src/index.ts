@@ -33,7 +33,9 @@ const routes: Record<string, (req: Request) => Promise<Response>> = {
 
 let wsClientCounter = 0;
 
-const server: Bun.Server<undefined> = Bun.serve({
+type WsData = { clientId: string; userId?: string; username?: string; roomId: string; isRoomWs?: boolean };
+
+const server: Bun.Server<WsData> = Bun.serve<WsData>({
 	port: Number(Bun.env.PORT),
 	async fetch(req: Request): Promise<Response>
 	{
@@ -42,8 +44,12 @@ const server: Bun.Server<undefined> = Bun.serve({
 
 		if (pathname === '/ws/game' && req.headers.get('upgrade') === 'websocket')
 		{
+			const uid		= await getUserIdFromRequest(req);
+			if (!uid)
+				return (new Response('Unauthorized', { status: 401 }));
+
 			const clientId	= `ws_${wsClientCounter++}`;
-			const userId	= url.searchParams.get('userId') || '';
+			const userId	= String(uid);
 			const username	= url.searchParams.get('username') || 'Guest';
 			const roomId	= url.searchParams.get('roomId') || '';
 			const success	= server.upgrade(req, { data: { clientId, userId, username, roomId }});
@@ -56,15 +62,14 @@ const server: Bun.Server<undefined> = Bun.serve({
 		if (roomWsMatch && req.headers.get('upgrade') === 'websocket')
 		{
 			const clientId	= `ws_room_${wsClientCounter++}`;
-			const roomId	= roomWsMatch[1];
+			const roomId	= roomWsMatch[1]!;
 			const userId	= await getUserIdFromRequest(req);
+			if (!userId)
+				return (new Response('Unauthorized', { status: 401 }));
 
-			if (userId)
-			{
-				const room = roomManager.getRoom(roomId!);
-				if (room && !room.players.has(String(userId)) && !room.spectators.has(String(userId)))
-					return (new Response('You are not a member of this room', { status: 403 }));
-			}
+			const room = roomManager.getRoom(roomId!);
+			if (room && !room.players.has(String(userId)) && !room.spectators.has(String(userId)))
+				return (new Response('You are not a member of this room', { status: 403 }));
 
 			const success	= server.upgrade(req, { data: { clientId, roomId, isRoomWs: true, userId: userId ? String(userId) : undefined }});
 
@@ -80,7 +85,7 @@ const server: Bun.Server<undefined> = Bun.serve({
 	},
 
 	websocket: {
-		open(ws: WebSocket) {
+		open(ws: Bun.ServerWebSocket<WsData>) {
 			const data = ws.data as { clientId: string; userId?: string; username?: string; roomId: string; isRoomWs?: boolean };
 			if (data.isRoomWs)
 			{
@@ -100,13 +105,13 @@ const server: Bun.Server<undefined> = Bun.serve({
 			}
 		},
 
-		message(ws: WebSocket, message: string | Buffer)
+		message(ws: Bun.ServerWebSocket<WsData>, message: string | Buffer)
 		{
 			const data = ws.data as { clientId: string; isRoomWs?: boolean };
 			if (typeof message === 'string') { wsManager.handleMessage(data.clientId, message); }
 		},
 
-		close(ws: WebSocket)
+		close(ws: Bun.ServerWebSocket<WsData>)
 		{
 			const data = ws.data as { clientId: string; userId?: string; roomId: string; isRoomWs?: boolean };
 			if (data.isRoomWs)
@@ -143,12 +148,6 @@ const server: Bun.Server<undefined> = Bun.serve({
 				}
 			}
 			console.log(`[WS] Client ${data.clientId} disconnected`);
-		},
-
-		error(ws: WebSocket, error: Error) {
-			const data = ws.data as { clientId: string };
-			console.error(`[WS] Error on client ${data.clientId}:`, error);
-			ws.close();
 		},
 	},
 });

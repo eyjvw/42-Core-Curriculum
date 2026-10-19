@@ -16,17 +16,13 @@
 #include <algorithm>
 #include <vector>
 
-template <typename T> bool easyfind(T &container, int value)
+// Returns an iterator to the first occurrence of value, or container.end() if not found
+template <typename T> typename T::iterator easyfind(T &container, int value)
 {
-    std::cout << "Value : " << value;
-
-    if (std::find(container.begin(), container.end(), value) != container.end())
-    {
-        std::cout << " found in container" << std::endl;
-        return (true);
-    }
-
-    std::cout << " not found in container" << std::endl;
-    return (false);
+    return (std::find(container.begin(), container.end(), value));
 }
 
+template <typename T> typename T::const_iterator easyfind(const T &container, int value)
+{
+    return (std::find(container.begin(), container.end(), value));
+}
